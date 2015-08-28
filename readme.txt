@@ -2,7 +2,7 @@
 Contributors: andy7629, alexknowshtml, jptoto
 Tags: postmark, email, smtp, notifications, wp_mail, wildbit
 Requires at least: 3.2
-Tested up to: 3.9
+Tested up to: 4.3
 Stable tag: trunk
 
 If you're still sending email with default SMTP, you're blind to delivery problems! This Postmark Approved WordPress Plugin enables WordPress blogs of any size to deliver and track WordPress notification emails reliably, with minimal setup time and zero maintenance.
@@ -58,6 +58,10 @@ This plugin detects HTML by checking the headers sent by other WordPress plugins
 == Screenshots ==
 
 1. Postmark WP Plugin Settings screen.
+
+== Changelog ==
+= v1.7 =
+* Support headers for cc, bcc, and reply-to
 
 == Changelog ==
 = v1.6 =
