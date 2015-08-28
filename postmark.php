@@ -51,7 +51,7 @@ add_filter('plugin_action_links', 'pm_admin_action_links', 10, 2);
 
 
 function pm_admin_options() {
-	if($_POST['submit']) {
+	if (isset($_POST['submit']) && $_POST['submit'] == "Save") {
 		$pm_enabled = $_POST['pm_enabled'];
 		if($pm_enabled):
 			$pm_enabled = 1;
@@ -117,8 +117,8 @@ function pm_admin_options() {
 
 	<div class="wrap">
 
-		<?php if($msg_updated): ?><div class="updated"><p><?php echo $msg_updated; ?></p></div><?php endif; ?>
-		<?php if($msg_error): ?><div class="error"><p><?php echo $msg_error; ?></p></div><?php endif; ?>
+		<?php if (isset($msg_updated)): ?><div class="updated"><p><?php echo $msg_updated; ?></p></div><?php endif; ?>
+		<?php if (isset($msg_error)): ?><div class="error"><p><?php echo $msg_error; ?></p></div><?php endif; ?>
 
 		<div id="icon-tools" class="icon32"></div>
 		<h2><img src="<?php echo WP_PLUGIN_URL.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__)) ?>images/PM-Logo.jpg" /></h2>
@@ -198,13 +198,25 @@ function pm_admin_test_ajax() {
 
 // End Admin Functionality
 
-
-
-
 // Override wp_mail() if postmark enabled
 if(get_option('postmark_enabled') == 1){
 	if (!function_exists("wp_mail")){
 		function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()) {
+
+			// Compact the input, apply the filters, and extract them back out
+			extract(apply_filters('wp_mail', compact('to', 'subject', 'message', 'headers', 'attachments')));
+
+			$recognized_headers = pm_parse_headers($headers);
+
+			//Adding the filter thats executed in the wp_mail function so that plugins using those filters will not clash
+			//Did not used the filters wp_mail_from_name, wp_mail_from(both are defined in the postmarkapp settings) and wp_mail_charset(postmarkapp does not accept charset)
+			$recognized_headers['Content-Type'] = apply_filters( 'wp_mail_content_type', $recognized_headers['Content-Type'] );
+
+			if (isset($recognized_headers['Content-Type']) && stripos($recognized_headers['Content-Type'], 'text/html') !== false) {
+					$current_email_type = 'HTML';
+			} else {
+					$current_email_type = 'PLAINTEXT';
+			}
 
 			// Define Headers
 			$postmark_headers = array(
@@ -222,35 +234,119 @@ if(get_option('postmark_enabled') == 1){
 			}
 
 			// Send Email
-			if(!is_array($to)){
-				$recipients = explode(",", $to);
+			if (is_array($to)) {
+					$recipients = implode(",", $to);
 			} else {
-				$recipients = $to;
+					$recipients = $to;
 			}
 
-			foreach($recipients as $recipient){
-				// Construct Message
-				$email = array();
-				$email['To'] = $recipient;
-				$email['From'] = get_option('postmark_sender_address');
-		    	$email['Subject'] = $subject;
-		    	$email['TextBody'] = $message;
+			// Construct Message
+			$email = array();
+			$email['To'] = $recipients;
+			$email['From'] = get_option('postmark_sender_address');
+			$email['Subject'] = $subject;
+			$email['TextBody'] = $message;
 
-		    	if(strpos($headers, "text/html" ) || get_option('postmark_force_html') == 1){
-			    	$email['HtmlBody'] = $message;
-		    	}
-
-		    	if(get_option('postmark_trackopens') == 1){
-		    		$email['TrackOpens'] = "true";
-		    	}
-
-        		$response = pm_send_mail($postmark_headers, $email);
+			if (isset($recognized_headers['Cc']) && !empty($recognized_headers['Cc'])) {
+					$email['Cc'] = $recognized_headers['Cc'];
 			}
-			return $response;
+
+			if (isset($recognized_headers['Bcc']) && !empty($recognized_headers['Bcc'])) {
+					$email['Bcc'] = $recognized_headers['Bcc'];
+			}
+
+			if (isset($recognized_headers['Reply-To']) && !empty($recognized_headers['Reply-To'])) {
+					$email['ReplyTo'] = $recognized_headers['Reply-To'];
+			}
+
+			if ($current_email_type == 'HTML') {
+					$email['HtmlBody'] = $message;
+			} else if (get_option('postmark_force_html') == 1 || get_option('postmark_trackopens') == 1) {
+					$email['HtmlBody'] = pm_convert_plaintext_to_html($message);
+			}
+
+			if (get_option('postmark_trackopens') == 1) {
+					$email['TrackOpens'] = "true";
+			}
+
+			$response = pm_send_mail($postmark_headers, $email);
+
+			if (is_wp_error($response)) {
+					return false;
+			}
+			return true;
 		}
 	}
 }
 
+function pm_convert_plaintext_to_html($message) {
+    $message = nl2br(htmlspecialchars($message));
+    return $message;
+}
+
+function pm_parse_headers($headers) {
+    if (!is_array($headers)) {
+        if (stripos($headers, "\r\n") !== false) {
+            $headers = explode("\r\n", $headers);
+        } else {
+            $headers = explode("\n", $headers);
+        }
+    }
+    $recognized_headers = array();
+    $headers_list = array(
+        'Content-Type' => array(),
+        'Bcc' => array(),
+        'Cc' => array(),
+        'Reply-To' => array()
+    );
+    $headers_list_lowercase = array_change_key_case($headers_list, CASE_LOWER);
+    if (!empty($headers)) {
+	    foreach ($headers as $key => $header) {
+                    $key = strtolower($key);
+		    if (array_key_exists($key, $headers_list_lowercase)) {
+			    $header_key = $key;
+                            $header_val = $header;
+                            $segments = explode(':', $header);
+                            if (count($segments) === 2) {
+				    if (array_key_exists(strtolower($segments[0]), $headers_list_lowercase)) {
+					    list($header_key, $header_val) = $segments;
+                                            $header_key = strtolower($header_key);
+				    }
+			    }
+		    }
+		    else {
+			    $segments = explode(':', $header);
+			    if (count($segments) === 2) {
+				    if (array_key_exists(strtolower($segments[0]), $headers_list_lowercase)) {
+					    list($header_key, $header_val) = $segments;
+                                            $header_key = strtolower($header_key);
+				    }
+			    }
+		    }
+		    if (isset($header_key) && isset($header_val)) {
+			    if (stripos($header_val, ',') === false) {
+				    $headers_list_lowercase[$header_key][] = trim($header_val);
+			    }
+			    else {
+				    $vals = explode(',', $header_val);
+				    foreach ($vals as $val) {
+					    $headers_list_lowercase[$header_key][] = trim($val);
+				    }
+			    }
+			    unset($header_key);
+			    unset($header_val);
+		    }
+	    }
+
+	    foreach ($headers_list as $key => $value) {
+                    $value = $headers_list_lowercase[strtolower($key)];
+		    if (count($value) > 0) {
+			    $recognized_headers[$key] = implode(', ', $value);
+		    }
+	    }
+    }
+    return $recognized_headers;
+}
 
 function pm_send_test(){
 	$email_address = $_POST['email'];
@@ -269,13 +365,13 @@ function pm_send_test(){
 		$message .= "\n\nPostmark solves your WordPress email problems. Send transactional email confidently using http://postmarkapp.com";
 		$html_message .= '<br /><br />Postmark solves your WordPress email problems. Send transactional email confidently using <a href="http://postmarkapp.com">Postmark</a>.';
 	}
-	
+
 	$email = array();
 	$email['To'] = $email_address;
 	$email['From'] = get_option('postmark_sender_address');
     $email['Subject'] = get_bloginfo('name').' Postmark Test';
     $email['TextBody'] = $message;
-    
+
     if(get_option('postmark_force_html') == 1){
     	$email['HtmlBody'] = $html_message;
 	}
