@@ -34,8 +34,7 @@ class Postmark_Mail
 
         add_filter( 'init', array( $this, 'init' ) );
 
-        $this->upgrade();
-        $this->settings = json_decode( get_option( 'postmark_settings' ), true );
+        $this->settings = $this->load_settings();
     }
 
 
@@ -50,8 +49,9 @@ class Postmark_Mail
     }
 
 
-    function upgrade() {
+    function load_settings() {
         $settings = get_option( 'postmark_settings' );
+
         if ( false === $settings ) {
             $settings = array(
                 'enabled'           => get_option( 'postmark_enabled', 0 ),
@@ -62,7 +62,11 @@ class Postmark_Mail
             );
 
             update_option( 'postmark_settings', json_encode( $settings ) );
+
+            return $settings;
         }
+
+        return json_decode( $settings, true );
     }
 
 
