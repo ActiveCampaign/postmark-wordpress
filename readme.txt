@@ -1,8 +1,8 @@
 === Postmark Approved WordPress Plugin ===
-Contributors: andy7629, alexknowshtml, jptoto
+Contributors: andy7629, alexknowshtml, mgibbs189, jptoto
 Tags: postmark, email, smtp, notifications, wp_mail, wildbit
-Requires at least: 3.2
-Tested up to: 4.3
+Requires at least: 4.0
+Tested up to: 4.4
 Stable tag: trunk
 
 If you're still sending email with default SMTP, you're blind to delivery problems! This Postmark Approved WordPress Plugin enables WordPress blogs of any size to deliver and track WordPress notification emails reliably, with minimal setup time and zero maintenance.
@@ -11,7 +11,7 @@ If you're still sending email with default SMTP, you're blind to delivery proble
 
 If you're still sending email with default SMTP, you're blind to delivery problems! This Postmark Approved WordPress Plugin enables WordPress blogs of any size to deliver and track WordPress notification emails reliably, with minimal setup time and zero maintenance. No more SMTP errors or delivery problems with Postmark!
 
-If you don't already have a free Postmark account, you can get one in minutes. Every account comes with 10,000 free sends.
+If you don't already have a free Postmark account, you can get one in minutes. Every account comes with 25,000 free credits.
 
 == Installation ==
 
@@ -33,11 +33,11 @@ The Postmark Approved WordPress plugin overrides any usage of the wp_mail() func
 
 = Does this cost me money? =
 
-This Postmark plugin is 100% free. All new Postmark accounts include 1000 free email sends. Beyond your first 1000 email sends, they will cost only $1.50 per 1000 sends with no monthly commitments and no expirations.
+This Postmark plugin is 100% free. All new Postmark accounts include 25,000 free credits. Afterwards, they will cost only $1.50 per 1000 sends with no monthly commitments and no expirations.
 
 We will send you multiple warnings as you approach running out of send credits, so you don't need to worry about paying for credits until you absolutely need them.
 
-Sign up for your free Postmark account at http://postmarkapp.com and get started now.
+Sign up for your free Postmark account at https://postmarkapp.com/ and get started now.
 
 = My emails are still not sending, or they are going to spam! HELP!? =
 
