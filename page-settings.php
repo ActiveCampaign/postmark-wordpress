@@ -100,7 +100,7 @@ input[type=text] {
     <table class="form-table">
         <tr>
             <th><label>Recipient</label></th>
-            <td><input type="text" class="pm-test-email" value="<?php echo get_option('postmark_sender_address'); ?>" class="regular-text"/></td>
+            <td><input type="text" class="pm-test-email" value="" /></td>
         </tr>
     </table>
 
