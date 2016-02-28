@@ -27,14 +27,6 @@
         });
 
         $(document).on('click', '.send-test', function() {
-            var data = {
-                'enabled': $('.pm-enabled').is(':checked') ? 1 : 0,
-                'api_key': $('.pm-api-key').val(),
-                'sender_address': $('.pm-sender-address').val(),
-                'force_html': $('.pm-force-html').is(':checked') ? 1 : 0,
-                'track_opens': $('.pm-track-opens').is(':checked') ? 1 : 0
-            };
-
             $.post(ajaxurl, {
                 'action': 'postmark_test',
                 'email': $('.pm-test-email').val()
