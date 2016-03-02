@@ -131,11 +131,13 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
     }
 
     foreach ( $attachments as $attachment ) {
-        $body['Attachments'][] = array(
-            'Name'          => basename( $attachment ),
-            'Content'       => base64_encode( file_get_contents( $attachment ) ),
-            'ContentType'   => mime_content_type( $attachment ),
-        );
+        if ( is_readable( $attachment ) ) {
+            $body['Attachments'][] = array(
+                'Name'          => basename( $attachment ),
+                'Content'       => base64_encode( file_get_contents( $attachment ) ),
+                'ContentType'   => mime_content_type( $attachment ),
+            );
+        }
     }
 
     /*
