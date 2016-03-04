@@ -62,7 +62,6 @@ This plugin detects HTML by checking the headers sent by other WordPress plugins
 == Changelog ==
 = v1.8 =
 * Modernization of codebase.
-* Change to MIT License (which is more permissive than the GNU GPL)
 
 = v1.7 =
 * Support headers for cc, bcc, and reply-to
