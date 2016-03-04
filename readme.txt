@@ -1,15 +1,15 @@
-=== Postmark Approved WordPress Plugin ===
+=== Postmark for Wordpress ===
 Contributors: andy7629, alexknowshtml, mgibbs189, jptoto
 Tags: postmark, email, smtp, notifications, wp_mail, wildbit
 Requires at least: 4.0
 Tested up to: 4.4
 Stable tag: trunk
 
-If you're still sending email with default SMTP, you're blind to delivery problems! This Postmark Approved WordPress Plugin enables WordPress blogs of any size to deliver and track WordPress notification emails reliably, with minimal setup time and zero maintenance.
+The *officially-supported* Postmark plugin for Wordpress.
 
 == Description ==
 
-If you're still sending email with default SMTP, you're blind to delivery problems! This Postmark Approved WordPress Plugin enables WordPress blogs of any size to deliver and track WordPress notification emails reliably, with minimal setup time and zero maintenance. No more SMTP errors or delivery problems with Postmark!
+If you're still sending email with default SMTP, you're blind to delivery problems! Postmark for Wordpress enables sites of any size to deliver and track WordPress notification emails reliably, with minimal setup time and zero maintenance.
 
 If you don't already have a free Postmark account, you can get one in minutes. Every account comes with 25,000 free credits.
 
