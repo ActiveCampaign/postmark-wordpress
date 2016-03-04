@@ -60,6 +60,10 @@ This plugin detects HTML by checking the headers sent by other WordPress plugins
 1. Postmark WP Plugin Settings screen.
 
 == Changelog ==
+= v1.8 =
+* Modernization of codebase.
+* Change to MIT License (which is more permissive than the GNU GPL)
+
 = v1.7 =
 * Support headers for cc, bcc, and reply-to
 

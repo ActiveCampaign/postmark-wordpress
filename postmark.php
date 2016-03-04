@@ -3,23 +3,11 @@
 Plugin Name: Postmark (Official)
 Plugin URI: https://postmarkapp.com/
 Description: Overwrites wp_mail to send emails through Postmark
-Version: 1.7
+Version: 1.8
 Author: Andrew Yates & Matt Gibbs
 
-Copyright 2011 - 2016 Andrew Yates & Postmark
+MIT Licensed (https://opensource.org/licenses/MIT)
 
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, see <http://www.gnu.org/licenses/>.
 */
 
 class Postmark_Mail
@@ -28,7 +16,7 @@ class Postmark_Mail
 
 
     function __construct() {
-        define( 'POSTMARK_VERSION', '1.7' );
+        define( 'POSTMARK_VERSION', '1.8' );
         define( 'POSTMARK_DIR', dirname( __FILE__ ) );
         define( 'POSTMARK_URL', plugins_url( basename( POSTMARK_DIR ) ) );
 
