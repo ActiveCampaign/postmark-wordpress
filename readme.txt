@@ -66,7 +66,6 @@ This plugin detects HTML by checking the headers sent by other WordPress plugins
 = v1.7 =
 * Support headers for cc, bcc, and reply-to
 
-== Changelog ==
 = v1.6 =
 * Added open tracking support.
 
