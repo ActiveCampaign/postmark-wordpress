@@ -62,13 +62,18 @@ class Postmark_Mail
 
     function send_test_email() {
         $to = $_POST['email'];
+        $with_tracking_and_html = $_POST['with_tracking_and_html'];
         $subject = 'Postmark Test: ' . get_bloginfo( 'name' );
-        $message = 'This is a <strong>test</strong> email sent using the Postmark plugin.';
-        $response = wp_mail( $to, $subject, $message );
+        if( $with_tracking_and_html ){
+            $message = 'This is an <strong>HTML test</strong> email sent using the Postmark plugin. It has Open Tracking enabled.';
+            $headers['X-PM-Track-Opens'] = true;
+        }else{ 
+            $message = 'This is a test email sent using the Postmark plugin.';
+        }
+        $response = wp_mail( $to, $subject, $message, $headers );
         echo ( false !== $response ) ? 'Test sent' : 'Test failed';
         wp_die();
     }
-
 
     function save_settings() {
         $settings = stripslashes( $_POST['data'] );

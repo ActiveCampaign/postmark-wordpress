@@ -29,7 +29,8 @@
         $(document).on('click', '.send-test', function() {
             $.post(ajaxurl, {
                 'action': 'postmark_test',
-                'email': $('.pm-test-email').val()
+                'email': $('.pm-test-email').val(),
+                'with_tracking_and_html': $('.pm-test-with-opens').is(':checked') ? 1 : 0
             }, function(response) {
                 $('.pm-notice').html('<p>' + response + '</p>');
                 $('.pm-notice').removeClass('hidden');
@@ -67,9 +68,9 @@ input[type=text] {
             <a href="https://postmarkapp.com/" target="_blank"><img src="<?php echo POSTMARK_URL; ?>/images/logo.png" width="130" height="21" alt="" /></a>
         </h1>
     </div>
+    <br/>
     <div class="updated notice pm-notice hidden"></div>
-
-    <table class="form-table" style="max-width:400px;">
+    <table class="form-table" style="max-width:740px;">
         <tr>
             <th><label>Enabled?</label></th>
             <td>
@@ -122,6 +123,9 @@ input[type=text] {
         <tr>
             <th><label>Recipient</label></th>
             <td><input type="text" class="pm-test-email" value="" /></td>
+        </tr>
+        <tr>
+            <td><input type="checkbox" name="with_tracking_and_html" class="pm-test-with-opens" value="" />Send test as HTML, with Open Tracking Enabled.</td>
         </tr>
     </table>
 
