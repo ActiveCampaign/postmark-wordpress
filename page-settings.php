@@ -125,7 +125,7 @@ input[type=text] {
             <td><input type="text" class="pm-test-email" value="" /></td>
         </tr>
         <tr>
-            <td><input type="checkbox" name="with_tracking_and_html" class="pm-test-with-opens" value="" />Send test as HTML, with Open Tracking Enabled.</td>
+            <td colspan="2"><input type="checkbox" name="with_tracking_and_html" class="pm-test-with-opens" value="" />Send test as HTML, with Open Tracking Enabled.</td>
         </tr>
     </table>
 
