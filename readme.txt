@@ -63,8 +63,8 @@ This plugin detects HTML by checking the headers sent by other WordPress plugins
 
 = v1.9 =
 * Allow the 'From' header to override the default sender.
-* Don't sent TextBody when the user has specified the 'Content-Type' header of 'text/html'
-* Allow individual messages to opt-in to Track-Opens by including a header of 'X-PM-Track-Opens' and a value of `true`
+* Don't sent TextBody when the user has specified the 'Content-Type' header of 'text/html'.
+* Allow individual messages to opt-in to Track-Opens by including a header of 'X-PM-Track-Opens' and a value of `true`.
 
 = v1.8 =
 * Modernization of codebase.

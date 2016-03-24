@@ -45,7 +45,7 @@
 
         $('.pm-force-html').click(function(){
             if (!$(this).is(':checked')) {
-                $('.pm-track-opens').attr('checked', '');
+                $('.pm-track-opens').removeAttr('checked');
             }
         });
     });
@@ -62,12 +62,14 @@ input[type=text] {
 </style>
 
 <div class="wrap">
-    <h1>
-        <a href="https://postmarkapp.com/" target="_blank"><img src="<?php echo POSTMARK_URL; ?>/images/logo.png" width="130" height="21" alt="" /></a>
-    </h1>
+    <div style="background: #FFDE00; padding: 10px; border-radius: 5px">
+        <h1>
+            <a href="https://postmarkapp.com/" target="_blank"><img src="<?php echo POSTMARK_URL; ?>/images/logo.png" width="130" height="21" alt="" /></a>
+        </h1>
+    </div>
     <div class="updated notice pm-notice hidden"></div>
 
-    <table class="form-table">
+    <table class="form-table" style="max-width:400px;">
         <tr>
             <th><label>Enabled?</label></th>
             <td>
@@ -86,21 +88,27 @@ input[type=text] {
             <th><label>Sender Email Address</label></th>
             <td>
                 <input type="text" class="pm-sender-address" value="" />
-                <div class="footnote">This email must be a verified <a href="https://account.postmarkapp.com/signatures" target="_blank">Sender Signature</a>. It will appear as the "from" address on all outbound emails.</div>
+                <div class="footnote">This email must be a verified <a href="https://account.postmarkapp.com/signatures" target="_blank">Sender Signature</a>. It will appear as the "from" address on all outbound emails.<br/><br/>
+                You may override the "From" address set here on individual emails, by including a 'From' header with the address you wish to send from. This address must still be a confirmed Sender Signature associated with your account on Postmark.<br/><br/>
+                For information on setting headers using the wp_mail function, <a href="https://developer.wordpress.org/reference/functions/wp_mail/">see the Wordpress Codex page.</a>
+                </div>
             </td>
         </tr>
         <tr>
             <th><label>Force HTML</label></th>
             <td>
                 <input type="checkbox" class="pm-force-html" value="1" />
-                <span class="footnote">Force emails to be sent as HTML. DEPRECATED: Instead of enabling this feature, add a header to your HTML message with name 'Content-Type' and value 'text/html'. "Forcing HTML" for Wordpress-generated emails (such as password-resets) will cause them to be sent as HTML, this is often incorrect. Instead, individual messages should include the header above to have them treated as HTML instead of plain text.</span>
+                <span class="footnote">Force emails to be sent as HTML.<br/><br/>DEPRECATED: Instead of enabling this feature, add a header to your HTML message with name 'Content-Type' and value 'text/html'. "Forcing HTML" for Wordpress-generated emails (such as password reset emails) will cause them to be sent as HTML, this is often incorrect. Instead, individual messages should include the header above to have them treated as HTML instead of plain text.
+                <br/><br/>
+                For information on setting headers using the wp_mail function, <a href="https://developer.wordpress.org/reference/functions/wp_mail/">see the Wordpress Codex page.</a></span>
             </td>
         </tr>
         <tr>
             <th><label>Track Opens</label></th>
             <td>
                 <input type="checkbox" class="pm-track-opens" value="1" />
-                <span class="footnote">Track email opens (which also requires emails to be "forced" to HTML). DEPRECATED: Instead of enabling this feature, add a header to your HTML message called 'X-PM-Track-Opens' and a value of 'true'. See the explanation of why this is the preferred method in the description of the 'Force HTML' feature.</span>
+                <span class="footnote">Track email opens (which also requires emails to be "forced" to HTML).<br/><br/>DEPRECATED: Instead of enabling this feature, add a header to your HTML message called 'X-PM-Track-Opens' and a value of 'true'. See the explanation of why this is the preferred method in the description of the 'Force HTML' feature.<br/><br/>
+                For information on setting headers using the wp_mail function, <a href="https://developer.wordpress.org/reference/functions/wp_mail/">see the Wordpress Codex page.</a></span>
             </td>
         </tr>
     </table>
