@@ -29,7 +29,7 @@ Postmark is a hosted service that expertly handles all delivery of transactional
 
 = Will this plugin work with my WordPress site? =
 
-The Postmark Approved WordPress plugin overrides any usage of the wp_mail() function. Because of this, if any 3rd party code or plugins send mail directly using the PHP mail function, or any other method, we cannot override it. Please contact the makers of any offending plugins and let them know that they should use wp_mail() instead of unsupported mailing funcitons.
+The Postmark for WordPress plugin overrides any usage of the wp_mail() function. Because of this, if any 3rd party code or plugins send mail directly using the PHP mail function, or any other method, we cannot override it. Please contact the makers of any offending plugins and let them know that they should use wp_mail() instead of unsupported mailing funcitons.
 
 = Does this cost me money? =
 
@@ -60,6 +60,12 @@ This plugin detects HTML by checking the headers sent by other WordPress plugins
 1. Postmark WP Plugin Settings screen.
 
 == Changelog ==
+
+= v1.9 =
+* Allow the 'From' header to override the default sender.
+* Don't sent TextBody when the user has specified the 'Content-Type' header of 'text/html'
+* Allow individual messages to opt-in to Track-Opens by including a header of 'X-PM-Track-Opens' and a value of `true`
+
 = v1.8 =
 * Modernization of codebase.
 

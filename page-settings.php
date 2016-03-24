@@ -35,6 +35,19 @@
                 $('.pm-notice').removeClass('hidden');
             });
         });
+
+        //if we enable the track opens, we should also enable the force html.
+        $('.pm-track-opens').click(function(){
+            if ($(this).is(':checked')) {
+                $('.pm-force-html').attr('checked', 'checked');
+            }
+        });
+
+        $('.pm-force-html').click(function(){
+            if (!$(this).is(':checked')) {
+                $('.pm-track-opens').attr('checked', '');
+            }
+        });
     });
 })(jQuery);
 </script>
@@ -80,14 +93,14 @@ input[type=text] {
             <th><label>Force HTML</label></th>
             <td>
                 <input type="checkbox" class="pm-force-html" value="1" />
-                <span class="footnote">Force emails to be sent as HTML</span>
+                <span class="footnote">Force emails to be sent as HTML. DEPRECATED: Instead of enabling this feature, add a header to your HTML message with name 'Content-Type' and value 'text/html'. "Forcing HTML" for Wordpress-generated emails (such as password-resets) will cause them to be sent as HTML, this is often incorrect. Instead, individual messages should include the header above to have them treated as HTML instead of plain text.</span>
             </td>
         </tr>
         <tr>
             <th><label>Track Opens</label></th>
             <td>
                 <input type="checkbox" class="pm-track-opens" value="1" />
-                <span class="footnote">Track email opens (forces HTML mode)</span>
+                <span class="footnote">Track email opens (which also requires emails to be "forced" to HTML). DEPRECATED: Instead of enabling this feature, add a header to your HTML message called 'X-PM-Track-Opens' and a value of 'true'. See the explanation of why this is the preferred method in the description of the 'Force HTML' feature.</span>
             </td>
         </tr>
     </table>
