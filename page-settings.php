@@ -108,33 +108,43 @@ input[type=text] {
             <th><label>Force HTML</label></th>
             <td>
                 <input type="checkbox" class="pm-force-html" value="1" />
-                <span class="footnote">Force emails to be sent as HTML.<br/><br/>DEPRECATED: Instead of enabling this feature, add a header to your HTML message with name 'Content-Type' and value 'text/html'. "Forcing HTML" for Wordpress-generated emails (such as password reset emails) will cause them to be sent as HTML, this is often incorrect. Instead, individual messages should include the header above to have them treated as HTML instead of plain text.
-                <br/><br/>
-                <h6>Example Override:</h6>
-                <pre>
-                $headers = array();
-                $headers['Content-Type'] = 'text/html';
-                // send mail
-                $response = wp_mail( $to, $subject, $message, $headers );
-                </pre>
-                <br/><br/>
-                For more information on setting headers using the wp_mail function, <a href="https://developer.wordpress.org/reference/functions/wp_mail/">see the Wordpress Codex page.</a></span>
+                <span class="footnote">Force emails to be sent as HTML.<br/><br/>DEPRECATED: Instead of enabling this feature, add a header to your HTML message with name 'Content-Type' and value 'text/html'. See the example below.
+                </span>
             </td>
         </tr>
         <tr>
             <th><label>Track Opens</label></th>
             <td>
                 <input type="checkbox" class="pm-track-opens" value="1" />
-                <span class="footnote">Track email opens (which also requires emails to be "forced" to HTML).<br/><br/>DEPRECATED: Instead of enabling this feature, add a header to your HTML message called 'X-PM-Track-Opens' and a value of 'true'. See the explanation of why this is the preferred method in the description of the 'Force HTML' feature.<br/><br/>
-                <h6>Example Override:</h6>
+                <span class="footnote">Track email opens (which also requires emails to be "forced" to HTML).<br/><br/>DEPRECATED: Instead of enabling this feature, add a header to your HTML message called 'X-PM-Track-Opens' and a value of 'true'. See the example below.
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <h2>Overriding Sending Behavior for Individual Messages:</h2>
+                 "Forcing HTML" for Wordpress-generated emails (such as password reset emails) will cause them to be sent as HTML, this is often incorrect. Instead, individual messages should include the header above to have them treated as HTML instead of plain text
+
+                <h4>Example Overrides:</h4>
                 <pre>
+                //Create a headers array:
                 $headers = array();
+
+                // Set this header if you want to override the default 'From' address:
+                $headers['From'] = 'john.smith@example.com';
+
+                // Set this header if you want the message to be sent as HTML.
+                $headers['Content-Type'] = 'text/html';
+                
+                // Set this header if you want to enable open tracking for this message.
+                // Setting this header also forces the message to be treated as HTML.
                 $headers['X-PM-Track-Opens'] = true;
-                // send mail
+
+                // Send the email, including the $headers array we just created:
                 $response = wp_mail( $to, $subject, $message, $headers );
+
                 </pre>
                 <br/><br/>
-                For more information on setting headers using the wp_mail function, <a href="https://developer.wordpress.org/reference/functions/wp_mail/">see the Wordpress Codex page.</a></span>
+                For more information on setting headers using the wp_mail function, <a href="https://developer.wordpress.org/reference/functions/wp_mail/">see the Wordpress Codex page.</a>
             </td>
         </tr>
     </table>
