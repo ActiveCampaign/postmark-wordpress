@@ -91,8 +91,16 @@ input[type=text] {
             <td>
                 <input type="text" class="pm-sender-address" value="" />
                 <div class="footnote">This email must be a verified <a href="https://account.postmarkapp.com/signatures" target="_blank">Sender Signature</a>. It will appear as the "from" address on all outbound emails.<br/><br/>
-                You may override the "From" address set here on individual emails, by including a 'From' header with the address you wish to send from. This address must still be a confirmed Sender Signature associated with your account on Postmark.<br/><br/>
-                For information on setting headers using the wp_mail function, <a href="https://developer.wordpress.org/reference/functions/wp_mail/">see the Wordpress Codex page.</a>
+                You may override the "From" address set here on individual emails, by including a 'From' header with the address you wish to send from. This address must still be a confirmed Sender Signature associated with your account on Postmark.
+                <h6>Example Override:</h6>
+                <pre>
+                $headers = array();
+                $headers['From'] = 'some_other_address@example.com';
+                // send mail
+                $response = wp_mail( $to, $subject, $message, $headers );
+                </pre>
+                <br/><br/>
+                For more information on setting headers using the wp_mail function, <a href="https://developer.wordpress.org/reference/functions/wp_mail/">see the Wordpress Codex page.</a>
                 </div>
             </td>
         </tr>
@@ -102,7 +110,15 @@ input[type=text] {
                 <input type="checkbox" class="pm-force-html" value="1" />
                 <span class="footnote">Force emails to be sent as HTML.<br/><br/>DEPRECATED: Instead of enabling this feature, add a header to your HTML message with name 'Content-Type' and value 'text/html'. "Forcing HTML" for Wordpress-generated emails (such as password reset emails) will cause them to be sent as HTML, this is often incorrect. Instead, individual messages should include the header above to have them treated as HTML instead of plain text.
                 <br/><br/>
-                For information on setting headers using the wp_mail function, <a href="https://developer.wordpress.org/reference/functions/wp_mail/">see the Wordpress Codex page.</a></span>
+                <h6>Example Override:</h6>
+                <pre>
+                $headers = array();
+                $headers['Content-Type'] = 'text/html';
+                // send mail
+                $response = wp_mail( $to, $subject, $message, $headers );
+                </pre>
+                <br/><br/>
+                For more information on setting headers using the wp_mail function, <a href="https://developer.wordpress.org/reference/functions/wp_mail/">see the Wordpress Codex page.</a></span>
             </td>
         </tr>
         <tr>
@@ -110,7 +126,15 @@ input[type=text] {
             <td>
                 <input type="checkbox" class="pm-track-opens" value="1" />
                 <span class="footnote">Track email opens (which also requires emails to be "forced" to HTML).<br/><br/>DEPRECATED: Instead of enabling this feature, add a header to your HTML message called 'X-PM-Track-Opens' and a value of 'true'. See the explanation of why this is the preferred method in the description of the 'Force HTML' feature.<br/><br/>
-                For information on setting headers using the wp_mail function, <a href="https://developer.wordpress.org/reference/functions/wp_mail/">see the Wordpress Codex page.</a></span>
+                <h6>Example Override:</h6>
+                <pre>
+                $headers = array();
+                $headers['X-PM-Track-Opens'] = true;
+                // send mail
+                $response = wp_mail( $to, $subject, $message, $headers );
+                </pre>
+                <br/><br/>
+                For more information on setting headers using the wp_mail function, <a href="https://developer.wordpress.org/reference/functions/wp_mail/">see the Wordpress Codex page.</a></span>
             </td>
         </tr>
     </table>
