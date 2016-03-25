@@ -61,6 +61,9 @@ This plugin detects HTML by checking the headers sent by other WordPress plugins
 
 == Changelog ==
 
+= v1.9.1 =
+* Fix case where 'From' header is specified as a literal string, instead of in an associative array.
+
 = v1.9 =
 * Allow the 'From' header to override the default sender.
 * Don't send TextBody when the user has specified the 'Content-Type' header of 'text/html'

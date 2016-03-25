@@ -30,7 +30,8 @@
             $.post(ajaxurl, {
                 'action': 'postmark_test',
                 'email': $('.pm-test-email').val(),
-                'with_tracking_and_html': $('.pm-test-with-opens').is(':checked') ? 1 : 0
+                'with_tracking_and_html': $('.pm-test-with-opens').is(':checked') ? 1 : 0,
+                'override_from_address' : $('.pm-test-email-sender').val()
             }, function(response) {
                 $('.pm-notice').html('<p>' + response + '</p>');
                 $('.pm-notice').removeClass('hidden');
@@ -122,7 +123,11 @@ input[type=text] {
     <table class="form-table">
         <tr>
             <th><label>Recipient</label></th>
-            <td><input type="text" class="pm-test-email" value="" /></td>
+            <td><input type="text" class="pm-test-email" value="" placeholder="recipient@example.com" /></td>
+        </tr>
+        <tr>
+            <th><label>Override Sender Email Address</label></th>
+            <td><input type="text" class="pm-test-email-sender" value="" placeholder="sender@example.com" /></td>
         </tr>
         <tr>
             <td colspan="2"><input type="checkbox" name="with_tracking_and_html" class="pm-test-with-opens" value="" />Send test as HTML, with Open Tracking Enabled.</td>

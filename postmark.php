@@ -3,7 +3,7 @@
 Plugin Name: Postmark (Official)
 Plugin URI: https://postmarkapp.com/
 Description: Overwrites wp_mail to send emails through Postmark
-Version: 1.9
+Version: 1.9.1
 Author: Andrew Yates & Matt Gibbs
 */
 
@@ -13,7 +13,7 @@ class Postmark_Mail
 
 
     function __construct() {
-        define( 'POSTMARK_VERSION', '1.9' );
+        define( 'POSTMARK_VERSION', '1.9.1' );
         define( 'POSTMARK_DIR', dirname( __FILE__ ) );
         define( 'POSTMARK_URL', plugins_url( basename( POSTMARK_DIR ) ) );
 
@@ -64,12 +64,21 @@ class Postmark_Mail
         $to = $_POST['email'];
         $with_tracking_and_html = $_POST['with_tracking_and_html'];
         $subject = 'Postmark Test: ' . get_bloginfo( 'name' );
+        $override_from = $_POST['override_from_address'];
+        $headers = array();
+
         if( $with_tracking_and_html ){
             $message = 'This is an <strong>HTML test</strong> email sent using the Postmark plugin. It has Open Tracking enabled.';
-            $headers['X-PM-Track-Opens'] = true;
+            array_push($headers, 'X-PM-Track-Opens: true');
         }else{ 
             $message = 'This is a test email sent using the Postmark plugin.';
         }
+
+        
+        if( isset( $override_from ) && $override_from != '' ) {
+            array_push($headers, 'From: ' . $override_from);
+        }
+
         $response = wp_mail( $to, $subject, $message, $headers );
         echo ( false !== $response ) ? 'Test sent' : 'Test failed';
         wp_die();

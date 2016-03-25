@@ -27,7 +27,9 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
         'Content-Type'  => array(),
         'Cc'            => array(),
         'Bcc'           => array(),
-        'Reply-To'      => array()
+        'Reply-To'      => array(),
+        'From'          => array(),
+        'X-PM-Track-Opens' => array()
     );
 
     $headers_list_lowercase = array_change_key_case( $headers_list, CASE_LOWER );
@@ -56,6 +58,7 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
                 }
             }
 
+            // If the key was detected, assign it.
             if ( isset( $header_key ) && isset( $header_val ) ) {
                 if ( false === stripos( $header_val, ',' ) ) {
                     $headers_list_lowercase[ $header_key ][] = trim( $header_val );
@@ -103,9 +106,8 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
     // Allow overriding the From address when specified in the headers.
     $from = $settings['sender_address'];
 
-    if ( isset( $headers['From'] ) ) {
-        $from = $headers['From'];
-        unset($headers['From']);
+    if ( isset( $recognized_headers['From'] ) ) {
+        $from = $recognized_headers['From'];
     }
 
     $body = array(
@@ -129,13 +131,12 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 
     $track_opens = (int) $settings['track_opens'];
 
-    if ( isset($headers['X-PM-Track-Opens'])){
-        if ( $headers['X-PM-Track-Opens'] ) {
+    if ( isset($recognized_headers['X-PM-Track-Opens'])){
+        if ( $recognized_headers['X-PM-Track-Opens'] ) {
             $track_opens = 1;
         }else {
             $track_opens = 0;
         }
-        unset( $headers['X-PM-Track-Opens'] );
     }
 
     if ( 1 == (int) $settings['force_html'] || 'text/html' == $content_type || 1 == $track_opens ) {
