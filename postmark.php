@@ -28,7 +28,11 @@ class Postmark_Mail
             return;
         }
 
-        add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+        if ( is_multisite() ) {
+          add_action( 'network_admin_menu', array( $this, 'admin_menu' ) );
+        } else {
+          add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+        }
         add_action( 'wp_ajax_postmark_save', array( $this, 'save_settings' ) );
         add_action( 'wp_ajax_postmark_test', array( $this, 'send_test_email' ) );
     }
@@ -56,7 +60,11 @@ class Postmark_Mail
 
 
     function admin_menu() {
-        add_options_page( 'Postmark', 'Postmark', 'manage_options', 'pm_admin', array( $this, 'settings_html' ) );
+        if ( is_multisite() ) {
+          add_submenu_page('settings.php', 'Postmark', 'Postmark', 'manage_options', 'pm_admin', array( $this, 'settings_html' ));
+        } else {
+          add_options_page( 'Postmark', 'Postmark', 'manage_options', 'pm_admin', array( $this, 'settings_html' ) );
+        }
     }
 
 
@@ -70,11 +78,11 @@ class Postmark_Mail
         if( $with_tracking_and_html ){
             $message = 'This is an <strong>HTML test</strong> email sent using the Postmark plugin. It has Open Tracking enabled.';
             array_push($headers, 'X-PM-Track-Opens: true');
-        }else{ 
+        }else{
             $message = 'This is a test email sent using the Postmark plugin.';
         }
 
-        
+
         if( isset( $override_from ) && $override_from != '' ) {
             array_push($headers, 'From: ' . $override_from);
         }
