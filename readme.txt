@@ -1,15 +1,15 @@
-=== Postmark Approved WordPress Plugin ===
+=== Postmark for Wordpress ===
 Contributors: andy7629, alexknowshtml, mgibbs189, jptoto
 Tags: postmark, email, smtp, notifications, wp_mail, wildbit
 Requires at least: 4.0
 Tested up to: 4.4
 Stable tag: trunk
 
-If you're still sending email with default SMTP, you're blind to delivery problems! This Postmark Approved WordPress Plugin enables WordPress blogs of any size to deliver and track WordPress notification emails reliably, with minimal setup time and zero maintenance.
+The *officially-supported* Postmark plugin for Wordpress.
 
 == Description ==
 
-If you're still sending email with default SMTP, you're blind to delivery problems! This Postmark Approved WordPress Plugin enables WordPress blogs of any size to deliver and track WordPress notification emails reliably, with minimal setup time and zero maintenance. No more SMTP errors or delivery problems with Postmark!
+If you're still sending email with default SMTP, you're blind to delivery problems! Postmark for Wordpress enables sites of any size to deliver and track WordPress notification emails reliably, with minimal setup time and zero maintenance.
 
 If you don't already have a free Postmark account, you can get one in minutes. Every account comes with 25,000 free credits.
 
@@ -29,7 +29,7 @@ Postmark is a hosted service that expertly handles all delivery of transactional
 
 = Will this plugin work with my WordPress site? =
 
-The Postmark Approved WordPress plugin overrides any usage of the wp_mail() function. Because of this, if any 3rd party code or plugins send mail directly using the PHP mail function, or any other method, we cannot override it. Please contact the makers of any offending plugins and let them know that they should use wp_mail() instead of unsupported mailing funcitons.
+The Postmark for WordPress plugin overrides any usage of the wp_mail() function. Because of this, if any 3rd party code or plugins send mail directly using the PHP mail function, or any other method, we cannot override it. Please contact the makers of any offending plugins and let them know that they should use wp_mail() instead of unsupported mailing funcitons.
 
 = Does this cost me money? =
 
@@ -60,10 +60,21 @@ This plugin detects HTML by checking the headers sent by other WordPress plugins
 1. Postmark WP Plugin Settings screen.
 
 == Changelog ==
+
+= v1.9.1 =
+* Fix case where 'From' header is specified as a literal string, instead of in an associative array.
+
+= v1.9 =
+* Allow the 'From' header to override the default sender.
+* Don't send TextBody when the user has specified the 'Content-Type' header of 'text/html'
+* Allow individual messages to opt-in to Track-Opens by including a header of 'X-PM-Track-Opens' and a value of `true`
+
+= v1.8 =
+* Modernization of codebase.
+
 = v1.7 =
 * Support headers for cc, bcc, and reply-to
 
-== Changelog ==
 = v1.6 =
 * Added open tracking support.
 

@@ -27,7 +27,9 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
         'Content-Type'  => array(),
         'Cc'            => array(),
         'Bcc'           => array(),
-        'Reply-To'      => array()
+        'Reply-To'      => array(),
+        'From'          => array(),
+        'X-PM-Track-Opens' => array()
     );
 
     $headers_list_lowercase = array_change_key_case( $headers_list, CASE_LOWER );
@@ -56,6 +58,7 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
                 }
             }
 
+            // If the key was detected, assign it.
             if ( isset( $header_key ) && isset( $header_val ) ) {
                 if ( false === stripos( $header_val, ',' ) ) {
                     $headers_list_lowercase[ $header_key ][] = trim( $header_val );
@@ -100,9 +103,16 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
     ==================================================
     */
 
+    // Allow overriding the From address when specified in the headers.
+    $from = $settings['sender_address'];
+
+    if ( isset( $recognized_headers['From'] ) ) {
+        $from = $recognized_headers['From'];
+    }
+
     $body = array(
         'To'        => is_array( $to ) ? implode( ',', $to ) : $to,
-        'From'      => $settings['sender_address'],
+        'From'      => $from,
         'Subject'   => $subject,
         'TextBody'  => $message,
     );
@@ -119,14 +129,28 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
         $body['ReplyTo'] = $recognized_headers['Reply-To'];
     }
 
-    if ( 1 == (int) $settings['force_html'] || 'text/html' == $content_type ) {
-        $body['HtmlBody'] = $message;
-    }
-    elseif ( 1 == (int) $settings['force_html'] || 1 == (int) $settings['track_opens'] ) {
-        $body['HtmlBody'] = $message;
+    $track_opens = (int) $settings['track_opens'];
+
+    if ( isset($recognized_headers['X-PM-Track-Opens'])){
+        if ( $recognized_headers['X-PM-Track-Opens'] ) {
+            $track_opens = 1;
+        }else {
+            $track_opens = 0;
+        }
     }
 
-    if ( 1 == (int) $settings['track_opens'] ) {
+    if ( 1 == (int) $settings['force_html'] || 'text/html' == $content_type || 1 == $track_opens ) {
+        $body['HtmlBody'] = $message;
+        // The user really, truly wants this sent as HTML, don't send it as text, too.
+        // For historical reasons, we can't "force html" and "track opens" set both html and text bodies,
+        // which is incorrect, but in order not to break existing behavior, we only strip out the textbody when
+        // the user has gone to the trouble of specifying content type of 'text/html' in their headers.
+        if ('text/html' == $content_type) {
+            unset($body['TextBody']);
+        }
+    }
+
+    if ( 1 == $track_opens ) {
         $body['TrackOpens'] = 'true';
     }
 
