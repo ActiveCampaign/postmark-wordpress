@@ -108,8 +108,9 @@ class Postmark_Mail
 
 if ( ! function_exists( 'wp_mail' ) ) {
     $postmark = new Postmark_Mail();
+    $enabled = (bool) $postmark->settings['enabled'];
 
-    if ( 1 == $postmark->settings['enabled'] ) {
+    if ( apply_filters( 'postmark_enabled', $enabled ) ) {
         include( POSTMARK_DIR . '/wp-mail.php' );
     }
 }
