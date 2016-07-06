@@ -1,4 +1,5 @@
 <?php
+require_once(dirname( __FILE__ ).'/postmark.php');
 
 function wp_mail( $to, $subject, $message, $headers = '', $attachments = array() ) {
 
@@ -181,6 +182,7 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
     $response = wp_remote_post( 'https://api.postmarkapp.com/email', $args );
 
     if ( is_wp_error( $response ) || 200 != wp_remote_retrieve_response_code( $response ) ) {
+	Postmark_Mail::$LAST_ERROR = $response;
         return false;
     }
 
