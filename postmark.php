@@ -3,14 +3,14 @@
 Plugin Name: Postmark (Official)
 Plugin URI: https://postmarkapp.com/
 Description: Overwrites wp_mail to send emails through Postmark
-Version: 1.9.1
+Version: 1.9.2
 Author: Andrew Yates & Matt Gibbs
 */
 
 class Postmark_Mail
 {
     public $settings;
-
+    public static $LAST_ERROR = null;
 
     function __construct() {
         define( 'POSTMARK_VERSION', '1.9.1' );
@@ -80,8 +80,14 @@ class Postmark_Mail
         }
 
         $response = wp_mail( $to, $subject, $message, $headers );
-        echo ( false !== $response ) ? 'Test sent' : 'Test failed';
-        wp_die();
+        if ( false !== $response ) {
+		echo 'Test sent';
+	}
+	else{
+		$dump = print_r(Postmark_Mail::$LAST_ERROR, true);
+		echo 'Test failed, the following is the error generated when running the test send:<br/><pre class="diagnostics">'.$dump.'</pre>';	
+	}
+	wp_die();
     }
 
     function save_settings() {
@@ -108,9 +114,8 @@ class Postmark_Mail
 
 if ( ! function_exists( 'wp_mail' ) ) {
     $postmark = new Postmark_Mail();
-    $enabled = (bool) $postmark->settings['enabled'];
 
-    if ( apply_filters( 'postmark_enabled', $enabled ) ) {
+    if ( 1 == $postmark->settings['enabled'] ) {
         include( POSTMARK_DIR . '/wp-mail.php' );
     }
 }
