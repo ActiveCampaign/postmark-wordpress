@@ -75,7 +75,7 @@ class Postmark_Mail
 	    }
 	    
 	    // We check that the current user is allowed to update settings.
-	    if ( ! current_user_can('manage_options') ) {
+	    if ( ( is_multisite() && ! current_user_can('manage_network_options') ) || ! current_user_can('manage_options') ) {
 		    wp_die(__('Cheatin’ uh?'));
 	    }
 	    
@@ -140,7 +140,7 @@ class Postmark_Mail
 	    }
 	    	    
 	    // We check that the current user is allowed to update settings.
-	    if ( ! current_user_can('manage_options') ) {
+	    if ( ( is_multisite() && ! current_user_can('manage_network_options') ) || ! current_user_can('manage_options') ) {
 		    wp_die(__('Cheatin’ uh?'));
 	    }
 	    
