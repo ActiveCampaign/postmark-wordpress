@@ -1,13 +1,6 @@
 <script>
 (function($) {
     $(function() {
-        var settings = <?php echo json_encode( $this->settings ); ?>;
-        $('.pm-enabled').prop('checked', settings.enabled);
-        $('.pm-api-key').val(settings.api_key);
-        $('.pm-sender-address').val(settings.sender_address);
-        $('.pm-force-html').prop('checked', settings.force_html);
-        $('.pm-track-opens').prop('checked', settings.track_opens);
-
         $(document).on('click', '.save-settings', function() {
             var data = {
                 'enabled': $('.pm-enabled').is(':checked') ? 1 : 0,
@@ -78,21 +71,21 @@ input[type=text] {
         <tr>
             <th><label>Enabled?</label></th>
             <td>
-                <input type="checkbox" class="pm-enabled" value="1" />
+                <input type="checkbox" class="pm-enabled" value="1" <?php checked($this->settings['enabled']); ?> />
                 <span class="footnote">Send emails using Postmark's REST API</span>
             </td>
         </tr>
         <tr>
             <th><label>API Key</label></th>
             <td>
-                <input type="text" class="pm-api-key" value="" />
+                <input type="text" class="pm-api-key" value="<?php echo esc_attr($this->settings['api_key']); ?>" />
                 <div class="footnote">Your API key is available in the <strong>Credentials</strong> screen of your <a href="https://account.postmarkapp.com/servers" target="_blank">Postmark Server</a>.</div>
             </td>
         </tr>
         <tr>
             <th><label>Sender Email Address</label></th>
             <td>
-                <input type="text" class="pm-sender-address" value="" />
+                <input type="email" class="pm-sender-address" value="<?php echo esc_attr($this->settings['sender_address']); ?>" />
                 <div class="footnote">This email must be a verified <a href="https://account.postmarkapp.com/signatures" target="_blank">Sender Signature</a>. It will appear as the "from" address on all outbound emails.<br/><br/>
                 You may override the "From" address set here on individual emails, by including a 'From' header with the address you wish to send from. <a href="#example">See the example below.</a>
                 </div>
@@ -101,7 +94,7 @@ input[type=text] {
         <tr>
             <th><label>Force HTML</label></th>
             <td>
-                <input type="checkbox" class="pm-force-html" value="1" />
+                <input type="checkbox" class="pm-force-html" value="1" <?php checked($this->settings['force_html']); ?> />
                 <span class="footnote">Force emails to be sent as HTML.<br/><br/>DEPRECATED: Instead of enabling this feature, add a header to your HTML message with name 'Content-Type' and value 'text/html'. <a href="#example">See the example below.</a>
                 </span>
             </td>
@@ -109,7 +102,7 @@ input[type=text] {
         <tr>
             <th><label>Track Opens</label></th>
             <td>
-                <input type="checkbox" class="pm-track-opens" value="1" />
+                <input type="checkbox" class="pm-track-opens" value="1" <?php checked($this->settings['track_opens']); ?> />
                 <span class="footnote">Track email opens (which also requires emails to be "forced" to HTML).<br/><br/>DEPRECATED: Instead of enabling this feature, add a header to your HTML message called 'X-PM-Track-Opens' and a value of 'true'. <a href="#example">See the example below.</a>
             </td>
         </tr>
@@ -123,11 +116,11 @@ input[type=text] {
     <table class="form-table">
         <tr>
             <th><label>Recipient</label></th>
-            <td><input type="text" class="pm-test-email" value="" placeholder="recipient@example.com" /></td>
+            <td><input type="email" class="pm-test-email" value="" placeholder="recipient@example.com" /></td>
         </tr>
         <tr>
             <th><label>Override Sender Email Address</label></th>
-            <td><input type="text" class="pm-test-email-sender" value="" placeholder="sender@example.com" /></td>
+            <td><input type="email" class="pm-test-email-sender" value="" placeholder="sender@example.com" /></td>
         </tr>
         <tr>
             <td colspan="2"><input type="checkbox" name="with_tracking_and_html" class="pm-test-with-opens" value="" />Send test as HTML, with Open Tracking Enabled.</td>
