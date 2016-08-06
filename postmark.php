@@ -24,10 +24,6 @@ class Postmark_Mail
 
 
     function init() {
-        if ( ! current_user_can( 'manage_options' ) ) {
-            return;
-        }
-
         add_action( 'admin_menu', array( $this, 'admin_menu' ) );
         add_action( 'wp_ajax_postmark_save', array( $this, 'save_settings' ) );
         add_action( 'wp_ajax_postmark_test', array( $this, 'send_test_email' ) );
