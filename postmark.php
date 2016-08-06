@@ -67,6 +67,11 @@ class Postmark_Mail
 		    wp_die(__('Cheatin’ uh?'));
 	    }
 	    
+	    // We check that the current user is allowed to update settings.
+	    if ( ! current_user_can('manage_options') ) {
+		    wp_die(__('Cheatin’ uh?'));
+	    }
+	    
         $to = $_POST['email'];
         $with_tracking_and_html = $_POST['with_tracking_and_html'];
         $subject = 'Postmark Test: ' . get_bloginfo( 'name' );
@@ -100,6 +105,11 @@ class Postmark_Mail
 	    
 	    // We check the wp_nonce.
 	    if ( ! isset($_POST['_wpnonce']) || ! wp_verify_nonce( $_POST['_wpnonce'], 'postmark_nonce' ) ) {
+		    wp_die(__('Cheatin’ uh?'));
+	    }
+	    	    
+	    // We check that the current user is allowed to update settings.
+	    if ( ! current_user_can('manage_options') ) {
 		    wp_die(__('Cheatin’ uh?'));
 	    }
 	    
