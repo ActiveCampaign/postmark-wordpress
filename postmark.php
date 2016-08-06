@@ -38,19 +38,41 @@ class Postmark_Mail
 
 
     function load_settings() {
-        $settings = get_option( 'postmark_settings' );
+	    
+	    // If on a multisite instance, get the network wide option
+	    if ( is_multisite() ){
+			$settings = get_site_option( 'postmark_settings' ); 
+	    }
+	    else {
+		    $settings = get_option( 'postmark_settings' );
+	    }
+	    
+        
 
         if ( false === $settings ) {
-            $settings = array(
-                'enabled'           => get_option( 'postmark_enabled', 0 ),
-                'api_key'           => get_option( 'postmark_api_key', '' ),
-                'sender_address'    => get_option( 'postmark_sender_address', '' ),
-                'force_html'        => get_option( 'postmark_force_html', 0 ),
-                'track_opens'       => get_option( 'postmark_trackopens', 0 )
-            );
-
-            update_option( 'postmark_settings', json_encode( $settings ) );
-
+           
+			// If on a multisite instance, update the network wide option
+		    if ( is_multisite() ){
+				$settings = array(
+	                'enabled'           => get_site_option( 'postmark_enabled', 0 ),
+	                'api_key'           => get_site_option( 'postmark_api_key', '' ),
+	                'sender_address'    => get_site_option( 'postmark_sender_address', '' ),
+	                'force_html'        => get_site_option( 'postmark_force_html', 0 ),
+	                'track_opens'       => get_site_option( 'postmark_trackopens', 0 )
+	            );
+				update_site_option( 'postmark_settings', json_encode( $settings ) );
+		    }
+		    else {
+			    $settings = array(
+	                'enabled'           => get_option( 'postmark_enabled', 0 ),
+	                'api_key'           => get_option( 'postmark_api_key', '' ),
+	                'sender_address'    => get_option( 'postmark_sender_address', '' ),
+	                'force_html'        => get_option( 'postmark_force_html', 0 ),
+	                'track_opens'       => get_option( 'postmark_trackopens', 0 )
+	            );
+			    update_option( 'postmark_settings', json_encode( $settings ) );
+		    }
+		    
             return $settings;
         }
 
@@ -197,8 +219,14 @@ class Postmark_Mail
         else {
 	        $settings['track_opens'] = 0;
         }
-
-        update_option( 'postmark_settings', json_encode($settings) );
+		
+		// If on a multisite instance, get the network wide option
+	    if ( is_multisite() ){
+			update_site_option( 'postmark_settings', json_encode($settings) );
+	    }
+	    else {
+		    update_option( 'postmark_settings', json_encode($settings) );
+	    }
 
         wp_die('Settings saved');
     }
