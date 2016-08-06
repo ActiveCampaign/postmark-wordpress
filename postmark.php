@@ -72,8 +72,30 @@ class Postmark_Mail
 		    wp_die(__('Cheatin’ uh?'));
 	    }
 	    
-        $to = $_POST['email'];
-        $with_tracking_and_html = $_POST['with_tracking_and_html'];
+        // We validate that 'email' is a valid email address
+        if ( isset($_POST['email']) && is_email($_POST['email']) ) {
+	        $to = sanitize_email($_POST['email']);
+        }
+        else {
+	        wp_die(__('You need to specify a valid recipient email address.', 'postmark-wordpress'));
+        }
+        
+        // We validate that 'with_tracking_and_html' is a numeric boolean
+        if ( isset($_POST['with_tracking_and_html']) && 1 === $_POST['with_tracking_and_html'] ) {
+	        $with_tracking_and_html = true;
+        }
+        else {
+	        $with_tracking_and_html = false;
+        }
+        
+        // We validate that 'override_from_address' is a valid email address
+        if ( isset($_POST['override_from_address']) && is_email($_POST['override_from_address']) ) {
+	        $override_from = sanitize_email($_POST['override_from_address']);
+        }
+        else {
+	        $override_from = false;
+        }
+        
         $subject = 'Postmark Test: ' . get_bloginfo( 'name' );
         $override_from = $_POST['override_from_address'];
         $headers = array();
@@ -85,8 +107,7 @@ class Postmark_Mail
             $message = 'This is a test email sent using the Postmark plugin.';
         }
 
-        
-        if( isset( $override_from ) && $override_from != '' ) {
+        if( false !== $override_from ) {
             array_push($headers, 'From: ' . $override_from);
         }
 
