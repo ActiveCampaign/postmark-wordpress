@@ -103,7 +103,8 @@ class Postmark_Mail
         if( $with_tracking_and_html ){
             $message = 'This is an <strong>HTML test</strong> email sent using the Postmark plugin. It has Open Tracking enabled.';
             array_push($headers, 'X-PM-Track-Opens: true');
-        }else{ 
+        }
+        else{ 
             $message = 'This is a test email sent using the Postmark plugin.';
         }
 
@@ -112,14 +113,16 @@ class Postmark_Mail
         }
 
         $response = wp_mail( $to, $subject, $message, $headers );
+        
         if ( false !== $response ) {
-		echo 'Test sent';
-	}
-	else{
-		$dump = print_r(Postmark_Mail::$LAST_ERROR, true);
-		echo 'Test failed, the following is the error generated when running the test send:<br/><pre class="diagnostics">'.$dump.'</pre>';	
-	}
-	wp_die();
+			echo 'Test sent';
+		}
+		else{
+			$dump = print_r(Postmark_Mail::$LAST_ERROR, true);
+			echo 'Test failed, the following is the error generated when running the test send:<br/><pre class="diagnostics">'.$dump.'</pre>';	
+		}
+		
+		wp_die();
     }
 
     function save_settings() {
