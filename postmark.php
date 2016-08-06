@@ -113,18 +113,63 @@ class Postmark_Mail
 		    wp_die(__('Cheatin’ uh?'));
 	    }
 	    
-        $settings = stripslashes( $_POST['data'] );
-        $json_test = json_decode( $settings, true );
-
-        // Check for valid JSON
-        if ( isset( $json_test['enabled'] ) ) {
-            update_option( 'postmark_settings', $settings );
-            echo 'Settings saved';
+	    // We check that we have received some data.
+	    if ( ! isset($_POST['data']) ) {
+		    wp_die(__('Cheatin’ uh?'));
+	    }
+	    
+        $data = json_decode( stripslashes( $_POST['data'] ), true);
+                
+        $settings = array();
+        
+        // We check that we were able to decode data.
+        if ( ! is_array($data) ) {
+	        wp_die(__('Something went wrong!', 'postmark-wordpress'));
+        }
+        
+        // We validate that 'enabled' is a numeric boolean
+        if ( isset($data['enabled']) && 1 === $data['enabled'] ) {
+	        $settings['enabled'] = 1;
         }
         else {
-            echo 'Error: invalid JSON';
+	        $settings['enabled'] = 0;
         }
-        wp_die();
+        
+        // We validate that 'api_key' contains only allowed caracters [letters, numbers, dash]
+        if ( isset($data['api_key']) && 1 === preg_match('/^[A-Za-z0-9\-]*$/', $data['api_key']) ) {
+	        $settings['api_key'] = $data['api_key'];
+        }
+        else {
+	        $settings['api_key'] = '';
+        }
+        
+        // We validate that 'sender_address' is a valid email address
+        if ( isset($data['sender_address']) && is_email($data['sender_address']) ) {
+	        $settings['sender_address'] = sanitize_email($data['sender_address']);
+        }
+        else {
+	        $settings['sender_address'] = '';
+        }
+        
+        // We validate that 'force_html' is a numeric boolean
+        if ( isset($data['force_html']) && 1 === $data['force_html'] ) {
+	        $settings['force_html'] = 1;
+        }
+        else {
+	        $settings['force_html'] = 0;
+        }
+        
+        // We validate that 'track_opens' is a numeric boolean
+        if ( isset($data['track_opens']) && 1 === $data['track_opens'] ) {
+	        $settings['track_opens'] = 1;
+        }
+        else {
+	        $settings['track_opens'] = 0;
+        }
+
+        update_option( 'postmark_settings', json_encode($settings) );
+
+        wp_die('Settings saved');
     }
 
 
