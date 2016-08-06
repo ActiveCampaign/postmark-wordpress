@@ -19,7 +19,8 @@
 
             $.post(ajaxurl, {
                 'action': 'postmark_save',
-                'data': JSON.stringify(data)
+                'data': JSON.stringify(data),
+                '_wpnonce': $('[name=_wpnonce]').val()
             }, function(response) {
                 $('.pm-notice').html('<p>' + response + '</p>');
                 $('.pm-notice').removeClass('hidden');
@@ -31,7 +32,8 @@
                 'action': 'postmark_test',
                 'email': $('.pm-test-email').val(),
                 'with_tracking_and_html': $('.pm-test-with-opens').is(':checked') ? 1 : 0,
-                'override_from_address' : $('.pm-test-email-sender').val()
+                'override_from_address' : $('.pm-test-email-sender').val(),
+                '_wpnonce': $('[name=_wpnonce]').val()
             }, function(response) {
                 $('.pm-notice').html('<p>' + response + '</p>');
                 $('.pm-notice').removeClass('hidden');
@@ -71,6 +73,7 @@ input[type=text] {
     </div>
     <br/>
     <div class="updated notice pm-notice hidden"></div>
+    <?php wp_nonce_field( 'postmark_nonce' ); ?>
     <table class="form-table" style="max-width:740px;">
         <tr>
             <th><label>Enabled?</label></th>
