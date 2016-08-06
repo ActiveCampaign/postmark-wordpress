@@ -24,7 +24,14 @@ class Postmark_Mail
 
 
     function init() {
-        add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+	    
+	    if( is_multisite() ) {
+			add_action( 'network_admin_menu', array( $this, 'network_admin_menu' ) );   
+	    }
+	    else {
+		    add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+	    }
+
         add_action( 'wp_ajax_postmark_save', array( $this, 'save_settings' ) );
         add_action( 'wp_ajax_postmark_test', array( $this, 'send_test_email' ) );
     }
@@ -53,6 +60,10 @@ class Postmark_Mail
 
     function admin_menu() {
         add_options_page( 'Postmark', 'Postmark', 'manage_options', 'pm_admin', array( $this, 'settings_html' ) );
+    }
+    
+    function network_admin_menu() {
+        add_options_page( 'Postmark', 'Postmark', 'manage_network_options', 'pm_admin', array( $this, 'settings_html' ) );
     }
 
 
