@@ -2,7 +2,7 @@
 Contributors: andy7629, alexknowshtml, mgibbs189, jptoto
 Tags: postmark, email, smtp, notifications, wp_mail, wildbit
 Requires at least: 4.0
-Tested up to: 4.5.3
+Tested up to: 4.6.1
 Stable tag: trunk
 
 The *officially-supported* Postmark plugin for Wordpress.
@@ -60,6 +60,10 @@ This plugin detects HTML by checking the headers sent by other WordPress plugins
 1. Postmark WP Plugin Settings screen.
 
 == Changelog ==
+
+= v1.9.3 =
+* Interface cleanup
+* Minor code restructuring
 
 = v1.9.2 =
 * Make the errors available in the PHP variable `Postmark_Mail::$LAST_ERROR` if `wp_mail()` returns false, examine this variable to find out what happened.
