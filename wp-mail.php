@@ -1,6 +1,19 @@
 <?php
 require_once(dirname( __FILE__ ).'/postmark.php');
 
+function postmark_determine_mime_content_type( $filename ){
+    if (function_exists( 'mime_content_type' )) {
+	return mime_content_type($filename);
+    }
+    else
+    {
+       $finfo = finfo_open( FILEINFO_MIME_TYPE );
+       $mime_type = finfo_file( $finfo, $filename );
+       finfo_close( $finfo );
+       return $mime_type;
+    }
+}
+
 function wp_mail( $to, $subject, $message, $headers = '', $attachments = array() ) {
 
     // Compact the input, apply the filters, and extract them back out
@@ -160,7 +173,7 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
             $body['Attachments'][] = array(
                 'Name'          => basename( $attachment ),
                 'Content'       => base64_encode( file_get_contents( $attachment ) ),
-                'ContentType'   => mime_content_type( $attachment ),
+                'ContentType'   => postmark_determine_mime_content_type( $attachment ),
             );
         }
     }
