@@ -31,6 +31,7 @@ class Postmark_Mail
         add_action( 'admin_menu', array( $this, 'admin_menu' ) );
         add_action( 'wp_ajax_postmark_save', array( $this, 'save_settings' ) );
         add_action( 'wp_ajax_postmark_test', array( $this, 'send_test_email' ) );
+        add_action( 'wp_ajax_postmark_test_plugin', array( $this, 'postmark_test_plugin' ) );
     }
 
 
@@ -91,6 +92,24 @@ class Postmark_Mail
         wp_die();
     }
 
+
+    function postmark_test_plugin() {
+        $to = $_POST['to'];
+        $subject = $_POST['subject'];
+        $body = $_POST['body'];
+        $headers = preg_split('/\r\n|[\r\n]/',$_POST['headers']);
+
+        $response = wp_mail( $to, $subject, $body, $headers );
+
+        if ( false !== $response ) {
+            echo 'Test sent';
+        }
+        else {
+            $dump = print_r( Postmark_Mail::$LAST_ERROR, true );
+            echo 'Test failed, the following is the error generated when running the test send:<br/><pre class="diagnostics">' . $dump . '</pre>';
+        }
+        wp_die();
+    }
 
     function save_settings() {
         $settings = stripslashes( $_POST['data'] );

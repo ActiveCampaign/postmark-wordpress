@@ -14,6 +14,7 @@ postmark.settings = <?php echo json_encode( $this->settings ); ?>;
         <a class="nav-tab" rel="general">General</a>
         <a class="nav-tab" rel="test">Send Test Email</a>
         <a class="nav-tab" rel="overrides">Overrides</a>
+        <?php if($_ENV['POSTMARK_PLUGIN_TESTING'] == 'POSTMARK_PLUGIN_TESTING'){ ?><a class="nav-tab" rel="plugin-testing">Plugin Testing</a><? }?>
     </h1>
 
     <div class="updated notice pm-notice hidden"></div>
@@ -102,4 +103,38 @@ postmark.settings = <?php echo json_encode( $this->settings ); ?>;
         </pre>
         To learn more about <code>wp_mail</code>, see the <a href="https://developer.wordpress.org/reference/functions/wp_mail/">WordPress Codex page.</a>
     </div>
+    <?php if($_ENV['POSTMARK_PLUGIN_TESTING'] == 'POSTMARK_PLUGIN_TESTING'){ ?>
+    <div class="tab-content tab-plugin-testing">
+        <table class="form-table" style="max-width:740px;">
+            <tr>
+                <th><label>Headers</label></th>
+                <td>
+                    <textarea name="pm-plugin-test-headers" class="pm-plugin-test-headers" cols=80 placeholder="Reply-To: john@example.com"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th><label>Subject</label></th>
+                <td>
+                    <input type="text" name="pm-plugin-test-subject" class="pm-plugin-test-subject" placeholder="Dear Emily, I just wanted to say hello..."/>
+                </td>
+            </tr>
+            <tr>
+                <th><label>Body</label></th>
+                <td>
+                    <textarea name="pm-plugin-test-body" class="pm-plugin-test-body" placeholder="Hi there!" cols=80 ></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th><label>To Address</label></th>
+                <td>
+                    <input type="text" name="pm-plugin-test-to-address" class="pm-plugin-test-to-address" value="" placeholder="emily@example.com" />
+                </td>
+            </tr>
+        </table>
+
+        <div class="submit">
+            <input type="submit" class="button-primary plugin-send-test" value="Send Test Message" />
+        </div>
+    </div>
+    <? }?>
 </div>

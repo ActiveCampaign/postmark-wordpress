@@ -39,6 +39,20 @@
             });
         });
 
+        // send plugin test
+        $(document).on('click', '.plugin-send-test', function () {
+            $.post(ajaxurl, {
+                'action': 'postmark_test_plugin',
+                'to': $('.pm-plugin-test-to-address').val(),
+                'body': $('.pm-plugin-test-body').val(),
+                'subject': $('.pm-plugin-test-subject').val(),
+                'headers': $('.pm-plugin-test-headers').val()
+            }, function(response) {
+                $('.pm-notice').html('<p>' + response + '</p>');
+                $('.pm-notice').removeClass('hidden');
+            });
+        });
+
         // tab handler
         $(document).on('click', '.nav-tab', function() {
             var which = $(this).attr('rel');
