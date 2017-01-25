@@ -2,7 +2,7 @@ version: '2'
 
 services:
   wordpress:
-    image: wordpress
+    image: wordpress:latest
     ports:
       - 9090:80
     environment:
