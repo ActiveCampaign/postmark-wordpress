@@ -29,3 +29,10 @@ input[type=text] {
 .tab-content.active {
     display: block;
 }
+
+.footnote {
+    font-size: 13px;
+}
+input[type=text] {
+    width: 300px;
+}

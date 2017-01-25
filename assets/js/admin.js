@@ -1,4 +1,4 @@
-(function($) {
+(function ($) {
     $(function() {
         var settings = postmark.settings;
         $('.pm-enabled').prop('checked', settings.enabled);
@@ -19,7 +19,8 @@
 
             $.post(ajaxurl, {
                 'action': 'postmark_save',
-                'data': JSON.stringify(data)
+                'data': JSON.stringify(data),
+                '_wpnonce': $('[name=_wpnonce]').val()
             }, function(response) {
                 $('.pm-notice').html('<p>' + response + '</p>');
                 $('.pm-notice').removeClass('hidden');
@@ -32,7 +33,8 @@
                 'action': 'postmark_test',
                 'email': $('.pm-test-email').val(),
                 'with_tracking_and_html': $('.pm-test-with-opens').is(':checked') ? 1 : 0,
-                'override_from_address' : $('.pm-test-email-sender').val()
+                'override_from_address': $('.pm-test-email-sender').val(),
+                '_wpnonce': $('[name=_wpnonce]').val()
             }, function(response) {
                 $('.pm-notice').html('<p>' + response + '</p>');
                 $('.pm-notice').removeClass('hidden');
@@ -46,7 +48,8 @@
                 'to': $('.pm-plugin-test-to-address').val(),
                 'body': $('.pm-plugin-test-body').val(),
                 'subject': $('.pm-plugin-test-subject').val(),
-                'headers': $('.pm-plugin-test-headers').val()
+                'headers': $('.pm-plugin-test-headers').val(),
+                '_wpnonce': $('[name=_wpnonce]').val()
             }, function(response) {
                 $('.pm-notice').html('<p>' + response + '</p>');
                 $('.pm-notice').removeClass('hidden');

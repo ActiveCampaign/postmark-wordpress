@@ -24,10 +24,6 @@ class Postmark_Mail
 
 
     function init() {
-        if ( ! current_user_can( 'manage_options' ) ) {
-            return;
-        }
-
         add_action( 'admin_menu', array( $this, 'admin_menu' ) );
         add_action( 'wp_ajax_postmark_save', array( $this, 'save_settings' ) );
         add_action( 'wp_ajax_postmark_test', array( $this, 'send_test_email' ) );
@@ -62,8 +58,40 @@ class Postmark_Mail
 
 
     function send_test_email() {
-        $to = $_POST['email'];
-        $with_tracking_and_html = $_POST['with_tracking_and_html'];
+	    // We check the wp_nonce.
+	    if ( ! isset($_POST['_wpnonce']) || ! wp_verify_nonce( $_POST['_wpnonce'], 'postmark_nonce' ) ) {
+		    wp_die(__('Cheatin’ uh?'));
+	    }
+	    
+	    // We check that the current user is allowed to update settings.
+	    if ( ! current_user_can('manage_options') ) {
+		    wp_die(__('Cheatin’ uh?'));
+	    }
+	    
+        // We validate that 'email' is a valid email address
+        if ( isset($_POST['email']) && is_email($_POST['email']) ) {
+	        $to = sanitize_email($_POST['email']);
+        }
+        else {
+	        wp_die(__('You need to specify a valid recipient email address.', 'postmark-wordpress'));
+        }
+        
+        // We validate that 'with_tracking_and_html' is a numeric boolean
+        if ( isset($_POST['with_tracking_and_html']) && 1 === $_POST['with_tracking_and_html'] ) {
+	        $with_tracking_and_html = true;
+        }
+        else {
+	        $with_tracking_and_html = false;
+        }
+        
+        // We validate that 'override_from_address' is a valid email address
+        if ( isset($_POST['override_from_address']) && is_email($_POST['override_from_address']) ) {
+	        $override_from = sanitize_email($_POST['override_from_address']);
+        }
+        else {
+	        $override_from = false;
+        }
+        
         $subject = 'Postmark Test: ' . get_bloginfo( 'name' );
         $override_from = $_POST['override_from_address'];
         $headers = array();
@@ -72,12 +100,12 @@ class Postmark_Mail
             $message = 'This is an <strong>HTML test</strong> email sent using the Postmark plugin. It has Open Tracking enabled.';
             array_push( $headers, 'X-PM-Track-Opens: true' );
         }
-        else {
+        else{ 
             $message = 'This is a test email sent using the Postmark plugin.';
         }
 
-        if ( isset( $override_from ) && '' != $override_from ) {
-            array_push( $headers, 'From: ' . $override_from );
+        if( false !== $override_from && '' !== $override_from ) {
+            array_push($headers, 'From: ' . $override_from);
         }
 
         $response = wp_mail( $to, $subject, $message, $headers );
@@ -89,41 +117,79 @@ class Postmark_Mail
             $dump = print_r( Postmark_Mail::$LAST_ERROR, true );
             echo 'Test failed, the following is the error generated when running the test send:<br/><pre class="diagnostics">' . $dump . '</pre>';
         }
-        wp_die();
-    }
-
-
-    function postmark_test_plugin() {
-        $to = $_POST['to'];
-        $subject = $_POST['subject'];
-        $body = $_POST['body'];
-        $headers = preg_split('/\r\n|[\r\n]/',$_POST['headers']);
-
-        $response = wp_mail( $to, $subject, $body, $headers );
-
-        if ( false !== $response ) {
-            echo 'Test sent';
-        }
-        else {
-            $dump = print_r( Postmark_Mail::$LAST_ERROR, true );
-            echo 'Test failed, the following is the error generated when running the test send:<br/><pre class="diagnostics">' . $dump . '</pre>';
-        }
+		
         wp_die();
     }
 
     function save_settings() {
-        $settings = stripslashes( $_POST['data'] );
-        $json_test = json_decode( $settings, true );
+	    // We check the wp_nonce.
+	    if ( ! isset($_POST['_wpnonce']) || ! wp_verify_nonce( $_POST['_wpnonce'], 'postmark_nonce' ) ) {
+		    wp_die(__('Cheatin’ uh?'));
+	    }
+	    	    
+	    // We check that the current user is allowed to update settings.
+	    if ( ! current_user_can('manage_options') ) {
+		    wp_die(__('Cheatin’ uh?'));
+	    }
+	    
+	    // We check that we have received some data.
+	    if ( ! isset($_POST['data']) ) {
+		    wp_die(__('Cheatin’ uh?'));
+    }
 
-        // Check for valid JSON
-        if ( isset( $json_test['enabled'] ) ) {
-            update_option( 'postmark_settings', $settings );
-            echo 'Settings saved';
+        $data = json_decode( stripslashes( $_POST['data'] ), true);
+
+        $settings = array();
+        
+        // We check that we were able to decode data.
+        $subject = $_POST['subject'];
+        if ( ! is_array($data) ) {
+	        wp_die(__('Something went wrong!', 'postmark-wordpress'));
+        }
+
+        // We validate that 'enabled' is a numeric boolean
+        if ( isset($data['enabled']) && 1 === $data['enabled'] ) {
+	        $settings['enabled'] = 1;
         }
         else {
-            echo 'Error: invalid JSON';
+	        $settings['enabled'] = 0;
         }
-        wp_die();
+
+        // We validate that 'api_key' contains only allowed caracters [letters, numbers, dash]
+        if ( isset($data['api_key']) && 1 === preg_match('/^[A-Za-z0-9\-]*$/', $data['api_key']) ) {
+	        $settings['api_key'] = $data['api_key'];
+        }
+        else {
+	        $settings['api_key'] = '';
+        }
+        
+        // We validate that 'sender_address' is a valid email address
+        if ( isset($data['sender_address']) && is_email($data['sender_address']) ) {
+	        $settings['sender_address'] = sanitize_email($data['sender_address']);
+        }
+        else {
+	        $settings['sender_address'] = '';
+    }
+
+        // We validate that 'force_html' is a numeric boolean
+        if ( isset($data['force_html']) && 1 === $data['force_html'] ) {
+	        $settings['force_html'] = 1;
+        }
+        else {
+	        $settings['force_html'] = 0;
+        }
+
+        // We validate that 'track_opens' is a numeric boolean
+        if ( isset($data['track_opens']) && 1 === $data['track_opens'] ) {
+	        $settings['track_opens'] = 1;
+        }
+        else {
+	        $settings['track_opens'] = 0;
+        }
+
+        update_option( 'postmark_settings', json_encode($settings) );
+
+        wp_die('Settings saved');
     }
 
 

@@ -4,7 +4,7 @@ postmark.settings = <?php echo json_encode( $this->settings ); ?>;
 </script>
 <script src="<?php echo POSTMARK_URL; ?>/assets/js/admin.js"></script>
 <link href="<?php echo POSTMARK_URL; ?>/assets/css/admin.css" rel="stylesheet">
-
+<?php wp_nonce_field( 'postmark_nonce' ); ?>
 <div class="wrap">
     <div class="logo-bar">
         <a href="https://postmarkapp.com/" target="_blank"><img src="<?php echo POSTMARK_URL; ?>/assets/images/logo.png" width="130" height="21" alt="" /></a>
