@@ -29,12 +29,9 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
         $headers = explode( "\n", str_replace( "\r\n", "\n", $headers ) );
     }
 
-    /*
-    ==================================================
-        Parse headers
-    ==================================================
-    */
-
+    /*==================================================
+   		Parse headers
+    ==================================================*/
     $recognized_headers = array();
 
     $headers_list = array(
@@ -97,12 +94,9 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
         }
     }
 
-    /*
-    ==================================================
+    /*==================================================
         Content-Type hook
-    ==================================================
-    */
-
+    ==================================================*/
     $content_type = 'text/plain';
     if ( isset( $recognized_headers[ 'Content-Type'] ) ) {
         if ( false !== strpos( $recognized_headers[ 'Content-Type'], 'text/html' ) ) {
@@ -111,11 +105,9 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
     }
     $content_type = apply_filters( 'wp_mail_content_type', $content_type );
 
-    /*
-    ==================================================
+    /*==================================================
         Generate POST payload
-    ==================================================
-    */
+    ==================================================*/
 
     // Allow overriding the From address when specified in the headers.
     $from = $settings['sender_address'];
@@ -178,16 +170,13 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
         }
     }
 
-    /*
-    ==================================================
+    /*==================================================
         Send email
-    ==================================================
-    */
-
+    ==================================================*/
     $args = array(
         'headers' => array(
-            'Accept' => 'application/json',
-            'Content-Type' => 'application/json',
+            'Accept'                  => 'application/json',
+            'Content-Type'            => 'application/json',
             'X-Postmark-Server-Token' => $settings['api_key']
         ),
         'body' => json_encode( $body )
@@ -195,7 +184,7 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
     $response = wp_remote_post( 'https://api.postmarkapp.com/email', $args );
 
     if ( is_wp_error( $response ) || 200 != wp_remote_retrieve_response_code( $response ) ) {
-	Postmark_Mail::$LAST_ERROR = $response;
+		Postmark_Mail::$LAST_ERROR = $response;
         return false;
     }
 
