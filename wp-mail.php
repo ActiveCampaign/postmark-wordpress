@@ -1,4 +1,8 @@
 <?php
+
+// Exit if accessed directly
+defined( 'ABSPATH' ) || exit;
+
 require_once(dirname( __FILE__ ).'/postmark.php');
 
 function postmark_determine_mime_content_type( $filename ){
