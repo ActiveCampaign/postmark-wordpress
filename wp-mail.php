@@ -199,5 +199,7 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
         return false;
     }
 
+    do_action('postmark_response', $response, $headers);
+
     return true;
 }
