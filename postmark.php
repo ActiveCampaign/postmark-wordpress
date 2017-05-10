@@ -7,6 +7,9 @@ Version: 1.9.4
 Author: Andrew Yates & Matt Gibbs
 */
 
+// Exit if accessed directly
+defined( 'ABSPATH' ) || exit;
+
 class Postmark_Mail
 {
     public $settings;
@@ -62,12 +65,12 @@ class Postmark_Mail
 	    if ( ! isset($_POST['_wpnonce']) || ! wp_verify_nonce( $_POST['_wpnonce'], 'postmark_nonce' ) ) {
 		    wp_die(__('Cheatin’ uh?'));
 	    }
-	    
+
 	    // We check that the current user is allowed to update settings.
 	    if ( ! current_user_can('manage_options') ) {
 		    wp_die(__('Cheatin’ uh?'));
 	    }
-	    
+
         // We validate that 'email' is a valid email address
         if ( isset($_POST['email']) && is_email($_POST['email']) ) {
 	        $to = sanitize_email($_POST['email']);
@@ -75,7 +78,7 @@ class Postmark_Mail
         else {
 	        wp_die(__('You need to specify a valid recipient email address.', 'postmark-wordpress'));
         }
-        
+
         // We validate that 'with_tracking_and_html' is a numeric boolean
         if ( isset($_POST['with_tracking_and_html']) && 1 === $_POST['with_tracking_and_html'] ) {
 	        $with_tracking_and_html = true;
@@ -83,7 +86,7 @@ class Postmark_Mail
         else {
 	        $with_tracking_and_html = false;
         }
-        
+
         // We validate that 'override_from_address' is a valid email address
         if ( isset($_POST['override_from_address']) && is_email($_POST['override_from_address']) ) {
 	        $override_from = sanitize_email($_POST['override_from_address']);
@@ -91,7 +94,7 @@ class Postmark_Mail
         else {
 	        $override_from = false;
         }
-        
+
         $subject = 'Postmark Test: ' . get_bloginfo( 'name' );
         $override_from = $_POST['override_from_address'];
         $headers = array();
@@ -100,7 +103,7 @@ class Postmark_Mail
             $message = 'This is an <strong>HTML test</strong> email sent using the Postmark plugin. It has Open Tracking enabled.';
             array_push( $headers, 'X-PM-Track-Opens: true' );
         }
-        else{ 
+        else{
             $message = 'This is a test email sent using the Postmark plugin.';
         }
 
@@ -117,7 +120,7 @@ class Postmark_Mail
             $dump = print_r( Postmark_Mail::$LAST_ERROR, true );
             echo 'Test failed, the following is the error generated when running the test send:<br/><pre class="diagnostics">' . $dump . '</pre>';
         }
-		
+
         wp_die();
     }
 
@@ -126,12 +129,12 @@ class Postmark_Mail
 	    if ( ! isset($_POST['_wpnonce']) || ! wp_verify_nonce( $_POST['_wpnonce'], 'postmark_nonce' ) ) {
 		    wp_die(__('Cheatin’ uh?'));
 	    }
-	    	    
+
 	    // We check that the current user is allowed to update settings.
 	    if ( ! current_user_can('manage_options') ) {
 		    wp_die(__('Cheatin’ uh?'));
 	    }
-	    
+
 	    // We check that we have received some data.
 	    if ( ! isset($_POST['data']) ) {
 		    wp_die(__('Cheatin’ uh?'));
@@ -140,7 +143,7 @@ class Postmark_Mail
         $data = json_decode( stripslashes( $_POST['data'] ), true);
 
         $settings = array();
-        
+
         // We check that we were able to decode data.
         $subject = $_POST['subject'];
         if ( ! is_array($data) ) {
@@ -162,7 +165,7 @@ class Postmark_Mail
         else {
 	        $settings['api_key'] = '';
         }
-        
+
         // We validate that 'sender_address' is a valid email address
         if ( isset($data['sender_address']) && is_email($data['sender_address']) ) {
 	        $settings['sender_address'] = sanitize_email($data['sender_address']);
