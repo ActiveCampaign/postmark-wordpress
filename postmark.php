@@ -24,7 +24,14 @@ class Postmark_Mail
 
 
     function init() {
-        add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+	    
+	    if( is_multisite() ) {
+			add_action( 'network_admin_menu', array( $this, 'network_admin_menu' ) );   
+	    }
+	    else {
+		    add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+	    }
+
         add_action( 'wp_ajax_postmark_save', array( $this, 'save_settings' ) );
         add_action( 'wp_ajax_postmark_test', array( $this, 'send_test_email' ) );
         add_action( 'wp_ajax_postmark_test_plugin', array( $this, 'postmark_test_plugin' ) );
@@ -32,19 +39,41 @@ class Postmark_Mail
 
 
     function load_settings() {
-        $settings = get_option( 'postmark_settings' );
+	    
+	    // If on a multisite instance, get the network wide option
+	    if ( is_multisite() ){
+			$settings = get_site_option( 'postmark_settings' ); 
+	    }
+	    else {
+		    $settings = get_option( 'postmark_settings' );
+	    }
+	    
+        
 
         if ( false === $settings ) {
-            $settings = array(
-                'enabled'           => get_option( 'postmark_enabled', 0 ),
-                'api_key'           => get_option( 'postmark_api_key', '' ),
-                'sender_address'    => get_option( 'postmark_sender_address', '' ),
-                'force_html'        => get_option( 'postmark_force_html', 0 ),
-                'track_opens'       => get_option( 'postmark_trackopens', 0 )
-            );
-
-            update_option( 'postmark_settings', json_encode( $settings ) );
-
+           
+			// If on a multisite instance, update the network wide option
+		    if ( is_multisite() ){
+				$settings = array(
+	                'enabled'           => get_site_option( 'postmark_enabled', 0 ),
+	                'api_key'           => get_site_option( 'postmark_api_key', '' ),
+	                'sender_address'    => get_site_option( 'postmark_sender_address', '' ),
+	                'force_html'        => get_site_option( 'postmark_force_html', 0 ),
+	                'track_opens'       => get_site_option( 'postmark_trackopens', 0 )
+	            );
+				update_site_option( 'postmark_settings', json_encode( $settings ) );
+		    }
+		    else {
+			    $settings = array(
+	                'enabled'           => get_option( 'postmark_enabled', 0 ),
+	                'api_key'           => get_option( 'postmark_api_key', '' ),
+	                'sender_address'    => get_option( 'postmark_sender_address', '' ),
+	                'force_html'        => get_option( 'postmark_force_html', 0 ),
+	                'track_opens'       => get_option( 'postmark_trackopens', 0 )
+	            );
+			    update_option( 'postmark_settings', json_encode( $settings ) );
+		    }
+		    
             return $settings;
         }
 
@@ -55,6 +84,10 @@ class Postmark_Mail
     function admin_menu() {
         add_options_page( 'Postmark', 'Postmark', 'manage_options', 'pm_admin', array( $this, 'settings_html' ) );
     }
+    
+    function network_admin_menu() {
+        add_options_page( 'Postmark', 'Postmark', 'manage_network_options', 'pm_admin', array( $this, 'settings_html' ) );
+    }
 
 
     function send_test_email() {
@@ -64,7 +97,7 @@ class Postmark_Mail
 	    }
 	    
 	    // We check that the current user is allowed to update settings.
-	    if ( ! current_user_can('manage_options') ) {
+	    if ( ( is_multisite() && ! current_user_can('manage_network_options') ) || ! current_user_can('manage_options') ) {
 		    wp_die(__('Cheatin’ uh?'));
 	    }
 	    
@@ -128,7 +161,7 @@ class Postmark_Mail
 	    }
 	    	    
 	    // We check that the current user is allowed to update settings.
-	    if ( ! current_user_can('manage_options') ) {
+	    if ( ( is_multisite() && ! current_user_can('manage_network_options') ) || ! current_user_can('manage_options') ) {
 		    wp_die(__('Cheatin’ uh?'));
 	    }
 	    
@@ -186,8 +219,14 @@ class Postmark_Mail
         else {
 	        $settings['track_opens'] = 0;
         }
-
-        update_option( 'postmark_settings', json_encode($settings) );
+		
+		// If on a multisite instance, get the network wide option
+	    if ( is_multisite() ){
+			update_site_option( 'postmark_settings', json_encode($settings) );
+	    }
+	    else {
+		    update_option( 'postmark_settings', json_encode($settings) );
+	    }
 
         wp_die('Settings saved');
     }
