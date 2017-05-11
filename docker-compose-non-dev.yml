@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+  wordpress:
+    image: wordpress:latest
+    ports:
+      - 80:80
+    environment:
+      WORDPRESS_DB_PASSWORD: flawless-sender!
+    volumes:
+      - ./:/var/www/html/wp-content/plugins/postmark-plugin-development
+
+  mysql:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: flawless-sender!

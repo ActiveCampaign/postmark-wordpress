@@ -3,7 +3,7 @@
 Plugin Name: Postmark (Official)
 Plugin URI: https://postmarkapp.com/
 Description: Overwrites wp_mail to send emails through Postmark
-Version: 1.9.4
+Version: 1.9.5
 Author: Andrew Yates & Matt Gibbs
 */
 
@@ -60,12 +60,12 @@ class Postmark_Mail
     function send_test_email() {
 	    // We check the wp_nonce.
 	    if ( ! isset($_POST['_wpnonce']) || ! wp_verify_nonce( $_POST['_wpnonce'], 'postmark_nonce' ) ) {
-		    wp_die(__('Cheatin’ uh?'));
+		    wp_die(__('We were unable to verify this request, please reload the page and try again.'));
 	    }
 	    
 	    // We check that the current user is allowed to update settings.
 	    if ( ! current_user_can('manage_options') ) {
-		    wp_die(__('Cheatin’ uh?'));
+		    wp_die(__('We were unable to verify this request, please reload the page and try again.'));
 	    }
 	    
         // We validate that 'email' is a valid email address
@@ -124,17 +124,17 @@ class Postmark_Mail
     function save_settings() {
 	    // We check the wp_nonce.
 	    if ( ! isset($_POST['_wpnonce']) || ! wp_verify_nonce( $_POST['_wpnonce'], 'postmark_nonce' ) ) {
-		    wp_die(__('Cheatin’ uh?'));
+		    wp_die(__('We were unable to verify this request, please reload the page and try again.'));
 	    }
 	    	    
 	    // We check that the current user is allowed to update settings.
 	    if ( ! current_user_can('manage_options') ) {
-		    wp_die(__('Cheatin’ uh?'));
+		    wp_die(__('We were unable to verify this request, please reload the page and try again.'));
 	    }
 	    
 	    // We check that we have received some data.
 	    if ( ! isset($_POST['data']) ) {
-		    wp_die(__('Cheatin’ uh?'));
+		    wp_die(__('We were unable to verify this request, please reload the page and try again.'));
     }
 
         $data = json_decode( stripslashes( $_POST['data'] ), true);

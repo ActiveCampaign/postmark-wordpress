@@ -2,7 +2,7 @@
 Contributors: andy7629, alexknowshtml, mgibbs189, jptoto, atheken
 Tags: postmark, email, smtp, notifications, wp_mail, wildbit
 Requires at least: 4.0
-Tested up to: 4.6.1
+Tested up to: 4.7.4
 Stable tag: trunk
 
 The *officially-supported* Postmark plugin for Wordpress.
@@ -60,6 +60,9 @@ This plugin detects HTML by checking the headers sent by other WordPress plugins
 1. Postmark WP Plugin Settings screen.
 
 == Changelog ==
+
+= v1.9.5 =
+* Update javascript to fix settings update issue.
 
 = v1.9.4 =
 * Added `postmark_error` and `postmark_response` actions to the plugin, to intercept API results after calling wp_mail. You can register callbacks for these using `add_action` (more info here: https://developer.wordpress.org/reference/functions/add_action/)
