@@ -18,9 +18,9 @@
             };
 
             $.post(ajaxurl, {
+                '_wpnonce' : $('#_wpnonce').val(),
                 'action': 'postmark_save',
-                'data': JSON.stringify(data),
-                '_wpnonce': $('[name=_wpnonce]').val()
+                'data': JSON.stringify(data)
             }, function(response) {
                 $('.pm-notice').html('<p>' + response + '</p>');
                 $('.pm-notice').removeClass('hidden');
@@ -30,26 +30,11 @@
         // send test email
         $(document).on('click', '.send-test', function() {
             $.post(ajaxurl, {
+                '_wpnonce' : $('#_wpnonce').val(),
                 'action': 'postmark_test',
                 'email': $('.pm-test-email').val(),
                 'with_tracking_and_html': $('.pm-test-with-opens').is(':checked') ? 1 : 0,
-                'override_from_address': $('.pm-test-email-sender').val(),
-                '_wpnonce': $('[name=_wpnonce]').val()
-            }, function(response) {
-                $('.pm-notice').html('<p>' + response + '</p>');
-                $('.pm-notice').removeClass('hidden');
-            });
-        });
-
-        // send plugin test
-        $(document).on('click', '.plugin-send-test', function () {
-            $.post(ajaxurl, {
-                'action': 'postmark_test_plugin',
-                'to': $('.pm-plugin-test-to-address').val(),
-                'body': $('.pm-plugin-test-body').val(),
-                'subject': $('.pm-plugin-test-subject').val(),
-                'headers': $('.pm-plugin-test-headers').val(),
-                '_wpnonce': $('[name=_wpnonce]').val()
+                'override_from_address' : $('.pm-test-email-sender').val()
             }, function(response) {
                 $('.pm-notice').html('<p>' + response + '</p>');
                 $('.pm-notice').removeClass('hidden');

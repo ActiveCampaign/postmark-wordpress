@@ -14,7 +14,8 @@ postmark.settings = <?php echo json_encode( $this->settings ); ?>;
         <a class="nav-tab" rel="general">General</a>
         <a class="nav-tab" rel="test">Send Test Email</a>
         <a class="nav-tab" rel="overrides">Overrides</a>
-       <?php if ( 'POSTMARK_PLUGIN_TESTING' == $_ENV['POSTMARK_PLUGIN_TESTING'] ) : ?>
+
+       <?php if ( isset($_ENV['POSTMARK_PLUGIN_TESTING']) && 'POSTMARK_PLUGIN_TESTING' == $_ENV['POSTMARK_PLUGIN_TESTING'] ) : ?>
 			<a class="nav-tab" rel="plugin-testing">Plugin Testing</a>
 		<?php endif; ?>
     </h1>
@@ -105,7 +106,7 @@ postmark.settings = <?php echo json_encode( $this->settings ); ?>;
         </pre>
         To learn more about <code>wp_mail</code>, see the <a href="https://developer.wordpress.org/reference/functions/wp_mail/">WordPress Codex page.</a>
     </div>
-   <?php if ( 'POSTMARK_PLUGIN_TESTING' == $_ENV['POSTMARK_PLUGIN_TESTING'] ) : ?>
+   <?php if ( isset($_ENV['POSTMARK_PLUGIN_TESTING']) &&'POSTMARK_PLUGIN_TESTING' == $_ENV['POSTMARK_PLUGIN_TESTING'] ) : ?>
     <div class="tab-content tab-plugin-testing">
         <table class="form-table" style="max-width:740px;">
             <tr>
