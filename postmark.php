@@ -135,14 +135,13 @@ class Postmark_Mail
 	    // We check that we have received some data.
 	    if ( ! isset($_POST['data']) ) {
 		    wp_die(__('We were unable to verify this request, please reload the page and try again.'));
-    }
+        }
 
         $data = json_decode( stripslashes( $_POST['data'] ), true);
 
         $settings = array();
         
         // We check that we were able to decode data.
-        $subject = $_POST['subject'];
         if ( ! is_array($data) ) {
 	        wp_die(__('Something went wrong!', 'postmark-wordpress'));
         }
@@ -169,7 +168,7 @@ class Postmark_Mail
         }
         else {
 	        $settings['sender_address'] = '';
-    }
+        }
 
         // We validate that 'force_html' is a numeric boolean
         if ( isset($data['force_html']) && 1 === $data['force_html'] ) {
@@ -191,7 +190,6 @@ class Postmark_Mail
 
         wp_die('Settings saved');
     }
-
 
     function settings_html() {
         include( POSTMARK_DIR . '/page-settings.php' );
