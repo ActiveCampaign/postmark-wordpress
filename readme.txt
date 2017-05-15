@@ -61,6 +61,10 @@ This plugin detects HTML by checking the headers sent by other WordPress plugins
 
 == Changelog ==
 
+= v1.9.6 =
+* Resolves issue when saving settings in UI.
+* Falls attachment Content-Type back to 'application/octet-stream' when other methods fail.
+
 = v1.9.5 =
 * Update javascript to fix settings update issue.
 
