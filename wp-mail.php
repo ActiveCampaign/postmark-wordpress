@@ -1,12 +1,23 @@
 <?php
+/**
+ * Postmark WP Mail Override.
+ *
+ * @package postmark
+ */
+
+/* Exit if accessed directly. */
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 require_once( dirname( __FILE__ ) . '/postmark.php' );
 
 
 /**
- * postmark_determine_mime_content_type function.
+ * Postmark Determine Mime Content Type.
  *
  * @access public
- * @param mixed $filename
+ * @param mixed $filename Filename.
  * @return void
  */
 function postmark_determine_mime_content_type( $filename ) {
@@ -24,19 +35,19 @@ function postmark_determine_mime_content_type( $filename ) {
 
 
 /**
- * wp_mail function.
+ * WP Mail.
  *
  * @access public
- * @param mixed  $to
- * @param mixed  $subject
- * @param mixed  $message
- * @param string $headers (default: '')
- * @param array  $attachments (default: array())
+ * @param mixed  $to To.
+ * @param mixed  $subject Subject.
+ * @param mixed  $message Message.
+ * @param string $headers (default: '') Headers.
+ * @param array  $attachments (default: array()) Attachments.
  * @return void
  */
 function wp_mail( $to, $subject, $message, $headers = '', $attachments = array() ) {
 
-	// Compact the input, apply the filters, and extract them back out
+	// Compact the input, apply the filters, and extract them back out.
 	extract( apply_filters( 'wp_mail', compact( 'to', 'subject', 'message', 'headers', 'attachments' ) ) );
 
 	$settings = json_decode( get_option( 'postmark_settings' ), true );
@@ -165,24 +176,24 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 
 	if ( isset( $recognized_headers['X-PM-Track-Opens'] ) ) {
 		if ( $recognized_headers['X-PM-Track-Opens'] ) {
-			$track_opens = 1;
+			1 === $track_opens;
 		} else {
-			$track_opens = 0;
+			0 === $track_opens;
 		}
 	}
 
-	if ( 1 == (int) $settings['force_html'] || 'text/html' == $content_type || 1 == $track_opens ) {
+	if ( 1 === (int) $settings['force_html'] || 'text/html' === $content_type || 1 === $track_opens ) {
 		$body['HtmlBody'] = $message;
 		// The user really, truly wants this sent as HTML, don't send it as text, too.
 		// For historical reasons, we can't "force html" and "track opens" set both html and text bodies,
 		// which is incorrect, but in order not to break existing behavior, we only strip out the textbody when
 		// the user has gone to the trouble of specifying content type of 'text/html' in their headers.
-		if ( 'text/html' == $content_type ) {
+		if ( 'text/html' === $content_type ) {
 			unset( $body['TextBody'] );
 		}
 	}
 
-	if ( 1 == $track_opens ) {
+	if ( 1 === $track_opens ) {
 		$body['TrackOpens'] = 'true';
 	}
 
@@ -208,11 +219,11 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 			'Content-Type' => 'application/json',
 			'X-Postmark-Server-Token' => $settings['api_key'],
 		),
-		'body' => json_encode( $body ),
+		'body' => wp_json_encode( $body ),
 	);
 	$response = wp_remote_post( 'https://api.postmarkapp.com/email', $args );
 
-	if ( is_wp_error( $response ) || 200 != wp_remote_retrieve_response_code( $response ) ) {
+	if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
 		do_action( 'postmark_error', $response, $headers );
 		Postmark_Mail::$LAST_ERROR = $response;
 		return false;

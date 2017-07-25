@@ -19,7 +19,12 @@
 * GitHub Branch: master
 */
 
+/* Exit if accessed directly. */
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
+/* Check if Class Exists. */
 if ( ! class_exists( 'Postmark_Mail' ) ) {
 
 	/**
@@ -79,7 +84,7 @@ if ( ! class_exists( 'Postmark_Mail' ) ) {
 
 
 		/**
-		 * load_settings function.
+		 * Load Setting.
 		 *
 		 * @access public
 		 * @return void
@@ -96,7 +101,7 @@ if ( ! class_exists( 'Postmark_Mail' ) ) {
 					'track_opens'       => get_option( 'postmark_trackopens', 0 ),
 				);
 
-				update_option( 'postmark_settings', json_encode( $settings ) );
+				update_option( 'postmark_settings', wp_json_encode( $settings ) );
 
 				return $settings;
 			}
@@ -106,7 +111,7 @@ if ( ! class_exists( 'Postmark_Mail' ) ) {
 
 
 		/**
-		 * admin_menu function.
+		 * Admin Menu.
 		 *
 		 * @access public
 		 * @return void
@@ -117,12 +122,13 @@ if ( ! class_exists( 'Postmark_Mail' ) ) {
 
 
 		/**
-		 * send_test_email function.
+		 * Send Test Email.
 		 *
 		 * @access public
 		 * @return void
 		 */
 		function send_test_email() {
+
 			// We check the wp_nonce.
 			if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], 'postmark_nonce' ) ) {
 				wp_die( __( 'We were unable to verify this request, please reload the page and try again.' ) );
@@ -133,21 +139,21 @@ if ( ! class_exists( 'Postmark_Mail' ) ) {
 				wp_die( __( 'We were unable to verify this request, please reload the page and try again.' ) );
 			}
 
-			// We validate that 'email' is a valid email address
+			// We validate that 'email' is a valid email address.
 			if ( isset( $_POST['email'] ) && is_email( $_POST['email'] ) ) {
 				$to = sanitize_email( $_POST['email'] );
 			} else {
 				wp_die( __( 'You need to specify a valid recipient email address.', 'postmark-wordpress' ) );
 			}
 
-			// We validate that 'with_tracking_and_html' is a numeric boolean
+			// We validate that 'with_tracking_and_html' is a numeric boolean.
 			if ( isset( $_POST['with_tracking_and_html'] ) && 1 === $_POST['with_tracking_and_html'] ) {
 				$with_tracking_and_html = true;
 			} else {
 				$with_tracking_and_html = false;
 			}
 
-			// We validate that 'override_from_address' is a valid email address
+			// We validate that 'override_from_address' is a valid email address.
 			if ( isset( $_POST['override_from_address'] ) && is_email( $_POST['override_from_address'] ) ) {
 				$override_from = sanitize_email( $_POST['override_from_address'] );
 			} else {
@@ -182,12 +188,13 @@ if ( ! class_exists( 'Postmark_Mail' ) ) {
 		}
 
 		/**
-		 * save_settings function.
+		 * Save Settings.
 		 *
 		 * @access public
 		 * @return void
 		 */
 		function save_settings() {
+
 			// We check the wp_nonce.
 			if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], 'postmark_nonce' ) ) {
 				wp_die( __( 'We were unable to verify this request, please reload the page and try again.' ) );
@@ -212,35 +219,35 @@ if ( ! class_exists( 'Postmark_Mail' ) ) {
 				wp_die( __( 'Something went wrong!', 'postmark-wordpress' ) );
 			}
 
-			// We validate that 'enabled' is a numeric boolean
+			// We validate that 'enabled' is a numeric boolean.
 			if ( isset( $data['enabled'] ) && 1 === $data['enabled'] ) {
 				$settings['enabled'] = 1;
 			} else {
 				$settings['enabled'] = 0;
 			}
 
-			// We validate that 'api_key' contains only allowed caracters [letters, numbers, dash]
+			// We validate that 'api_key' contains only allowed caracters [letters, numbers, dash].
 			if ( isset( $data['api_key'] ) && 1 === preg_match( '/^[A-Za-z0-9\-]*$/', $data['api_key'] ) ) {
 				$settings['api_key'] = $data['api_key'];
 			} else {
 				$settings['api_key'] = '';
 			}
 
-			// We validate that 'sender_address' is a valid email address
+			// We validate that 'sender_address' is a valid email address.
 			if ( isset( $data['sender_address'] ) && is_email( $data['sender_address'] ) ) {
 				$settings['sender_address'] = sanitize_email( $data['sender_address'] );
 			} else {
 				$settings['sender_address'] = '';
 			}
 
-			// We validate that 'force_html' is a numeric boolean
+			// We validate that 'force_html' is a numeric boolean.
 			if ( isset( $data['force_html'] ) && 1 === $data['force_html'] ) {
 				$settings['force_html'] = 1;
 			} else {
 				$settings['force_html'] = 0;
 			}
 
-			// We validate that 'track_opens' is a numeric boolean
+			// We validate that 'track_opens' is a numeric boolean.
 			if ( isset( $data['track_opens'] ) && 1 === $data['track_opens'] ) {
 				$settings['track_opens'] = 1;
 			} else {
@@ -253,7 +260,7 @@ if ( ! class_exists( 'Postmark_Mail' ) ) {
 		}
 
 		/**
-		 * settings_html function.
+		 * Settings HTML.
 		 *
 		 * @access public
 		 * @return void
