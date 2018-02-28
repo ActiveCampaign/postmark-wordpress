@@ -33,7 +33,7 @@ The Postmark for WordPress plugin overrides any usage of the wp_mail() function.
 
 = Does this cost me money? =
 
-The Postmark service (and this plugin) are free to get started. You can sign up at https://postmarkapp.com/. When you need to process more email, Postmark offers pay-as-you-go and monthly plans to fit your needs.
+The Postmark service (and this plugin) are free to get started. You can sign up at https://postmarkapp.com/. When you need to process more email, Postmark offers monthly plans to fit your needs.
 
 = My emails are still not sending, or they are going to spam! HELP!? =
 
