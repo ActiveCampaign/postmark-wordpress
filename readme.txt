@@ -11,7 +11,7 @@ The *officially-supported* Postmark plugin for Wordpress.
 
 If you're still sending email with default SMTP, you're blind to delivery problems! Postmark for Wordpress enables sites of any size to deliver and track WordPress notification emails reliably, with minimal setup time and zero maintenance.
 
-If you don't already have a free Postmark account, you can get one in minutes. Every account comes with 25,000 free credits.
+If you don't already have a free Postmark account, you can get one in minutes, signup at https://postmarkapp.com
 
 == Installation ==
 
@@ -33,11 +33,7 @@ The Postmark for WordPress plugin overrides any usage of the wp_mail() function.
 
 = Does this cost me money? =
 
-This Postmark plugin is 100% free. All new Postmark accounts include 25,000 free credits. Afterwards, they will cost only $1.50 per 1000 sends with no monthly commitments and no expirations.
-
-We will send you multiple warnings as you approach running out of send credits, so you don't need to worry about paying for credits until you absolutely need them.
-
-Sign up for your free Postmark account at https://postmarkapp.com/ and get started now.
+The Postmark service (and this plugin) are free to get started. You can Sign up at https://postmarkapp.com/. When you need to process more email, Postmark offers pay-as-you-go and monthly plans to fit your needs.
 
 = My emails are still not sending, or they are going to spam! HELP!? =
 
@@ -46,8 +42,6 @@ No worries, our expert team can help. Just send an email to support@postmarkapp.
 = Why should I trust you with my email sending? =
 
 Because we've been in this business for many years. We’ve been running an email marketing service, Newsberry, for five years. Through trial and error we already know what it takes to manage a large volume of email. We handle things like whitelisting, ISP throttling, reverse DNS, feedback loops, content scanning, and delivery monitoring to ensure your emails get to the inbox.
-
-We're hosted at Rackspace, where we’re able to offer both the physical (SAS70 data center) and environment security through a completely dedicated cluster of servers. Our servers utilize virtualization and high availability failover protection to properly handle outages and keep your data safe.
 
 Most importantly, a great product requires great support and even better education. Our team is spread out across six time zones to offer fast support on everything from using Postmark to best practices on content and user engagement. A solid infrastructure only goes so far, that’s why improving our customer’s sending practices helps achieve incredible results
 
