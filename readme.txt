@@ -11,7 +11,7 @@ The *officially-supported* Postmark plugin for Wordpress.
 
 If you're still sending email with default SMTP, you're blind to delivery problems! Postmark for Wordpress enables sites of any size to deliver and track WordPress notification emails reliably, with minimal setup time and zero maintenance.
 
-If you don't already have a free Postmark account, you can get one in minutes, signup at https://postmarkapp.com
+If you don't already have a Postmark account, you can get one in minutes, sign up at https://postmarkapp.com
 
 == Installation ==
 
@@ -33,7 +33,7 @@ The Postmark for WordPress plugin overrides any usage of the wp_mail() function.
 
 = Does this cost me money? =
 
-The Postmark service (and this plugin) are free to get started. You can Sign up at https://postmarkapp.com/. When you need to process more email, Postmark offers pay-as-you-go and monthly plans to fit your needs.
+The Postmark service (and this plugin) are free to get started. You can sign up at https://postmarkapp.com/. When you need to process more email, Postmark offers pay-as-you-go and monthly plans to fit your needs.
 
 = My emails are still not sending, or they are going to spam! HELP!? =
 
