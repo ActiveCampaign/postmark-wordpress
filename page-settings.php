@@ -168,7 +168,7 @@ wp_nonce_field( 'postmark_nonce' );
             // Builds HTML for each log to show as a row in the logs table.
             foreach($result as $row)
              {
-               echo "<tr><td align=\"center\">" . get_date_from_gmt($row->time, get_option('date_format') . ' - ' . get_option('time_format') ) . "</td><td align=\"center\">  " . $row->fromaddress . "</td><td align=\"center\">  " . $row->toaddress . "</td><td align=\"center\">  " . $row->subject . "</td><td align=\"center\">  " . $row->response . "</td></tr>";
+               echo "<tr><td align=\"center\">" . date('Y-m-d h:i A', strtotime($row->time)) . "</td><td align=\"center\">  " . $row->fromaddress . "</td><td align=\"center\">  " . $row->toaddress . "</td><td align=\"center\">  " . $row->subject . "</td><td align=\"center\">  " . $row->response . "</td></tr>";
              }
 
              echo "</tbody></table>";

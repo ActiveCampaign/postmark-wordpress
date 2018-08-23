@@ -80,7 +80,7 @@ class Postmark_Mail
       // Iterates through the retrieved logs and builds HTML rows for each one, to be added to the logs table in the UI.
       foreach($result as $row)
        {
-         $new_rows_html = $new_rows_html . "<tr><td align=\"center\">" . get_date_from_gmt($row->time, get_option('date_format') . ' - ' . get_option('time_format') ) . "</td><td align=\"center\">  " . $row->fromaddress . "</td><td align=\"center\">  " . $row->toaddress . "</td><td align=\"center\">  " . $row->subject . "</td><td align=\"center\">  " . $row->response . "</td></tr>";
+         $new_rows_html = $new_rows_html . "<tr><td align=\"center\">" . date('Y-m-d h:i A', strtotime($row->time)) . "</td><td align=\"center\">  " . $row->fromaddress . "</td><td align=\"center\">  " . $row->toaddress . "</td><td align=\"center\">  " . $row->subject . "</td><td align=\"center\">  " . $row->response . "</td></tr>";
        }
 
        $response = array(
