@@ -1,11 +1,13 @@
 (function ($) {
     $(function() {
         var settings = postmark.settings;
+        var logs_offset = 10;
         $('.pm-enabled').prop('checked', settings.enabled);
         $('.pm-api-key').val(settings.api_key);
         $('.pm-sender-address').val(settings.sender_address);
         $('.pm-force-html').prop('checked', settings.force_html);
         $('.pm-track-opens').prop('checked', settings.track_opens);
+        $('.pm-enable-logs').prop('checked', settings.enable_logs);
 
         // save
         $(document).on('click', '.save-settings', function() {
@@ -14,7 +16,8 @@
                 'api_key': $('.pm-api-key').val(),
                 'sender_address': $('.pm-sender-address').val(),
                 'force_html': $('.pm-force-html').is(':checked') ? 1 : 0,
-                'track_opens': $('.pm-track-opens').is(':checked') ? 1 : 0
+                'track_opens': $('.pm-track-opens').is(':checked') ? 1 : 0,
+                'enable_logs': $('.pm-enable-logs').is(':checked') ? 1 : 0
             };
 
             $.post(ajaxurl, {
@@ -24,6 +27,13 @@
             }, function(response) {
                 $('.pm-notice').html('<p>' + response + '</p>');
                 $('.pm-notice').removeClass('hidden');
+
+                // Immediately hides logs tab if logs were disabled.
+                if (data.enable_logs == 1) {
+                  $('#pm-log-nav-tab').show();
+                } else {
+                  $('#pm-log-nav-tab').hide();
+                }
             });
         });
 
@@ -48,6 +58,39 @@
             $('.tab-content').removeClass('active');
             $(this).addClass('nav-tab-active');
             $('.tab-' + which).addClass('active');
+        });
+
+        // Loads more logs when 'Load More' button is clicked.
+        $(document).on('click', '.load-more', function() {
+
+          var data = {
+            action: 'postmark_load_more_logs',
+            offset: logs_offset,
+            _wpnonce : $('#_wpnonce').val()
+          };
+
+          // Prepares for next 'Load More' by increasing the offset amount for next query.
+          logs_offset += 10;
+
+          $.post( ajaxurl, data, function( response ) {
+
+            // Parses response string into JSON.
+            response = JSON.parse(response);
+
+            // Adds new logs to logs table.
+            $('#pm-log-table tr:last').after(response.html);
+
+            // Tracks the number of total logs present in logs table.
+            var total_logs_count = response.total_count;
+
+            // Tracks the number of logs currently displayed.
+            var displayed_log_count = $('#pm-log-table tr').length - 1;
+
+            // Hides the 'Load More' button if no additional logs to display.
+            if (displayed_log_count == total_logs_count) {
+              $('.load-more').hide();
+            }
+          });
         });
 
         // force html if track opens is enabled
