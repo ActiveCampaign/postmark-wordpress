@@ -81,13 +81,10 @@
             $('#pm-log-table tr:last').after(response.html);
 
             // Tracks the number of total logs present in logs table.
-            var total_logs_count = response.total_count;
-
-            // Tracks the number of logs currently displayed.
-            var displayed_log_count = $('#pm-log-table tr').length - 1;
+            var has_more = response.has_more;
 
             // Hides the 'Load More' button if no additional logs to display.
-            if (displayed_log_count == total_logs_count) {
+            if (!has_more) {
               $('.load-more').hide();
             }
           });

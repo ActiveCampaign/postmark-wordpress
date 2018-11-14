@@ -72,21 +72,24 @@ class Postmark_Mail
       }
 
       // Retrieves more logs from logs table using offset and prepare() to prevent SQL injections.
-      $result = $wpdb->get_results( $wpdb->prepare("SELECT * FROM $table ORDER BY time DESC LIMIT %d OFFSET %d", 10, $_POST['offset']));
+      $result = $wpdb->get_results( $wpdb->prepare("SELECT * FROM $table ORDER BY log_entry_date DESC LIMIT %d OFFSET %d", 10, $_POST['offset']));
 
-      // Checks how many logs are in the logs table.
-      $count = $wpdb->get_var("SELECT COUNT(*) FROM " . $table );
+      $has_more = true;
+
+      if ($result->length < 10) {
+        $has_more = false;
+      }
 
       // Iterates through the retrieved logs and builds HTML rows for each one, to be added to the logs table in the UI.
       foreach($result as $row)
        {
-         $new_rows_html = $new_rows_html . "<tr><td align=\"center\">" . date('Y-m-d h:i A', strtotime($row->time)) . "</td><td align=\"center\">  " . $row->fromaddress . "</td><td align=\"center\">  " . $row->toaddress . "</td><td align=\"center\">  " . $row->subject . "</td><td align=\"center\">  " . $row->response . "</td></tr>";
+         $new_rows_html = $new_rows_html . "<tr><td align=\"center\">" . date('Y-m-d h:i A', strtotime($row->log_entry_date)) . "</td><td align=\"center\">  " . $row->fromaddress . "</td><td align=\"center\">  " . $row->toaddress . "</td><td align=\"center\">  " . $row->subject . "</td><td align=\"center\">  " . $row->response . "</td></tr>";
        }
 
        $response = array(
          'html' => $new_rows_html,
-         // Lets the front end know how many total logs there are.
-         'total_count' => $count
+         // Lets the front end know how if there are any more logs.
+         'has_more' => $has_more
        );
 
        echo json_encode($response);
@@ -259,8 +262,8 @@ function pm_log_create_db() {
     $charset_collate = $wpdb->get_charset_collate();
 
     $sql = "CREATE TABLE $table_name (
-     id mediumint(9) NOT NULL AUTO_INCREMENT,
-     time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+     id INT(9) NOT NULL AUTO_INCREMENT,
+     log_entry_date datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
      fromaddress text,
      toaddress text,
      subject text,
@@ -269,7 +272,11 @@ function pm_log_create_db() {
    ) $charset_collate;";
 
     require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+
     dbDelta( $sql );
+
+    // Creates index on log_entry_date column.
+    $wpdb->query($wpdb->prepare( "CREATE INDEX %s ON $table_name(%s)", array( 'pmlogdateindex', 'log_entry_date')));
 
     // Activates cron job for automatically purging old (7+ days) Postmark logs.
     pm_log_cron_activation();
@@ -287,22 +294,35 @@ function pm_log_cron_activation() {
 // Attaches pm_clear_old_logs function to cron job hook.
 add_action('pm_log_cron_job', 'pm_clear_old_logs');
 
-// Deletes Postmark logs older than 7 days.
+// Deletes up to 500 Postmark logs that are older than 7 days.
 function pm_clear_old_logs() {
 
   global $wpdb;
 
   $table_name = $wpdb->prefix . 'postmark_log';
 
-  // Deletes logs that are more than 7 days old.
-  $wpdb->query(
-	   $wpdb->prepare(
-		     "DELETE FROM $table_name
-          WHERE %s < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL %d DAY))
+  // Checks if there are any logs older than seven days to delete.
+  $rows_to_delete_count = $wpdb->get_var($wpdb->prepare(
+         "SELECT COUNT(*) FROM $table_name
+          WHERE %s < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL %d MINUTE)) LIMIT 500
          "
-          , 'time', 7)
-  );
+          , 'log_entry_date', 1));
 
+  // Deletes logs that are more than 7 days old, limited to 500 log deletions at a time to prevent locking up db.
+
+  if ($rows_to_delete_count > 0) {
+
+    $wpdb->query(
+  	   $wpdb->prepare(
+  		     "DELETE FROM $table_name
+            WHERE %s < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL %d MINUTE)) LIMIT %d
+           "
+            , 'log_entry_date', 1, $rows_to_delete_count)
+    );
+
+    // Check again for more logs to delete.
+    pm_clear_old_logs();
+  }
 }
 
 // Unschedules Postmark logs cleanup cron job.

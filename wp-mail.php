@@ -196,16 +196,16 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
     );
     $response = wp_remote_post( 'https://api.postmarkapp.com/email', $args );
 
-    // log send attempt, if logging enabled
+    // Logs send attempt, if logging enabled.
     if ($settings['enable_logs'] == 1) {
       global $wpdb;
       $table = $wpdb->prefix . "postmark_log";
       $wpdb->insert($table, array(
-        'time' => current_time( 'mysql' ),
-        'fromaddress' => $from,
-        'toaddress' => $body["To"],
-        'subject' => $subject,
-        'response' => $response['body']
+        'log_entry_date' => current_time( 'mysql' ),
+        'fromaddress' => sanitize_email($from),
+        'toaddress' => sanitize_email($body["To"]),
+        'subject' => sanitize_text_field($subject),
+        'response' => sanitize_text_field($response['body'])
       ));
     }
 

@@ -147,13 +147,13 @@ wp_nonce_field( 'postmark_nonce' );
           $table = $wpdb->prefix . "postmark_log";
 
           // Checks how many logs are in the logs table.
-          $count = $wpdb->get_var("SELECT COUNT(*) FROM " . $table );
+          $count = $wpdb->get_var("SELECT COUNT(*) FROM " . $table);
 
           // Only shows some logs if some logs are stored.
           if ($count > 0) {
 
             // Pulls sending logs from db to display in UI. prepare() used to prevent SQL injections
-            $result = $wpdb->get_results( $wpdb->prepare("SELECT * FROM $table ORDER BY time DESC LIMIT %d", 10));
+            $result = $wpdb->get_results( $wpdb->prepare("SELECT * FROM $table ORDER BY log_entry_date DESC LIMIT %d", 10));
 
             // Logs table header HTML.
             echo "<table class=\"pm-log\" id=\"pm-log-table\">
@@ -168,7 +168,7 @@ wp_nonce_field( 'postmark_nonce' );
             // Builds HTML for each log to show as a row in the logs table.
             foreach($result as $row)
              {
-               echo "<tr><td align=\"center\">" . date('Y-m-d h:i A', strtotime($row->time)) . "</td><td align=\"center\">  " . $row->fromaddress . "</td><td align=\"center\">  " . $row->toaddress . "</td><td align=\"center\">  " . $row->subject . "</td><td align=\"center\">  " . $row->response . "</td></tr>";
+               echo "<tr><td align=\"center\">" . date('Y-m-d h:i A', strtotime(esc_html($row->log_entry_date))) . "</td><td align=\"center\">  " . esc_html($row->fromaddress ) . "</td><td align=\"center\">  " . esc_html($row->toaddress) . "</td><td align=\"center\">  " . esc_html($row->subject) . "</td><td align=\"center\">  " . $row->response . "</td></tr>";
              }
 
              echo "</tbody></table>";
