@@ -1,10 +1,28 @@
 <script>
-var postmark = postmark || {};
-postmark.settings = <?php echo json_encode( $this->settings ); ?>;
+  var postmark = postmark || {};
+  postmark.settings = <?php echo json_encode( $this->settings ); ?>;
 </script>
-<script src="<?php echo POSTMARK_URL; ?>/assets/js/admin.js"></script>
-<link href="<?php echo POSTMARK_URL; ?>/assets/css/admin.css" rel="stylesheet">
-<?php wp_nonce_field( 'postmark_nonce' ); ?>
+<?php
+
+// Registers script for JS.
+wp_register_script('pm-js',
+  plugins_url( 'assets/js/admin.js', __FILE__ )
+);
+
+// Enqueues script for JS.
+wp_enqueue_script( 'pm-js' );
+
+// Registers script for CSS.
+wp_register_style( 'pm-styles',
+  plugins_url( 'assets/css/admin.css', __FILE__ )
+);
+
+// Enqueues script for CSS.
+wp_enqueue_style( 'pm-styles' );
+
+wp_nonce_field( 'postmark_nonce' );
+
+?>
 <div class="wrap">
     <div class="logo-bar">
         <a href="https://postmarkapp.com/" target="_blank"><img src="<?php echo POSTMARK_URL; ?>/assets/images/logo.png" width="130" height="21" alt="" /></a>
@@ -14,16 +32,22 @@ postmark.settings = <?php echo json_encode( $this->settings ); ?>;
         <a class="nav-tab" rel="general">General</a>
         <a class="nav-tab" rel="test">Send Test Email</a>
         <a class="nav-tab" rel="overrides">Overrides</a>
+        <!-- Only show Log tab if logging is enabled -->
+        <?php if ( $this->settings['enable_logs']) : ?>
+ 			    <a class="nav-tab" rel="log" id="pm-log-nav-tab">Logs</a>
+        <?php else : ?>
+          <a class="nav-tab hidden" rel="log" id="pm-log-nav-tab">Logs</a>
+ 		    <?php endif; ?>
 
        <?php if ( isset($_ENV['POSTMARK_PLUGIN_TESTING']) && 'POSTMARK_PLUGIN_TESTING' == $_ENV['POSTMARK_PLUGIN_TESTING'] ) : ?>
-			<a class="nav-tab" rel="plugin-testing">Plugin Testing</a>
-		<?php endif; ?>
+			      <a class="nav-tab" rel="plugin-testing">Plugin Testing</a>
+		  <?php endif; ?>
     </h1>
 
     <div class="updated notice pm-notice hidden"></div>
 
     <div class="tab-content tab-general">
-        <table class="form-table" style="max-width:740px;">
+        <table class="form-table">
             <tr>
                 <th><label>Enabled?</label></th>
                 <td>
@@ -57,6 +81,13 @@ postmark.settings = <?php echo json_encode( $this->settings ); ?>;
                 <td>
                     <input type="checkbox" class="pm-track-opens" value="1" />
                     <span class="footnote">Track email opens (<code>Force HTML</code> is required).</span>
+                </td>
+            </tr>
+            <tr>
+                <th><label>Enable Logs</label></th>
+                <td>
+                    <input type="checkbox" class="pm-enable-logs" value="1" />
+                    <span class="footnote">Log send attempts for historical/troubleshooting purposes (Recommended).</span>
                 </td>
             </tr>
         </table>
@@ -106,6 +137,54 @@ postmark.settings = <?php echo json_encode( $this->settings ); ?>;
         </pre>
         To learn more about <code>wp_mail</code>, see the <a href="https://developer.wordpress.org/reference/functions/wp_mail/">WordPress Codex page.</a>
     </div>
+
+    <!-- Sending logs tab -->
+    <div class="tab-content tab-log">
+
+        <?php
+          global $wpdb;
+
+          $table = $wpdb->prefix . "postmark_log";
+
+          // Checks how many logs are in the logs table.
+          $count = $wpdb->get_var("SELECT COUNT(*) FROM " . $table);
+
+          // Only shows some logs if some logs are stored.
+          if ($count > 0) {
+
+            // Pulls sending logs from db to display in UI. prepare() used to prevent SQL injections
+            $result = $wpdb->get_results( $wpdb->prepare("SELECT * FROM $table ORDER BY log_entry_date DESC LIMIT %d", 10));
+
+            // Logs table header HTML.
+            echo "<table class=\"pm-log\" id=\"pm-log-table\">
+                   <thead>
+                     <th>Date</th>
+                     <th>From</th>
+                     <th>To</th>
+                     <th>Subject</th>
+                     <th>Postmark API Response</th>
+                   </thead><tbody>";
+
+            // Builds HTML for each log to show as a row in the logs table.
+            foreach($result as $row)
+             {
+               echo "<tr><td align=\"center\">" . date('Y-m-d h:i A', strtotime(esc_html($row->log_entry_date))) . "</td><td align=\"center\">  " . esc_html($row->fromaddress ) . "</td><td align=\"center\">  " . esc_html($row->toaddress) . "</td><td align=\"center\">  " . esc_html($row->subject) . "</td><td align=\"center\">  " . $row->response . "</td></tr>";
+             }
+
+             echo "</tbody></table>";
+
+             // Shows a 'Load More' button if more than 10 logs in logs table.
+             if ($count > 10) {
+               echo '<div class="submit load-more">
+                   <input type="submit" class="button-primary" value="Load More" /></div>';
+             }
+          } else {
+            echo '<h2 align="center">No Logs</h2>';
+          }
+        ?>
+
+    </div>
+
    <?php if ( isset($_ENV['POSTMARK_PLUGIN_TESTING']) &&'POSTMARK_PLUGIN_TESTING' == $_ENV['POSTMARK_PLUGIN_TESTING'] ) : ?>
     <div class="tab-content tab-plugin-testing">
         <table class="form-table" style="max-width:740px;">

@@ -36,3 +36,33 @@ input[type=text] {
 input[type=text] {
     width: 300px;
 }
+
+#wpbody-content > div.wrap > div.tab-content.tab-log.active > table.pm-log {
+  margin-bottom: 0;
+  margin-top: 3%;
+  overflow: hidden;
+  overflow-y: scroll;
+  display: block;
+  border-collapse: collapse;
+}
+
+#wpbody-content > div.wrap > div.tab-content.tab-log.active > table.pm-log > tbody > tr:nth-child(odd) {
+  background-color: white;
+}
+
+#wpbody-content > div.wrap > div.tab-content.tab-log.active > table.pm-log > tbody > tr > td {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 0.5em;
+  padding-top: 0.5em;
+  padding-left: 0.5em
+}
+
+#wpbody-content > div.wrap > div.tab-content.tab-log.active > table > thead > tr > th {
+  font-size: 1.2em;
+  padding-bottom: 0.7em;
+}
+
+.load-more {
+  display: flex;
+  justify-content: center;
+}
