@@ -294,7 +294,7 @@ function pm_log_cron_activation() {
 // Attaches pm_clear_old_logs function to cron job hook.
 add_action('pm_log_cron_job', 'pm_clear_old_logs');
 
-// Deletes up to 500 Postmark logs that are older than 7 days.
+// Deletes up to 500 Postmark logs at a time that are older than 7 days.
 function pm_clear_old_logs() {
 
   global $wpdb;
@@ -304,9 +304,9 @@ function pm_clear_old_logs() {
   // Checks if there are any logs older than seven days to delete.
   $rows_to_delete_count = $wpdb->get_var($wpdb->prepare(
          "SELECT COUNT(*) FROM $table_name
-          WHERE %s < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL %d MINUTE)) LIMIT 500
+          WHERE %s < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL %d DAY)) LIMIT 500
          "
-          , 'log_entry_date', 1));
+          , 'log_entry_date', 7));
 
   // Deletes logs that are more than 7 days old, limited to 500 log deletions at a time to prevent locking up db.
 
@@ -315,9 +315,9 @@ function pm_clear_old_logs() {
     $wpdb->query(
   	   $wpdb->prepare(
   		     "DELETE FROM $table_name
-            WHERE %s < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL %d MINUTE)) LIMIT %d
+            WHERE %s < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL %d DAY)) LIMIT %d
            "
-            , 'log_entry_date', 1, $rows_to_delete_count)
+            , 'log_entry_date', 7, $rows_to_delete_count)
     );
 
     // Check again for more logs to delete.
