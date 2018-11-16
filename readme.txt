@@ -67,6 +67,12 @@ This plugin detects HTML by checking the headers sent by other WordPress plugins
 
 == Changelog ==
 
+= v1.10.4 =
+* Removes index on logs table.
+
+= v1.10.3 =
+* Corrects version mismatch in constructor.
+
 = v1.10.1 =
 * Adds a new logging feature that can be enabled to store logs for send attempts. Logs include Date, From address, To address, Subject, and Postmark API response. Logs are displayed in a Logs tab in the plugin setting once enabled.
 * Switch loading of JS/CSS to use enqueue()
@@ -106,7 +112,7 @@ This plugin detects HTML by checking the headers sent by other WordPress plugins
 = v1.6 =
 * Added open tracking support.
 
-= v1.5 = 
+= v1.5 =
 * Fix issue with new WordPress HTTP API Integration.
 
 = v1.4 =

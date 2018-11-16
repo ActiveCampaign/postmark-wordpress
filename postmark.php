@@ -3,7 +3,7 @@
 Plugin Name: Postmark (Official)
 Plugin URI: https://postmarkapp.com/
 Description: Overwrites wp_mail to send emails through Postmark
-Version: 1.10.1
+Version: 1.10.4
 Author: Andrew Yates & Matt Gibbs
 */
 
@@ -13,7 +13,7 @@ class Postmark_Mail
     public static $LAST_ERROR = null;
 
     function __construct() {
-        define( 'POSTMARK_VERSION', '1.9.6' );
+        define( 'POSTMARK_VERSION', '1.10.4' );
         define( 'POSTMARK_DIR', dirname( __FILE__ ) );
         define( 'POSTMARK_URL', plugins_url( basename( POSTMARK_DIR ) ) );
 
@@ -275,9 +275,6 @@ function pm_log_create_db() {
 
     dbDelta( $sql );
 
-    // Creates index on log_entry_date column.
-    $wpdb->query($wpdb->prepare( "CREATE INDEX %s ON $table_name(%s)", array( 'pmlogdateindex', 'log_entry_date')));
-
     // Activates cron job for automatically purging old (7+ days) Postmark logs.
     pm_log_cron_activation();
 
@@ -359,3 +356,20 @@ if ( ! function_exists( 'wp_mail' ) ) {
         include( POSTMARK_DIR . '/wp-mail.php' );
     }
 }
+
+// Handle upgrades (build the logs db) for upgrades from versions prior to 1.10.1
+function upgrade_completed( $upgrader_object, $options ) {
+
+ $pm_plugin = POSTMARK_DIR . '/postmark.php';
+
+ if( $options['action'] == 'update' && $options['type'] == 'plugin' && isset( $options['plugins'] ) ) {
+
+  foreach( $options['plugins'] as $plugin ) {
+   if( $plugin == $pm_plugin ) {
+     pm_log_create_db();
+   }
+  }
+ }
+}
+
+add_action( 'upgrader_process_complete', 'upgrade_completed', 10, 2 );
