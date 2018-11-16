@@ -33,7 +33,7 @@ wp_nonce_field( 'postmark_nonce' );
         <a class="nav-tab" rel="test">Send Test Email</a>
         <a class="nav-tab" rel="overrides">Overrides</a>
         <!-- Only show Log tab if logging is enabled -->
-        <?php if ( $this->settings['enable_logs']) : ?>
+        <?php if (isset($this->settings['enable_logs']) && $this->settings['enable_logs'] == true) : ?>
  			    <a class="nav-tab" rel="log" id="pm-log-nav-tab">Logs</a>
         <?php else : ?>
           <a class="nav-tab hidden" rel="log" id="pm-log-nav-tab">Logs</a>
@@ -139,50 +139,52 @@ wp_nonce_field( 'postmark_nonce' );
     </div>
 
     <!-- Sending logs tab -->
-    <div class="tab-content tab-log">
+    <!-- Only show Log tab if logging is enabled -->
+    <?php if (isset($this->settings['enable_logs']) && $this->settings['enable_logs'] == true) : ?>
+      <div class="tab-content tab-log">
 
-        <?php
-          global $wpdb;
+          <?php
+            global $wpdb;
 
-          $table = $wpdb->prefix . "postmark_log";
+            $table = $wpdb->prefix . "postmark_log";
 
-          // Checks how many logs are in the logs table.
-          $count = $wpdb->get_var("SELECT COUNT(*) FROM " . $table);
+            // Checks how many logs are in the logs table.
+            $count = $wpdb->get_var("SELECT COUNT(*) FROM " . $table);
 
-          // Only shows some logs if some logs are stored.
-          if ($count > 0) {
+            // Only shows some logs if some logs are stored.
+            if ($count > 0) {
 
-            // Pulls sending logs from db to display in UI. prepare() used to prevent SQL injections
-            $result = $wpdb->get_results( $wpdb->prepare("SELECT * FROM $table ORDER BY log_entry_date DESC LIMIT %d", 10));
+              // Pulls sending logs from db to display in UI. prepare() used to prevent SQL injections
+              $result = $wpdb->get_results( $wpdb->prepare("SELECT * FROM $table ORDER BY log_entry_date DESC LIMIT %d", 10));
 
-            // Logs table header HTML.
-            echo "<table class=\"pm-log\" id=\"pm-log-table\">
-                   <thead>
-                     <th>Date</th>
-                     <th>From</th>
-                     <th>To</th>
-                     <th>Subject</th>
-                     <th>Postmark API Response</th>
-                   </thead><tbody>";
+              // Logs table header HTML.
+              echo "<table class=\"pm-log\" id=\"pm-log-table\">
+                     <thead>
+                       <th>Date</th>
+                       <th>From</th>
+                       <th>To</th>
+                       <th>Subject</th>
+                       <th>Postmark API Response</th>
+                     </thead><tbody>";
 
-            // Builds HTML for each log to show as a row in the logs table.
-            foreach($result as $row)
-             {
-               echo "<tr><td align=\"center\">" . date('Y-m-d h:i A', strtotime(esc_html($row->log_entry_date))) . "</td><td align=\"center\">  " . esc_html($row->fromaddress ) . "</td><td align=\"center\">  " . esc_html($row->toaddress) . "</td><td align=\"center\">  " . esc_html($row->subject) . "</td><td align=\"center\">  " . $row->response . "</td></tr>";
-             }
+              // Builds HTML for each log to show as a row in the logs table.
+              foreach($result as $row)
+               {
+                 echo "<tr><td align=\"center\">" . date('Y-m-d h:i A', strtotime(esc_html($row->log_entry_date))) . "</td><td align=\"center\">  " . esc_html($row->fromaddress ) . "</td><td align=\"center\">  " . esc_html($row->toaddress) . "</td><td align=\"center\">  " . esc_html($row->subject) . "</td><td align=\"center\">  " . $row->response . "</td></tr>";
+               }
 
-             echo "</tbody></table>";
+               echo "</tbody></table>";
 
-             // Shows a 'Load More' button if more than 10 logs in logs table.
-             if ($count > 10) {
-               echo '<div class="submit load-more">
-                   <input type="submit" class="button-primary" value="Load More" /></div>';
-             }
-          } else {
-            echo '<h2 align="center">No Logs</h2>';
-          }
-        ?>
-
+               // Shows a 'Load More' button if more than 10 logs in logs table.
+               if ($count > 10) {
+                 echo '<div class="submit load-more">
+                     <input type="submit" class="button-primary" value="Load More" /></div>';
+               }
+            } else {
+              echo '<h2 align="center">No Logs</h2>';
+            }
+          ?>
+          <?php endif; ?>
     </div>
 
    <?php if ( isset($_ENV['POSTMARK_PLUGIN_TESTING']) &&'POSTMARK_PLUGIN_TESTING' == $_ENV['POSTMARK_PLUGIN_TESTING'] ) : ?>
