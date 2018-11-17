@@ -66,6 +66,9 @@ This plugin detects HTML by checking the headers sent by other WordPress plugins
 1. Postmark WP Plugin Settings screen.
 
 == Changelog ==
+= v1.10.6 =
+* Fixes undefined index error.
+* Adds Upgrade Notice
 
 = v1.10.5 =
 * Corrects logs deletion cron job unscheduling issue.
@@ -133,3 +136,7 @@ This plugin detects HTML by checking the headers sent by other WordPress plugins
 
 = v1.0.0 =
 * First Public release.
+
+== Upgrade Notice ==
+= 1.10 =
+Adds new feature for enabling logging of send attempts, including the response from the Postmark API.

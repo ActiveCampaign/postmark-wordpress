@@ -197,7 +197,7 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
     $response = wp_remote_post( 'https://api.postmarkapp.com/email', $args );
 
     // Logs send attempt, if logging enabled.
-    if ($settings['enable_logs'] == 1) {
+    if (isset($settings['enable_logs']) && $settings['enable_logs'] == 1) {
       global $wpdb;
       $table = $wpdb->prefix . "postmark_log";
       $wpdb->insert($table, array(
