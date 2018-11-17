@@ -329,7 +329,7 @@ function pm_log_cron_deactivate() {
 	$timestamp = wp_next_scheduled('pm_log_cron_job');
 
 	// Unschedules upcoming cron job.
-	wp_unschedule_event ($timestamp, 'pm_log_cron_job');
+	wp_unschedule_event($timestamp, 'pm_log_cron_job');
 }
 
 // Removes cron job for deleting old logs, if plugin is disabled.
