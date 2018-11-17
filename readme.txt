@@ -67,6 +67,9 @@ This plugin detects HTML by checking the headers sent by other WordPress plugins
 
 == Changelog ==
 
+= v1.10.5 =
+* Corrects logs deletion cron job unscheduling issue.
+
 = v1.10.4 =
 * Removes index on logs table.
 
