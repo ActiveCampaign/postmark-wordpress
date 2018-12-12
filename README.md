@@ -59,6 +59,10 @@ This plugin detects HTML by checking the headers sent by other WordPress plugins
 
 ## Changelog
 
+### v1.11.0
+* Adds link tracking support.
+* Fixes send test with HTML/open tracking option not being honored in sent test email.
+
 ### v1.10.6
 * Fixes undefined index error.
 * Adds Upgrade Notice
