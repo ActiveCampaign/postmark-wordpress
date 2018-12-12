@@ -2,7 +2,7 @@
 Contributors: andy7629, alexknowshtml, mgibbs189, jptoto, atheken, prileygraham
 Tags: postmark, email, smtp, notifications, wp_mail, wildbit
 Requires at least: 4.0
-Tested up to: 4.9.8
+Tested up to: 5.0
 Stable tag: trunk
 
 The *officially-supported* Postmark plugin for Wordpress.
@@ -49,6 +49,28 @@ Most importantly, a great product requires great support and even better educati
 
 This plugin detects HTML by checking the headers sent by other WordPress plugins. If a "text/html" content type isn't set then this plugin won't send the HTML to Postmark to be sent out only the plain text version of the email.
 
+= Why aren't my HTML emails being sent? =
+
+This plugin detects HTML by checking the headers sent by other WordPress plugins. If a "text/html" content type isn't set then this plugin won't send the HTML to Postmark to be sent out only the plain text version of the email.
+
+= Why are password reset links not showing in emails sent with this plugin? =
+
+There are a couple ways to resolve this issue.
+
+1. Open the Postmark plugin settings and uncheck Force HTML and click Save Changes. If the default WordPress password reset email is sent in Plain Text format, the link will render as expected.
+
+2. Access your WordPress site directory and open the wp-login.php file.
+
+Change this line:
+
+    $message .= ‘<‘ . network_site_url(“wp-login.php?action=rp&key=$key&login=” . rawurlencode($user_login), ‘login’) . “>\r\n”;
+
+Remove the brackets, so it becomes:
+
+    $message .= network_site_url(“wp-login.php?action=rp&key=$key&login=” . rawurlencode($user_login), ‘login’) . “\r\n”;
+
+And save the changes to the file.
+
 == Additional Resources ==
 
 [Postmark for WordPress FAQ](https://postmarkapp.com/support/article/1138-postmark-for-wordpress-faq)
@@ -66,6 +88,10 @@ This plugin detects HTML by checking the headers sent by other WordPress plugins
 1. Postmark WP Plugin Settings screen.
 
 == Changelog ==
+= v1.11.0 =
+* Adds link tracking support.
+* Fixes send test with HTML/open tracking option not being honored in sent test email.
+
 = v1.10.6 =
 * Fixes undefined index error.
 * Adds Upgrade Notice
@@ -138,5 +164,8 @@ This plugin detects HTML by checking the headers sent by other WordPress plugins
 * First Public release.
 
 == Upgrade Notice ==
+= 1.11 =
+Adds link tracking support.
+
 = 1.10 =
 Adds new feature for enabling logging of send attempts, including the response from the Postmark API.

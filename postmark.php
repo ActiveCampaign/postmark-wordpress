@@ -3,7 +3,7 @@
 Plugin Name: Postmark (Official)
 Plugin URI: https://postmarkapp.com/
 Description: Overwrites wp_mail to send emails through Postmark
-Version: 1.10.6
+Version: 1.11.0
 Author: Andrew Yates & Matt Gibbs
 */
 
@@ -13,7 +13,7 @@ class Postmark_Mail
     public static $LAST_ERROR = null;
 
     function __construct() {
-        define( 'POSTMARK_VERSION', '1.10.6' );
+        define( 'POSTMARK_VERSION', '1.11.0' );
         define( 'POSTMARK_DIR', dirname( __FILE__ ) );
         define( 'POSTMARK_URL', plugins_url( basename( POSTMARK_DIR ) ) );
 
@@ -42,12 +42,19 @@ class Postmark_Mail
                 'sender_address'    => get_option( 'postmark_sender_address', '' ),
                 'force_html'        => get_option( 'postmark_force_html', 0 ),
                 'track_opens'       => get_option( 'postmark_trackopens', 0 ),
+                'track_links'       => get_option( 'postmark_tracklinks', 0 ),
                 'enable_logs'       => get_option( 'postmark_enable_logs', 1 )
             );
 
             update_option( 'postmark_settings', json_encode( $settings ) );
 
             return $settings;
+        }
+
+        if (is_array($settings) && !isset($settings['track_links'])) {
+          $settings['track_links'] = 0;
+          update_option( 'postmark_settings', json_encode( $settings ) );
+          return $settings;
         }
 
         return json_decode( $settings, true );
@@ -136,9 +143,10 @@ class Postmark_Mail
         $override_from = $_POST['override_from_address'];
         $headers = array();
 
-        if ( $with_tracking_and_html ) {
-            $message = 'This is an <strong>HTML test</strong> email sent using the Postmark plugin. It has Open Tracking enabled.';
+        if ( isset($_POST['with_tracking_and_html']) && $_POST['with_tracking_and_html'] ) {
+            $message = 'This is an <strong>HTML</strong> test email sent using the Postmark plugin. It has <a href="https://postmarkapp.com/developer/user-guide/tracking-opens">Open Tracking</a> and <a href="https://postmarkapp.com/developer/user-guide/tracking-links">Link Tracking</a> enabled.';
             array_push( $headers, 'X-PM-Track-Opens: true' );
+            array_push( $headers, 'X-PM-TrackLinks: HtmlAndText' );
         }
         else{
             $message = 'This is a test email sent using the Postmark plugin.';
@@ -224,6 +232,14 @@ class Postmark_Mail
         }
         else {
 	        $settings['track_opens'] = 0;
+        }
+
+        // We validate that 'track_links' is a numeric boolean
+        if ( isset($data['track_links']) && 1 === $data['track_links'] ) {
+	        $settings['track_links'] = 1;
+        }
+        else {
+	        $settings['track_links'] = 0;
         }
 
         // Validates that 'enable_logs' is a numeric boolean and creates table for storing logs.
@@ -352,7 +368,7 @@ register_uninstall_hook( __FILE__, 'postmark_log_remove_table' );
 if ( ! function_exists( 'wp_mail' ) ) {
     $postmark = new Postmark_Mail();
 
-    if ( 1 == $postmark->settings['enabled'] ) {
+    if ( is_array($postmark->settings) && (1 == $postmark->settings['enabled']) ) {
         include( POSTMARK_DIR . '/wp-mail.php' );
     }
 }
@@ -367,6 +383,7 @@ function upgrade_completed( $upgrader_object, $options ) {
   foreach( $options['plugins'] as $plugin ) {
    if( $plugin == $pm_plugin ) {
      pm_log_create_db();
+     load_settings();
    }
   }
  }

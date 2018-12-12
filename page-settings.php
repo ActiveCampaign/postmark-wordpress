@@ -84,6 +84,13 @@ wp_nonce_field( 'postmark_nonce' );
                 </td>
             </tr>
             <tr>
+                <th><label>Track Links</label></th>
+                <td>
+                    <input type="checkbox" class="pm-track-links" value="1" />
+                    <span class="footnote">Track links in emails.</span>
+                </td>
+            </tr>
+            <tr>
                 <th><label>Enable Logs</label></th>
                 <td>
                     <input type="checkbox" class="pm-enable-logs" value="1" />
@@ -108,7 +115,7 @@ wp_nonce_field( 'postmark_nonce' );
                 <td><input type="text" class="pm-test-email-sender" value="" placeholder="sender@example.com" /></td>
             </tr>
             <tr>
-                <td colspan="2"><input type="checkbox" name="with_tracking_and_html" class="pm-test-with-opens" value="" />Send test as HTML, with Open Tracking enabled.</td>
+                <td colspan="2"><input type="checkbox" name="with_tracking_and_html" class="pm-test-with-opens" value="" />Send test as HTML, with Open and Link Tracking enabled.</td>
             </tr>
         </table>
 
@@ -131,6 +138,10 @@ wp_nonce_field( 'postmark_nonce' );
 
         // Enable open tracking (requires HTML email enabled)
         $headers['X-PM-Track-Opens'] = true;
+
+        // Enable or disable link tracking
+        // Options are None, HtmlAndText, TextOnly, or HtmlOnly
+        $headers['X-PM-Track-Links'] = 'HtmlAndText';
 
         // Send the email
         $response = wp_mail( $to, $subject, $message, $headers );

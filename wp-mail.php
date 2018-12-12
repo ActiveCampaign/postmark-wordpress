@@ -45,7 +45,8 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
         'Bcc'           => array(),
         'Reply-To'      => array(),
         'From'          => array(),
-        'X-PM-Track-Opens' => array()
+        'X-PM-Track-Opens' => array(),
+        'X-PM-TrackLinks' => array()
     );
 
     $headers_list_lowercase = array_change_key_case( $headers_list, CASE_LOWER );
@@ -146,12 +147,21 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
     }
 
     $track_opens = (int) $settings['track_opens'];
+    $track_links = (int) $settings['track_links'];
 
     if ( isset($recognized_headers['X-PM-Track-Opens'])){
         if ( $recognized_headers['X-PM-Track-Opens'] ) {
             $track_opens = 1;
         }else {
             $track_opens = 0;
+        }
+    }
+
+    if ( isset($recognized_headers['X-PM-TrackLinks'])){
+        if ( $recognized_headers['X-PM-TrackLinks'] != "none" ) {
+            $body['TrackLinks'] = $recognized_headers['X-PM-TrackLinks'];
+        }else {
+            $body['TrackLinks'] = "none";
         }
     }
 
@@ -168,6 +178,10 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 
     if ( 1 == $track_opens ) {
         $body['TrackOpens'] = 'true';
+    }
+
+    if ( 1 == $track_links ) {
+        $body['TrackLinks'] = 'HtmlAndText';
     }
 
     foreach ( $attachments as $attachment ) {
