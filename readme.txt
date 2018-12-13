@@ -88,6 +88,9 @@ And save the changes to the file.
 1. Postmark WP Plugin Settings screen.
 
 == Changelog ==
+= v1.11.1 =
+* Fixes call of non-global load_settings function during upgrade.
+
 = v1.11.0 =
 * Adds link tracking support.
 * Fixes send test with HTML/open tracking option not being honored in sent test email.

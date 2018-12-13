@@ -3,7 +3,7 @@
 Plugin Name: Postmark (Official)
 Plugin URI: https://postmarkapp.com/
 Description: Overwrites wp_mail to send emails through Postmark
-Version: 1.11.0
+Version: 1.11.1
 Author: Andrew Yates & Matt Gibbs
 */
 
@@ -13,7 +13,7 @@ class Postmark_Mail
     public static $LAST_ERROR = null;
 
     function __construct() {
-        define( 'POSTMARK_VERSION', '1.11.0' );
+        define( 'POSTMARK_VERSION', '1.11.1' );
         define( 'POSTMARK_DIR', dirname( __FILE__ ) );
         define( 'POSTMARK_URL', plugins_url( basename( POSTMARK_DIR ) ) );
 
@@ -383,7 +383,7 @@ function upgrade_completed( $upgrader_object, $options ) {
   foreach( $options['plugins'] as $plugin ) {
    if( $plugin == $pm_plugin ) {
      pm_log_create_db();
-     load_settings();
+     $postmark->load_settings();
    }
   }
  }
