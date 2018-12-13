@@ -146,8 +146,15 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
         $body['ReplyTo'] = $recognized_headers['Reply-To'];
     }
 
-    $track_opens = (int) $settings['track_opens'];
-    $track_links = (int) $settings['track_links'];
+    if (isset($settings['track_opens'])) {
+      $track_opens = (int) $settings['track_opens'];
+    }
+
+    if (isset($settings['track_links'])) {
+      $track_links = (int) $settings['track_links'];
+    } else {
+      $track_links = 0;
+    }
 
     if ( isset($recognized_headers['X-PM-Track-Opens'])){
         if ( $recognized_headers['X-PM-Track-Opens'] ) {

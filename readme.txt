@@ -88,6 +88,9 @@ And save the changes to the file.
 1. Postmark WP Plugin Settings screen.
 
 == Changelog ==
+= v1.11.2 =
+* Fixes no index error with track links check in wp_mail.
+
 = v1.11.1 =
 * Fixes call of non-global load_settings function during upgrade.
 
