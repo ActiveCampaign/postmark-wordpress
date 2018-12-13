@@ -59,6 +59,9 @@ This plugin detects HTML by checking the headers sent by other WordPress plugins
 
 ## Changelog
 
+### v1.11.2
+* Fixes no index error with track links check in wp_mail.
+
 ### v1.11.1
 * Fixes call of non-global load_settings function during upgrade.
 
