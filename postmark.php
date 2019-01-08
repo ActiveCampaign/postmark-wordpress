@@ -224,7 +224,7 @@ class Postmark_Mail
 	        $settings['test_email'] = sanitize_email($data['test_email']);
         }
         else {
-	        $settings['sender_address'] = '';
+	        $settings['test_email'] = '';
         }
 
         // We validate that 'force_html' is a numeric boolean
