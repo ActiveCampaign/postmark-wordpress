@@ -43,7 +43,8 @@ class Postmark_Mail
                 'force_html'        => get_option( 'postmark_force_html', 0 ),
                 'track_opens'       => get_option( 'postmark_trackopens', 0 ),
                 'track_links'       => get_option( 'postmark_tracklinks', 0 ),
-                'enable_logs'       => get_option( 'postmark_enable_logs', 1 )
+                'enable_logs'       => get_option( 'postmark_enable_logs', 1 ),
+                'test_email'        => get_option( 'postmark_test_email', ''),
             );
 
             update_option( 'postmark_settings', json_encode( $settings ) );
@@ -213,6 +214,14 @@ class Postmark_Mail
         // We validate that 'sender_address' is a valid email address
         if ( isset($data['sender_address']) && is_email($data['sender_address']) ) {
 	        $settings['sender_address'] = sanitize_email($data['sender_address']);
+        }
+        else {
+	        $settings['sender_address'] = '';
+        }
+
+        // We validate that 'test_email' is a valid email address
+        if ( isset($data['test_email']) && is_email($data['test_email']) ) {
+	        $settings['test_email'] = sanitize_email($data['test_email']);
         }
         else {
 	        $settings['sender_address'] = '';
