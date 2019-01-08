@@ -97,6 +97,13 @@ wp_nonce_field( 'postmark_nonce' );
                     <span class="footnote">Log send attempts for historical/troubleshooting purposes (Recommended).</span>
                 </td>
             </tr>
+            <tr>
+                <th><label>Test Recipient</label></th>
+                <td>
+                    <input type="email" class="pm-test-recipient-address" value="" />
+                    <div class="footnote">All emails sent through Postmark will be delievered to this email. Useful for staging and development environments.</div>
+                </td>
+            </tr>
         </table>
 
         <div class="submit">
