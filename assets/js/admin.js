@@ -5,7 +5,7 @@
         $('.pm-enabled').prop('checked', settings.enabled);
         $('.pm-api-key').val(settings.api_key);
         $('.pm-sender-address').val(settings.sender_address);
-      $('.pm-test-recipient-address').val(settings.override_recipient_address);
+        $('.pm-override-recipient-address').val(settings.override_recipient_address);
         $('.pm-force-html').prop('checked', settings.force_html);
         $('.pm-track-opens').prop('checked', settings.track_opens);
         $('.pm-enable-logs').prop('checked', settings.enable_logs);
