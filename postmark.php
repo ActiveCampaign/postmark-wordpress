@@ -44,7 +44,7 @@ class Postmark_Mail
                 'track_opens'       => get_option( 'postmark_trackopens', 0 ),
                 'track_links'       => get_option( 'postmark_tracklinks', 0 ),
                 'enable_logs'       => get_option( 'postmark_enable_logs', 1 ),
-                'test_email'        => get_option( 'postmark_test_email', ''),
+                'override_recipient_address' => get_option( 'postmark_override_recipient_address', '' ),
             );
 
             update_option( 'postmark_settings', json_encode( $settings ) );
@@ -219,12 +219,12 @@ class Postmark_Mail
 	        $settings['sender_address'] = '';
         }
 
-        // We validate that 'test_email' is a valid email address
-        if ( isset($data['test_email']) && is_email($data['test_email']) ) {
-	        $settings['test_email'] = sanitize_email($data['test_email']);
+        // We validate that 'override_recipient_address' is a valid email address
+        if ( isset($data['override_recipient_address']) && is_email($data['override_recipient_address']) ) {
+	        $settings['override_recipient_address'] = sanitize_email($data['override_recipient_address']);
         }
         else {
-	        $settings['test_email'] = '';
+	        $settings['override_recipient_address'] = '';
         }
 
         // We validate that 'force_html' is a numeric boolean
