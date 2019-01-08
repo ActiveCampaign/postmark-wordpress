@@ -127,9 +127,9 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
         $from = $recognized_headers['From'];
     }
 
-    // If test_email value is set replace $to with our test recipients
-    if ( ! empty( $settings['test_email'] ) ) {
-        $to = $settings['test_email'];
+    // If override_recipient_address value is set replace $to with our test recipients
+    if ( ! empty( $settings['override_recipient_address'] ) ) {
+        $to = $settings['override_recipient_address'];
     }
 
     $body = array(
