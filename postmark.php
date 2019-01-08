@@ -105,25 +105,6 @@ class Postmark_Mail
        wp_die();
     }
 
-    /**
-     * Accepts array or emails or a single email, checks if the given
-     * email(s) are set and valid email addresses. Returns true if all emails
-     * are valid and false if at least one email is invalid.
-     */
-    function verify_email_addresses($emails) {
-        if ( is_array($emails) ) {
-            foreach ($emails as $email) {
-                if ( ! isset($email) || ! is_email($email) ) {
-                    return false;
-                }
-            }
-        } else {
-            return isset($emails) && is_email($emails);
-        }
-
-        return true;
-    }
-
     function send_test_email() {
 	    // We check the wp_nonce.
 	    if ( ! isset($_POST['_wpnonce']) || ! wp_verify_nonce( $_POST['_wpnonce'], 'postmark_nonce' ) ) {
