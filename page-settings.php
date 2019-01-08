@@ -98,10 +98,10 @@ wp_nonce_field( 'postmark_nonce' );
                 </td>
             </tr>
             <tr>
-                <th><label>Test Recipient</label></th>
+                <th><label>Override Recipient</label></th>
                 <td>
-                    <input type="email" class="pm-test-recipient-address" value="" />
-                    <div class="footnote">All emails sent through Postmark will be delievered to this email. Useful for staging and development environments.</div>
+                    <input type="email" class="pm-override-recipient-address" value="" />
+                    <div class="footnote">All emails sent through Postmark will be automatically be delievered to address. Useful for staging and development environments where emails should not be sent to real users.</div>
                 </td>
             </tr>
         </table>
