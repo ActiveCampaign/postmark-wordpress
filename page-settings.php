@@ -101,7 +101,7 @@ wp_nonce_field( 'postmark_nonce' );
                 <th><label>Override Recipient</label></th>
                 <td>
                     <input type="email" class="pm-override-recipient-address" value="" />
-                    <div class="footnote">All emails sent through Postmark will be automatically delivered to this address (or comma separated addresses). Useful for environments, e.g. staging or development, where emails should not be sent to real users.</div>
+                    <div class="footnote">All emails sent through Postmark will be automatically delivered to this address instead of the original recipient(s). Useful for environments, e.g. staging or development, where emails should not be sent to real users.</div>
                 </td>
             </tr>
         </table>
