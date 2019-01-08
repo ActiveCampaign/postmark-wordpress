@@ -18,13 +18,6 @@ function postmark_determine_mime_content_type( $filename ){
 
 function wp_mail( $to, $subject, $message, $headers = '', $attachments = array() ) {
 
-    // If test_email value is set replace $to with our test recipients
-    $testRecipients = get_option( 'postmark_test_email', '');
-
-    if ( ! empty($testRecipients) ) {
-        $to = $testRecipients;
-    }
-
     // Compact the input, apply the filters, and extract them back out
     extract( apply_filters( 'wp_mail', compact( 'to', 'subject', 'message', 'headers', 'attachments' ) ) );
 
@@ -132,6 +125,11 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 
     if ( isset( $recognized_headers['From'] ) ) {
         $from = $recognized_headers['From'];
+    }
+
+    // If test_email value is set replace $to with our test recipients
+    if ( ! empty( $settings['test_email'] ) ) {
+        $to = $settings['test_email'];
     }
 
     $body = array(
