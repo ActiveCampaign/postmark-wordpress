@@ -3,9 +3,17 @@
 Plugin Name: Postmark (Official)
 Plugin URI: https://postmarkapp.com/
 Description: Overwrites wp_mail to send emails through Postmark
-Version: 1.11.2
+Version: 1.12.0
 Author: Andrew Yates & Matt Gibbs
 */
+
+// Adds Postmark WP CLI commands if WP CLI
+// is available.
+if ( defined( 'WP_CLI' ) && WP_CLI ) {
+
+  include( plugin_dir_path( __FILE__ ) . 'pm-cli.php');
+
+}
 
 class Postmark_Mail
 {
@@ -13,7 +21,7 @@ class Postmark_Mail
     public static $LAST_ERROR = null;
 
     function __construct() {
-        define( 'POSTMARK_VERSION', '1.11.2' );
+        define( 'POSTMARK_VERSION', '1.12.0' );
         define( 'POSTMARK_DIR', dirname( __FILE__ ) );
         define( 'POSTMARK_URL', plugins_url( basename( POSTMARK_DIR ) ) );
 
@@ -51,10 +59,13 @@ class Postmark_Mail
             return $settings;
         }
 
-        if (is_array($settings) && !isset($settings['track_links'])) {
+        if (is_array( $settings ) && !isset( $settings['track_links'] ) ) {
+
           $settings['track_links'] = 0;
+
           update_option( 'postmark_settings', json_encode( $settings ) );
           return $settings;
+
         }
 
         return json_decode( $settings, true );
@@ -74,23 +85,23 @@ class Postmark_Mail
       $table = $wpdb->prefix . "postmark_log";
 
       // Checks the wp_nonce.
-      if ( ! isset($_POST['_wpnonce']) || ! wp_verify_nonce( $_POST['_wpnonce'], 'postmark_nonce' ) ) {
-        wp_die(__('We were unable to verify this request, please reload the page and try again.'));
+      if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], 'postmark_nonce' ) ) {
+        wp_die(__( 'We were unable to verify this request, please reload the page and try again.' ) );
       }
 
       // Retrieves more logs from logs table using offset and prepare() to prevent SQL injections.
-      $result = $wpdb->get_results( $wpdb->prepare("SELECT * FROM $table ORDER BY log_entry_date DESC LIMIT %d OFFSET %d", 10, $_POST['offset']));
+      $result = $wpdb->get_results( $wpdb->prepare("SELECT * FROM $table ORDER BY log_entry_date DESC LIMIT %d OFFSET %d", 10, $_POST['offset'] ) );
 
       $has_more = true;
 
-      if ($result->length < 10) {
+      if ( $result->length < 10 ) {
         $has_more = false;
       }
 
       // Iterates through the retrieved logs and builds HTML rows for each one, to be added to the logs table in the UI.
-      foreach($result as $row)
+      foreach( $result as $row )
        {
-         $new_rows_html = $new_rows_html . "<tr><td align=\"center\">" . date('Y-m-d h:i A', strtotime($row->log_entry_date)) . "</td><td align=\"center\">  " . $row->fromaddress . "</td><td align=\"center\">  " . $row->toaddress . "</td><td align=\"center\">  " . $row->subject . "</td><td align=\"center\">  " . $row->response . "</td></tr>";
+         $new_rows_html = $new_rows_html . "<tr><td align=\"center\">" . date('Y-m-d h:i A', strtotime( $row->log_entry_date ) ) . "</td><td align=\"center\">  " . $row->fromaddress . "</td><td align=\"center\">  " . $row->toaddress . "</td><td align=\"center\">  " . $row->subject . "</td><td align=\"center\">  " . $row->response . "</td></tr>";
        }
 
        $response = array(
@@ -99,19 +110,19 @@ class Postmark_Mail
          'has_more' => $has_more
        );
 
-       echo json_encode($response);
+       echo json_encode( $response );
 
        wp_die();
     }
 
     function send_test_email() {
 	    // We check the wp_nonce.
-	    if ( ! isset($_POST['_wpnonce']) || ! wp_verify_nonce( $_POST['_wpnonce'], 'postmark_nonce' ) ) {
-		    wp_die(__('We were unable to verify this request, please reload the page and try again.'));
+	    if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], 'postmark_nonce' ) ) {
+		    wp_die(__( 'We were unable to verify this request, please reload the page and try again.' ) );
 	    }
 
 	    // We check that the current user is allowed to update settings.
-	    if ( ! current_user_can('manage_options') ) {
+	    if ( ! current_user_can( 'manage_options' ) ) {
 		    wp_die(__('We were unable to verify this request, please reload the page and try again.'));
 	    }
 
@@ -124,7 +135,7 @@ class Postmark_Mail
         }
 
         // We validate that 'with_tracking_and_html' is a numeric boolean
-        if ( isset($_POST['with_tracking_and_html']) && 1 === $_POST['with_tracking_and_html'] ) {
+        if ( isset( $_POST['with_tracking_and_html'] ) && 1 === $_POST['with_tracking_and_html'] ) {
 	        $with_tracking_and_html = true;
         }
         else {
@@ -140,7 +151,9 @@ class Postmark_Mail
         }
 
         $subject = 'Postmark Test: ' . get_bloginfo( 'name' );
+
         $override_from = $_POST['override_from_address'];
+
         $headers = array();
 
         if ( isset($_POST['with_tracking_and_html']) && $_POST['with_tracking_and_html'] ) {

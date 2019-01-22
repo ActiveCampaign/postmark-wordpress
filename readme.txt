@@ -88,6 +88,9 @@ And save the changes to the file.
 1. Postmark WP Plugin Settings screen.
 
 == Changelog ==
+= v1.12.0 =
+* Adds Postmark commands to WP CLI
+
 = v1.11.2 =
 * Fixes no index error with track links check in wp_mail.
 
