@@ -107,8 +107,11 @@ class PostmarkPluginCLI {
    * [--body=<body>]
    * : Test email body content
    *
-   * [--opentracking]
+   * [--trackopens]
    * : Use open tracking.
+   *
+   * [--tracklinks=<tracklinks>]
+   * : Use link tracking. Options are "None", "HtmlOnly", "TextOnly", "HtmlAndText"
    *
    * ## EXAMPLES
    * $ wp postmark send_test_email recipient@domain.com --from="senderoverride@domain.com" --subject="my custom subject" --body="<b>this is some test html</b>" --opentracking="true"
@@ -163,13 +166,24 @@ class PostmarkPluginCLI {
     }
 
     // Sets open tracking flag.
-    if ( isset( $assoc_args['opentracking'] ) ) {
+    if ( isset( $assoc_args['trackopens'] ) ) {
 
       $headers['X-PM-Track-Opens'] = true;
 
     } else {
 
       $headers['X-PM-Track-Opens'] = false;
+
+    }
+
+    // Sets link tracking flag.
+    if ( isset( $assoc_args['tracklinks'] ) ) {
+
+      $headers['X-PM-Track-Links'] = $assoc_args['tracklinks'];
+
+    } else {
+
+      $headers['X-PM-Track-Links'] = "None";
 
     }
 
