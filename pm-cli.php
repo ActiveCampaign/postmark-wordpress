@@ -1,6 +1,6 @@
 <?php
 
-if (!defined('ABSPATH')) {
+if ( !defined( 'ABSPATH' ) ) {
     die();
 }
 
@@ -87,11 +87,11 @@ class PostmarkPluginCLI {
   }
 
   /**********************************************
-  ************** Send a Test Email **************
+  ****************** Email API ******************
   **********************************************/
 
   /**
-   * Send a test email
+   * Sends a test email.
    *
    * ## OPTIONS
    *
@@ -192,6 +192,78 @@ class PostmarkPluginCLI {
         WP_CLI::warning('Response: ' . $dump);
     }
   }
+
+  /**
+   * Sends a batch of emails.
+   *
+   * ## OPTIONS
+   * <jsonfilename>
+   * : File containing JSON for each message to send.
+   *
+   * [--csv]
+   * : Output batch results to a csv.
+   *
+   * ## EXAMPLES
+   * $ wp postmark send_batch mybatchdata.json
+   *
+   */
+  public function send_batch( $args, $assoc_args ) {
+
+    if ( !check_server_token_is_set() ) {
+      return;
+    }
+
+    $url = "https://api.postmarkapp.com/email/batch";
+
+    // Get file contents to use as JSON body.
+    $file = file_get_contents( $args[0], true );
+
+    // Sends batch of emails using the messages in file.
+    $response = $this->postmark_api_call( 'post', $url, $file, null );
+
+    $body = json_decode( $response['body'], true );
+
+    // Successful call
+    if ( wp_remote_retrieve_response_code( $response ) == 200 ) {
+
+      $fields = array( 'Recipient', 'Result', 'Message ID' );
+
+      $data = array();
+
+      foreach( $body as $send_result ) {
+
+        array_push( $data, array(
+          "Recipient" => $send_result['To'],
+          "Result" => $send_result['MessageID'] ? "Sent" : "Failed - {$send_result['Message']}",
+          "Message ID" => $send_result['MessageID'] ? $send_result['MessageID'] : ""
+        ) );
+
+      }
+
+      // Outputs stats in a table.
+      WP_CLI\Utils\format_items( 'table', $data, $fields );
+
+      if ( $assoc_args['csv'] ) {
+
+        make_csv( "Recipient, Result, Message ID\n", $body,  'batch_send' );
+
+      }
+
+    // Non 200 API response
+    } else {
+
+      $errorMessage = [];
+
+      array_push( $errorMessage, "Postmark API Error Code: " . $body['ErrorCode'] );
+
+      array_push( $errorMessage, "Postmark Error Message: " . $body['Message'] );
+
+      // Displays Postmark API Error.
+      WP_CLI::error_multi_line( $errorMessage );
+
+    }
+
+  } // End Email API
 
   /**********************************************
   ***************** Bounces API *****************
@@ -1140,6 +1212,7 @@ class PostmarkPluginCLI {
    *
    * ## EXAMPLES
    * $ wp postmark validate_template <subject> --htmlbody=htmlfilename.html
+   *
    */
   public function validate_template( $args, $assoc_args) {
 
@@ -1204,26 +1277,24 @@ class PostmarkPluginCLI {
     $file = file_get_contents( $args[0], true );
 
     // Sends batch of emails using the template(s).
-    $response = $this->postmark_api_call('post', $url, $file, null );
-
-    WP_CLI::log("Response HTTP Code was: " . wp_remote_retrieve_response_code( $response ) );
+    $response = $this->postmark_api_call( 'post', $url, $file, null );
 
     $body = json_decode( $response['body'], true );
 
     // Successful call
     if ( wp_remote_retrieve_response_code( $response ) == 200 ) {
 
-      $fields = array('Recipient', 'Result', 'Message ID');
+      $fields = array( 'Recipient', 'Result', 'Message ID' );
 
       $data = array();
 
-      foreach($body as $send_result) {
+      foreach( $body as $send_result ) {
 
-        array_push($data, array(
+        array_push( $data, array(
           "Recipient" => $send_result['To'],
           "Result" => $send_result['MessageID'] ? "Sent" : "Failed - {$send_result['Message']}",
           "Message ID" => $send_result['MessageID'] ? $send_result['MessageID'] : ""
-        ));
+        ) );
 
       }
 
@@ -1232,7 +1303,7 @@ class PostmarkPluginCLI {
 
       if ( $assoc_args['csv'] ) {
 
-        make_csv("Recipient, Result, Message ID\n", $body,  'templated_batch_send');
+        make_csv( "Recipient, Result, Message ID\n", $body,  'templated_batch_send' );
 
       }
 
@@ -3881,7 +3952,23 @@ function make_csv( $csv_headers, $body, $type ) {
       break;
 
     case "templated_batch_send":
-      foreach ( $body as $send_result) {
+      foreach ( $body as $send_result ) {
+
+        $recipients = $send_result['To'];
+
+        $status = $send_result['MessageID'] ? "Sent" : "Failed - " . preg_replace( "/\r|\n/", " ", $send_result['Message'] );
+
+        $message_id = $send_result['MessageID'] ? $send_result['MessageID'] : "";
+
+        $csv_data  .= $recipients .','
+        . $status . ","
+        . $message_id . "\n";
+
+      }
+      break;
+
+    case "batch_send":
+      foreach ( $body as $send_result ) {
 
         $recipients = $send_result['To'];
 
