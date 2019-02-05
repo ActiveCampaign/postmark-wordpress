@@ -1,28 +1,4 @@
-<script>
-  var postmark = postmark || {};
-  postmark.settings = <?php echo json_encode( $this->settings ); ?>;
-</script>
-<?php
-
-// Registers script for JS.
-wp_register_script('pm-js',
-  plugins_url( 'assets/js/admin.js', __FILE__ )
-);
-
-// Enqueues script for JS.
-wp_enqueue_script( 'pm-js' );
-
-// Registers script for CSS.
-wp_register_style( 'pm-styles',
-  plugins_url( 'assets/css/admin.css', __FILE__ )
-);
-
-// Enqueues script for CSS.
-wp_enqueue_style( 'pm-styles' );
-
-wp_nonce_field( 'postmark_nonce' );
-
-?>
+<?php wp_nonce_field( 'postmark_nonce' ); ?>
 <div class="wrap">
     <div class="logo-bar">
         <a href="https://postmarkapp.com/" target="_blank"><img src="<?php echo POSTMARK_URL; ?>/assets/images/logo.png" width="130" height="21" alt="" /></a>

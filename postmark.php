@@ -25,6 +25,7 @@ class Postmark_Mail
 
     function init() {
         add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
         add_action( 'wp_ajax_postmark_save', array( $this, 'save_settings' ) );
         add_action( 'wp_ajax_postmark_test', array( $this, 'send_test_email' ) );
         add_action( 'wp_ajax_postmark_load_more_logs', array( $this, 'postmark_load_more_logs' ) );
@@ -63,6 +64,33 @@ class Postmark_Mail
     function admin_menu() {
         add_options_page( 'Postmark', 'Postmark', 'manage_options', 'pm_admin', array( $this, 'settings_html' ) );
     }
+
+	function enqueue_assets( $hook ) {
+
+		$pages = array( 'settings_page_pm_admin' );
+
+		if ( ! in_array( $hook, $pages ) ) {
+			return;
+		}
+
+		add_action( 'admin_print_footer_scripts', array( $this, 'admin_inline_js' ) );
+
+		// Registers script for JS.
+		wp_register_script('pm-js', plugins_url( 'assets/js/admin.js', __FILE__ ), array(), POSTMARK_VERSION );
+
+		// Enqueues script for JS.
+		wp_enqueue_script( 'pm-js' );
+
+		// Registers script for CSS.
+		wp_register_style( 'pm-styles', plugins_url( 'assets/css/admin.css', __FILE__ ), array(), POSTMARK_VERSION );
+
+		// Enqueues script for CSS.
+		wp_enqueue_style( 'pm-styles' );
+    }
+
+	function admin_inline_js() {
+		echo "<script type=\"text/javascript\">var postmark = postmark || {}; postmark.settings = " . json_encode( $this->settings ) . ";</script>";
+	}
 
     // Retrieves additional logs.
     function postmark_load_more_logs() {
