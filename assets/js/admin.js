@@ -7,6 +7,7 @@
         $('.pm-sender-address').val(settings.sender_address);
         $('.pm-force-html').prop('checked', settings.force_html);
         $('.pm-track-opens').prop('checked', settings.track_opens);
+        $('.pm-track-links').prop('checked', settings.track_links);
         $('.pm-enable-logs').prop('checked', settings.enable_logs);
 
         // save
@@ -17,6 +18,7 @@
                 'sender_address': $('.pm-sender-address').val(),
                 'force_html': $('.pm-force-html').is(':checked') ? 1 : 0,
                 'track_opens': $('.pm-track-opens').is(':checked') ? 1 : 0,
+                'track_links': $('.pm-track-links').is(':checked') ? 1 : 0,
                 'enable_logs': $('.pm-enable-logs').is(':checked') ? 1 : 0
             };
 
