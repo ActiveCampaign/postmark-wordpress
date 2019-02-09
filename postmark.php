@@ -15,7 +15,7 @@ class Postmark_Mail
     function __construct() {
         define( 'POSTMARK_VERSION', '1.11.2' );
         define( 'POSTMARK_DIR', dirname( __FILE__ ) );
-        define( 'POSTMARK_URL', plugins_url( basename( POSTMARK_DIR ) ) );
+		define( 'POSTMARK_URL', plugins_url( '', __FILE__ ) );
 
         add_filter( 'init', array( $this, 'init' ) );
 
