@@ -4,41 +4,50 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die();
 }
 
-// For account level commands, define POSTMARK_ACCOUNT_TOKEN in wp-config.php.
+// To make account level commands, define POSTMARK_ACCOUNT_TOKEN in wp-config.php.
 
 class PostmarkPluginCLI {
 
-	public function __construct() {
+	const POSTMARK_API_BASE_URL = 'https://api.postmarkapp.com/';
 
-		$this->postmark_settings = json_decode( get_option( 'postmark_settings' ), true );
+	public function __construct() {
 
 	}
 
-	// Helper function for making API calls to Postmark APIs.
-	public function postmark_api_call( $method, $url, $body, $account_token ) {
+	// Helper function for making API calls to Postmark APIs that require using a server token.
+	public function server_api_call( $method, $path, $body ) {
 
-		if ( isset( $account_token ) ) {
+		$url = Self::POSTMARK_API_BASE_URL . $path;
 
-			$headers = array( 'X-Postmark-Account-Token' => $account_token );
-
-		} else {
-
-			$headers = array(
-				'X-Postmark-Server-Token' => $this->postmark_settings['api_key'],
-			);
-
+		if ( !postmark_cli_check_server_token_is_set() ) {
+			WP_CLI::error('You must set your server API token before attempting to use this command.');
+			return;
 		}
+
+		$postmark_options =  json_decode(get_option( 'postmark_settings' ));
+
+		$headers = array(
+			'X-Postmark-Server-Token' => $postmark_options->api_key
+		);
+
+		$method = strtoupper( $method );
 
 		switch ( $method ) {
 
 			// GET
-			case 'get':
+			case "GET":
+
 				$headers['Accept'] = 'application/json';
 
-				return wp_remote_get( $url, array( 'headers' => $headers ) );
+				$options = array(
+					'method'  => 'GET',
+					'headers' => $headers
+				);
+				break;
 
 			// POST
-			case 'post':
+			case "POST":
+				$headers['Accept']       = 'application/json';
 				$headers['Content-Type'] = 'application/json';
 
 				$options = array(
@@ -52,24 +61,25 @@ class PostmarkPluginCLI {
 
 					'body'     => $body,
 				);
-
-				return wp_remote_post( $url, $options );
+				break;
 
 			// PUT
-			case 'put':
+			case "PUT":
 				$headers['Accept']       = 'application/json';
 				$headers['Content-Type'] = 'application/json';
 
 				$options = array(
 					'method'  => 'PUT',
+					// Waits for API response.
+					'blocking' => true,
 					'headers' => $headers,
 					'body'    => $body,
 				);
 
-				return wp_remote_request( $url, $options );
+				break;
 
 			// DELETE
-			case 'delete':
+			case "DELETE":
 				$headers['Accept'] = 'application/json';
 
 				$options = array(
@@ -77,9 +87,106 @@ class PostmarkPluginCLI {
 					'headers' => $headers,
 				);
 
-				// Returns resulting response from Postmark API.
-				return wp_remote_request( $url, $options );
+				break;
+
+
+		} // end HTTP method switch
+
+		// Returns resulting response from Postmark API.
+		$resp = wp_remote_request( esc_url_raw( $url ), $options );
+
+		//Checks for success, returns response.
+	  if( !is_wp_error( $resp ) ) {
+	    return $resp;
+	  } else {
+	    return false;
+	  }
+
+	}
+
+	// Helper function for making API calls to Postmark APIs that require using a server token.
+	public function account_api_call( $method, $path, $body ) {
+
+		$url = Self::POSTMARK_API_BASE_URL . $path;
+
+		if (!postmark_cli_check_account_token_is_set() ) {
+			WP_CLI::error( __('You need to set your account api token in your wp-config file before using this command.' ) );
+			return;
 		}
+
+		$headers = array( 'X-Postmark-Account-Token' => POSTMARK_ACCOUNT_TOKEN );
+
+		$method = strtoupper( $method );
+
+		switch ( $method ) {
+
+			// GET
+			case "GET":
+
+				$headers['Accept'] = 'application/json';
+
+				$options = array(
+					'method'  => 'GET',
+					'headers' => $headers
+				);
+				break;
+
+			// POST
+			case "POST":
+				$headers['Accept']       = 'application/json';
+				$headers['Content-Type'] = 'application/json';
+
+				$options = array(
+
+					'method'   => 'POST',
+
+					// Waits for API response.
+					'blocking' => true,
+
+					'headers'  => $headers,
+
+					'body'     => $body,
+				);
+				break;
+
+			// PUT
+			case "PUT":
+				$headers['Accept']       = 'application/json';
+				$headers['Content-Type'] = 'application/json';
+
+				$options = array(
+					'method'  => 'PUT',
+					// Waits for API response.
+					'blocking' => true,
+					'headers' => $headers,
+					'body'    => $body,
+				);
+
+				break;
+
+			// DELETE
+			case "DELETE":
+				$headers['Accept'] = 'application/json';
+
+				$options = array(
+					'method'  => 'DELETE',
+					'headers' => $headers,
+				);
+
+				break;
+
+
+		} // end HTTP method switch
+
+		// Returns resulting response from Postmark API.
+		$resp = wp_remote_request( esc_url_raw( $url ), $options );
+
+		//Checks for success, returns response.
+	  if( !is_wp_error( $resp ) ) {
+	    return $resp;
+	  } else {
+	    return false;
+	  }
 
 	}
 
@@ -146,7 +253,7 @@ class PostmarkPluginCLI {
 			// Uses a default subject if not specified.
 		} else {
 
-			$subject = 'Postmark Plugin WP-CLI Test: ' . get_bloginfo( 'name' );
+			$subject = sprintf( __( 'Postmark Plugin WP-CLI Test: %1$s' ), get_bloginfo( 'name' ) );
 
 		}
 
@@ -158,7 +265,7 @@ class PostmarkPluginCLI {
 			// Uses a default body if not specified.
 		} else {
 
-			$message = 'This is a test email generated from the Postmark for WordPress plugin using the WP-CLI.';
+			$message = __('This is a test email generated from the Postmark for WordPress plugin using the WP-CLI.');
 
 		}
 
@@ -176,11 +283,15 @@ class PostmarkPluginCLI {
 		// Sets link tracking flag.
 		if ( isset( $assoc_args['tracklinks'] ) ) {
 
+			// Checks for correct link tracking values.
+			if( !in_array( strtolower( $assoc_args['tracklinks'] ), array( 'none', 'htmlonly', 'textonly', 'htmlandtext' ) ) ) {
+				// Discard incorrect values for track links option.
+				WP_CLI::warning( __( 'Incorrect track links value received. Setting to none (no link tracking). Correct options are none, htmlonly, textonly, or htmlandtext' ) );
+
+				$assoc_args['tracklinks'] = 'None';
+			}
+
 			$headers['X-PM-Track-Links'] = $assoc_args['tracklinks'];
-
-		} else {
-
-			$headers['X-PM-Track-Links'] = 'None';
 
 		}
 
@@ -191,15 +302,15 @@ class PostmarkPluginCLI {
 		if ( false !== $response ) {
 
 			WP_CLI::success(
-				'Successfully sent a test email to ' . $to . '.'
+				sprintf( __( 'Successfully sent a test email to %1$s.' ), $to )
 			);
 		} else {
 
 			$dump = print_r( Postmark_Mail::$last_error, true );
 
-			WP_CLI::warning( 'Test send failed.' );
+			WP_CLI::warning( __('Test send failed.') );
 
-			WP_CLI::warning( 'Response: ' . $dump );
+			WP_CLI::warning( sprintf( __('Response: %1$s', $dump ) ) );
 		}
 	}
 
@@ -219,24 +330,20 @@ class PostmarkPluginCLI {
 	 */
 	public function send_batch( $args, $assoc_args ) {
 
-		if ( ! check_server_token_is_set() ) {
-			return;
-		}
-
-		$url = 'https://api.postmarkapp.com/email/batch';
+		$path = 'email/batch';
 
 		// Get file contents to use as JSON body.
 		$file = file_get_contents( $args[0], true );
 
 		// Sends batch of emails using the messages in file.
-		$response = $this->postmark_api_call( 'post', $url, $file, null );
+		$response = $this->server_api_call( 'post', $path, $file );
 
-		$body = json_decode( $response['body'], true );
+		$body = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		// Successful call
 		if ( 200 === wp_remote_retrieve_response_code( $response ) ) {
 
-			$fields = array( 'Recipient', 'Result', 'Message ID' );
+			$fields = array( __( 'Recipient' ), __( 'Result' ), __( 'Message ID' ) );
 
 			$data = array();
 
@@ -245,9 +352,9 @@ class PostmarkPluginCLI {
 				array_push(
 					$data,
 					array(
-						'Recipient'  => $send_result['To'],
-						'Result'     => $send_result['MessageID'] ? 'Sent' : "Failed - {$send_result['Message']}",
-						'Message ID' => $send_result['MessageID'] ? $send_result['MessageID'] : '',
+						__( 'Recipient' )  => $send_result['To'],
+						__( 'Result' )     => $send_result['MessageID'] ? 'Sent' : "Failed - {$send_result['Message']}",
+						__( 'Message ID' ) => $send_result['MessageID'] ? $send_result['MessageID'] : '',
 					)
 				);
 
@@ -258,21 +365,12 @@ class PostmarkPluginCLI {
 
 			if ( isset( $assoc_args['csv'] ) ) {
 
-				make_csv( "Recipient, Result, Message ID\n", $body, 'batch_send' );
+				postmark_cli_make_csv( array( __( "Recipient" ), __( "Result" ), __( "Message ID" ) ), $body, 'batch_send' );
 
 			}
-
-			// Non 200 API response
 		} else {
 
-			$error_message = [];
-
-			array_push( $error_message, 'Postmark API Error Code: ' . $body['ErrorCode'] );
-
-			array_push( $error_message, 'Postmark Error Message: ' . $body['Message'] );
-
-			// Displays Postmark API Error.
-			WP_CLI::error_multi_line( $error_message );
+			postmark_cli_handle_api_error( $response );
 
 		}
 
@@ -283,7 +381,7 @@ class PostmarkPluginCLI {
 	**********************************************/
 
 	/**
-	 * Retrieves delivery stats
+	 * Retrieves delivery stats.
 	 *
 	 *
 	 * ## OPTIONS
@@ -295,21 +393,17 @@ class PostmarkPluginCLI {
 	 */
 	public function get_delivery_stats( $args, $assoc_args ) {
 
-		if ( ! check_server_token_is_set() ) {
-			return;
-		}
-
-		$url = 'https://api.postmarkapp.com/deliverystats';
+		$path = 'deliverystats';
 
 		// Retrieves delivery stats
-		$response = $this->postmark_api_call( 'get', $url, null, null );
+		$response = $this->server_api_call( 'get', $path, null );
 
 		$body = json_decode( $response['body'], true );
 
 		// Successful call
-		if ( is_array( $response ) && 200 === wp_remote_retrieve_response_code( $response ) ) {
+		if ( 200 === wp_remote_retrieve_response_code( $response ) ) {
 
-			$fields = array( 'Type', 'Name', 'Count' );
+			$fields = array( __( 'Type' ), __( 'Name' ), __( 'Count' ) );
 
 			$data = array();
 
@@ -318,9 +412,9 @@ class PostmarkPluginCLI {
 				array_push(
 					$data,
 					array(
-						'Type'  => $bounce['Type'],
-						'Name'  => $bounce['Name'],
-						'Count' => $bounce['Count'],
+						__( 'Type' )  => $bounce['Type'],
+						__( 'Name' )  => $bounce['Name'],
+						__( 'Count' ) => $bounce['Count'],
 					)
 				);
 			}
@@ -330,21 +424,15 @@ class PostmarkPluginCLI {
 
 			if ( isset( $assoc_args['csv'] ) ) {
 
-				make_csv( "Type, Name, Count\n", $body, 'delivery_stats' );
+				postmark_cli_make_csv( array( __( "Type" ), __( "Name" ), __( "Count" ) ), $body, 'delivery_stats' );
 
 			}
 
 			// Non 200 API response
 		} else {
 
-			$error_message = [];
+			postmark_cli_handle_api_error( $response );
 
-			array_push( $error_message, 'Postmark API Error Code: ' . $body['ErrorCode'] );
-
-			array_push( $error_message, 'Postmark Error Message: ' . $body['Message'] );
-
-			// Displays Postmark API Error.
-			WP_CLI::error_multi_line( $error_message );
 		}
 
 	}
@@ -392,161 +480,27 @@ class PostmarkPluginCLI {
 	 */
 	public function get_bounces( $args, $assoc_args ) {
 
-		if ( ! check_server_token_is_set() ) {
-			return;
-		}
-		// Checks for a count parameter and uses it if set.
-		if ( isset( $assoc_args['count'] ) && is_int( $assoc_args['count'] ) && $assoc_args['count'] < 501 && $assoc_args['count'] > 0 ) {
+		$path = 'bounces';
 
-			$count = $assoc_args['count'];
-
-			// Uses 500 for default count if count not specified.
-		} elseif ( ! isset( $assoc_args['count'] ) ) {
-
-			$count = 500;
-
+		if ( !isset( $assoc_args['count'] ) ) {
+			$assoc_args['count'] = 500;
 		}
 
-		// Checks for an offset parameter and uses it if set.
-		if ( isset( $assoc_args['offset'] ) && is_int( $assoc_args['offset'] ) ) {
-
-			$offset = $assoc_args['offset'];
-
-			// Uses 0 for default offset if offset not specified.
-		} elseif ( ! isset( $assoc_args['offset'] ) ) {
-
-			$offset = 0;
-
+		if ( !isset( $assoc_args['offset'] ) ) {
+			$assoc_args['offset'] = 0;
 		}
 
-		// Checks if a type was specified and uses it.
-		if ( isset( $assoc_args['type'] ) ) {
-
-			$type = $assoc_args['type'];
-
-		}
-
-		// Checks if inactive was specified and uses it.
-		if ( isset( $assoc_args['inactive'] ) ) {
-
-			$inactive = $assoc_args['inactive'];
-
-		}
-
-		// Checks if emailfilter was specified and uses it.
-		if ( isset( $assoc_args['emailfilter'] ) ) {
-
-			if ( is_email( $assoc_args['emailfilter'] ) ) {
-
-				$email_filter = sanitize_email( $assoc_args['emailfilter'] );
-
-			} else {
-
-				WP_CLI::error( 'emailfilter param not a valid email address.' );
-
-			}
-		}
-
-		// Checks if tag was specified and uses it.
-		if ( isset( $assoc_args['tag'] ) ) {
-
-			$tag = $assoc_args['tag'];
-
-		}
-
-		// Checks if messageID was specified and uses it.
-		if ( isset( $assoc_args['messageid'] ) ) {
-
-			$message_id = $assoc_args['messageid'];
-
-		}
-
-		// Checks if fromdate was specified and uses it.
-		if ( isset( $assoc_args['fromdate'] ) ) {
-
-			$fromdate = $assoc_args['fromdate'];
-
-		}
-
-		// Checks if todate was specified and uses it.
-		if ( isset( $assoc_args['todate'] ) ) {
-
-			$todate = $assoc_args['todate'];
-
-		}
-
-		$url = 'https://api.postmarkapp.com/bounces';
-
-		if ( isset( $count ) ) {
-
-			$url .= '?count=' . $count;
-
-		} else {
-
-			$url .= '?count=' . 500;
-
-		}
-
-		if ( isset( $offset ) ) {
-
-			$url .= '&offset=' . $offset;
-
-		} else {
-
-			$url .= '&offset=' . 0;
-
-		}
-
-		if ( isset( $type ) ) {
-
-			$url .= '&type=' . $type;
-		}
-
-		if ( isset( $inactive ) ) {
-
-			$url .= '&inactive=' . $inactive;
-
-		}
-
-		if ( isset( $email_filter ) ) {
-
-			$url .= '&emailFilter=' . $email_filter;
-
-		}
-
-		if ( isset( $tag ) ) {
-
-			$url .= '&tag=' . $tag;
-
-		}
-
-		if ( isset( $message_id ) ) {
-
-			$url .= '&messageID=' . $message_id;
-
-		}
-
-		if ( isset( $fromdate ) ) {
-
-			$url .= '&fromdate=' . $fromdate;
-
-		}
-
-		if ( isset( $todate ) ) {
-
-			$url .= '&todate=' . $todate;
-
-		}
+		$path = postmark_cli_add_query_params( $assoc_args, $path );
 
 		// Retrieve bounces
-		$response = $this->postmark_api_call( 'get', $url, null, null );
+		$response = $this->server_api_call( 'get', $path, null );
 
 		$body = json_decode( $response['body'], true );
 
 		// Successful call
-		if ( is_array( $response ) && 200 === wp_remote_retrieve_response_code( $response ) ) {
+		if ( 200 === wp_remote_retrieve_response_code( $response ) ) {
 
-			$fields = array( 'Email', 'Type', 'ID', 'Bounced At' );
+			$fields = array( __( 'Email' ), __( 'Type' ), __( 'ID' ), __( 'Bounced At' ) );
 
 			$data = array();
 
@@ -555,10 +509,10 @@ class PostmarkPluginCLI {
 				array_push(
 					$data,
 					array(
-						'Email'      => $bounce['Email'],
-						'Type'       => $bounce['Type'],
-						'ID'         => $bounce['ID'],
-						'Bounced At' => $bounce['BouncedAt'],
+						__( 'Email' )      => $bounce['Email'],
+						__( 'Type' )       => $bounce['Type'],
+						__( 'ID' )         => $bounce['ID'],
+						__( 'Bounced At' ) => $bounce['BouncedAt'],
 					)
 				);
 			}
@@ -568,21 +522,15 @@ class PostmarkPluginCLI {
 
 			if ( isset( $assoc_args['csv'] ) ) {
 
-				make_csv( "Email, Type, ID, Bounced At\n", $body, 'bounces' );
+				postmark_cli_make_csv( array( __("Email"), __("Type"), __("ID"), __("BouncedAt") ), $body, 'bounces' );
 
 			}
 
 			// Non 200 API response
 		} else {
 
-			$error_message = [];
+			postmark_cli_handle_api_error( $response );
 
-			array_push( $error_message, 'Postmark API Error Code: ' . $body['ErrorCode'] );
-
-			array_push( $error_message, 'Postmark Error Message: ' . $body['Message'] );
-
-			// Displays Postmark API Error.
-			WP_CLI::error_multi_line( $error_message );
 		}
 
 	}
@@ -600,31 +548,27 @@ class PostmarkPluginCLI {
 	 */
 	public function get_bounce( $args ) {
 
-		$url = 'https://api.postmarkapp.com/bounces/' . $args['0'];
-
-		if ( ! check_server_token_is_set() ) {
-			return;
-		}
+		$path = 'bounces/' . $args['0'];
 
 		// Retrieve the bounce
-		$response = $this->postmark_api_call( 'get', $url, null, null );
+		$response = $this->server_api_call( 'get', $path, null );
 
 		$body = json_decode( $response['body'], true );
 
 		// Successful call
-		if ( is_array( $response ) && 200 === wp_remote_retrieve_response_code( $response ) ) {
+		if ( 200 === wp_remote_retrieve_response_code( $response ) ) {
 
-			$fields = array( 'ID', 'Recipient', 'Subject', 'Inactive' );
+			$fields = array( __( 'ID' ), __( 'Recipient' ), __( 'Subject' ), __( 'Inactive' ) );
 
 			$data = array();
 
 			array_push(
 				$data,
 				array(
-					'ID'        => $body['ID'],
-					'Recipient' => $body['Email'],
-					'Subject'   => $body['Subject'],
-					'Inactive'  => $body['Inactive'] ? 'True' : 'False',
+					__( 'ID' )        => $body['ID'],
+					__( 'Recipient' ) => $body['Email'],
+					__( 'Subject' )   => $body['Subject'],
+					__( 'Inactive' )  => $body['Inactive'] ? 'True' : 'False',
 				)
 			);
 
@@ -634,14 +578,7 @@ class PostmarkPluginCLI {
 			// Non 200 API response
 		} else {
 
-			$error_message = [];
-
-			array_push( $error_message, 'Postmark API Error Code: ' . $body['ErrorCode'] );
-
-			array_push( $error_message, 'Postmark Error Message: ' . $body['Message'] );
-
-			// Displays Postmark API Error.
-			WP_CLI::error_multi_line( $error_message );
+			postmark_cli_handle_api_error( $response );
 		}
 
 	}
@@ -660,22 +597,14 @@ class PostmarkPluginCLI {
 	 */
 	public function get_bounce_dump( $args ) {
 
-		if ( ! check_server_token_is_set( $postmark_settings ) ) {
-			return;
-		}
+		$path = 'bounces/' . $args['0'] . '/dump';
 
-		// Makes sure bounce id provided in command.
-		if ( isset( $args['0'] ) ) {
-			$bounceid = $args['0'];
-			$url      = 'https://api.postmarkapp.com/bounces/' . $args['0'] . '/dump';
-		} else {
-			WP_CLI::error( 'Specify a bounce id.' );
-		}
+		// Retrieves the bounce dump.
+		$response = $this->server_api_call( 'get', $path, null );
 
-		// Retrieve the bounce dump
-		$response = $this->postmark_api_call( 'get', $url, null, null );
+		var_dump($response);
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -692,41 +621,24 @@ class PostmarkPluginCLI {
 	 */
 	public function activate_bounce( $args ) {
 
-		if ( ! check_server_token_is_set( $postmark_settings ) ) {
-			return;
-		}
-
-		$url = 'https://api.postmarkapp.com/bounces/' . $args['0'] . '/activate';
+		$path = 'bounces/' . $args['0'] . '/activate';
 
 		// Activates the bounce - needs to include an empty body.
-		$response = $this->postmark_api_call( 'put', $url, ' ', null );
+		$response = $this->server_api_call( 'put', $path, ' ' );
 
 		$response_body = json_decode( $response['body'] );
 
 		// Successful API call (200 response).
-		if ( is_array( $response ) && 200 === wp_remote_retrieve_response_code( $response ) ) {
+		if ( 200 === wp_remote_retrieve_response_code( $response ) ) {
 
-			WP_CLI::success( "Bounce ID {$args[0]} reactivated ({$response_body->Bounce->Email})." );
+			WP_CLI::success( __( "Bounce ID {$args[0]} reactivated ({$response_body->Bounce->Email})." ) );
 
 			// Non-200 response from Postmark API.
-		} elseif ( is_array( $response ) && false === ( 200 === wp_remote_retrieve_response_code( $response ) ) ) {
+		} elseif ( !( 200 === wp_remote_retrieve_response_code( $response )  ) ) {
 
-
-
-			WP_CLI::warning( 'Error occurred.' );
-
-			$error_message = [];
-
-			array_push( $error_message, 'Postmark API Error Code: ' . $response_body->ErrorCode );
-
-			array_push( $error_message, 'Postmark Error Message: ' . $response_body->Message );
-
-			// Displays Postmark API Error Code and Message for debugging.
-			WP_CLI::error_multi_line( $error_message );
+			postmark_cli_handle_api_error( $response );
 
 		} else {
-
-
 
 			WP_CLI::error( 'Error occurred with command. API call unsuccessful.' );
 		}
@@ -741,16 +653,12 @@ class PostmarkPluginCLI {
 	 */
 	public function get_bounced_tags() {
 
-		if ( ! check_server_token_is_set( $postmark_settings ) ) {
-			return;
-		}
-
-		$url = 'https://api.postmarkapp.com/bounces/tags';
+		$path = '/bounces/tags';
 
 		// Retrieves the bounced tags.
-		$response = $this->postmark_api_call( 'get', $url, null, null );
+		$response = $this->server_api_call( 'get', $path, null );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	} // End Bounces API
 
@@ -769,19 +677,15 @@ class PostmarkPluginCLI {
 	 */
 	public function send_with_template( $args ) {
 
-		if ( ! check_server_token_is_set( $postmark_settings ) ) {
-			return;
-		}
-
-		$url = 'https://api.postmarkapp.com/email/withTemplate';
+		$path = 'email/withTemplate';
 
 		// Get file contents to use as JSON body.
 		$file = file_get_contents( $args[0], true );
 
 		// Sends email using the template.
-		$response = $this->postmark_api_call( 'post', $url, $file, null );
+		$response = $this->server_api_call( 'post', $path, $file );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -809,7 +713,7 @@ class PostmarkPluginCLI {
 	 */
 	public function push_templates( $args, $assoc_args ) {
 
-		$url = 'https://api.postmarkapp.com/templates/push';
+		$path = 'templates/push';
 
 		$body = array(
 			'SourceServerID'      => $args[0],
@@ -827,44 +731,44 @@ class PostmarkPluginCLI {
 		}
 
 		// Pushes the templates.
-		$response = $this->postmark_api_call( 'put', $url, wp_json_encode( $body ), POSTMARK_ACCOUNT_TOKEN, null );
+		$response = $this->account_api_call( 'put', $path, wp_json_encode( $body ) );
 
 		$body = json_decode( $response['body'], true );
 
 		// Successful call
-		if ( is_array( $response ) && 200 === wp_remote_retrieve_response_code( $response ) ) {
+		if ( 200 === wp_remote_retrieve_response_code( $response ) ) {
 
 			$data = array();
 
 			if ( isset( $assoc_args['performchanges'] ) ) {
 
-				$fields = array( 'Action', 'TemplateId', 'Alias', 'Name' );
+				$fields = array( __( 'Action' ), __( 'TemplateId' ), __( 'Alias' ), __( 'Name' ) );
 
 				foreach ( $body['Templates'] as $template ) {
 
 					array_push(
 						$data,
 						array(
-							'Action'     => $template['Action'],
-							'TemplateId' => $template['TemplateId'],
-							'Alias'      => $template['Alias'],
-							'Name'       => $template['Name'],
+							__( 'Action' )     => $template['Action'],
+							__( 'TemplateId' ) => $template['TemplateId'],
+							__( 'Alias' )      => $template['Alias'],
+							__( 'Name' )       => $template['Name'],
 						)
 					);
 
 				}
 			} else {
 
-				$fields = array( 'Action', 'Alias', 'Name' );
+				$fields = array( __( 'Action' ), __( 'Alias' ), __( 'Name' ) );
 
 				foreach ( $body['Templates'] as $template ) {
 
 					array_push(
 						$data,
 						array(
-							'Action' => $template['Action'],
-							'Alias'  => $template['Alias'],
-							'Name'   => $template['Name'],
+							__( 'Action' ) => $template['Action'],
+							__( 'Alias' )  => $template['Alias'],
+							__( 'Name' )   => $template['Name'],
 						)
 					);
 
@@ -873,14 +777,15 @@ class PostmarkPluginCLI {
 
 			if ( ! isset( $assoc_args['performchanges'] ) ) {
 
-				WP_CLI::log( 'Potential changes from templates push:' );
+				WP_CLI::log( __( 'Potential changes from templates push:' ) );
 				// Outputs in a table.
 				WP_CLI\Utils\format_items( 'table', $data, $fields );
-				WP_CLI::log( 'Run the command again with --performchanges to execute the templates push.' );
+				WP_CLI::log( __( "Run the command again with" ) . " --performchanges " .
+				__( "to execute the templates push." ) );
 
 			} else {
 
-				WP_CLI::success( 'Pushed templates:' );
+				WP_CLI::success( __( 'Pushed templates:' ) );
 				// Outputs in a table.
 				WP_CLI\Utils\format_items( 'table', $data, $fields );
 
@@ -889,14 +794,7 @@ class PostmarkPluginCLI {
 			// Non 200 API response
 		} else {
 
-			$error_message = [];
-
-			array_push( $error_message, 'Postmark API Error Code: ' . $body['ErrorCode'] );
-
-			array_push( $error_message, 'Postmark Error Message: ' . $body['Message'] );
-
-			// Displays Postmark API Error.
-			WP_CLI::error_multi_line( $error_message );
+			postmark_cli_handle_api_error( $response );
 
 		}
 
@@ -914,12 +812,12 @@ class PostmarkPluginCLI {
 	 */
 	public function get_template( $args ) {
 
-		$url = "https://api.postmarkapp.com/templates/$args[0]";
+		$path = "templates/{$args[0]}";
 
 		// Retrieves template details.
-		$response = $this->postmark_api_call( 'get', $url, null, null );
+		$response = $this->server_api_call( 'get', $path, null );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -958,7 +856,7 @@ class PostmarkPluginCLI {
 	 */
 	public function create_template( $args, $assoc_args ) {
 
-		$url = 'https://api.postmarkapp.com/templates';
+		$path = 'templates';
 
 		$new_template = array(
 			'Name'    => $args[0],
@@ -982,9 +880,9 @@ class PostmarkPluginCLI {
 		}
 
 		// Creates new template.
-		$response = $this->postmark_api_call( 'post', $url, wp_json_encode( $new_template ), null );
+		$response = $this->server_api_call( 'post', $path, wp_json_encode( $new_template ) );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -1025,7 +923,7 @@ class PostmarkPluginCLI {
 	 */
 	public function edit_template( $args, $assoc_args ) {
 
-		$url = "https://api.postmarkapp.com/templates/{$args[0]}";
+		$path = "templates/{$args[0]}";
 
 		$template_edits = array(
 			'Name'    => $args[1],
@@ -1045,9 +943,9 @@ class PostmarkPluginCLI {
 		}
 
 		// Edits template.
-		$response = $this->postmark_api_call( 'put', $url, wp_json_encode( $template_edits ), null );
+		$response = $this->server_api_call( 'put', $path, wp_json_encode( $template_edits ) );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -1089,40 +987,38 @@ class PostmarkPluginCLI {
 	 */
 	public function get_templates( $args, $assoc_args ) {
 
-		$url = 'https://api.postmarkapp.com/templates';
+		$path = 'templates';
 
-		if ( isset( $assoc_args['count'] ) && ( $assoc_args['count'] > 0 ) && ( $assoc_args['count'] < 500 ) ) {
-			$url .= '?count=' . $assoc_args['count'];
-		} else {
-			$url .= '?count=500';
+		if ( !isset( $assoc_args['count'] ) ) {
+			$assoc_args['count'] = 500;
 		}
 
-		if ( isset( $assoc_args['offset'] ) && ( $assoc_args['offset'] > 0 ) && ( $assoc_args['offset'] < 500 ) ) {
-			$url .= '&offset=' . $assoc_args['offset'];
-		} else {
-			$url .= '&offset=0';
+		if ( !isset( $assoc_args['offset'] ) ) {
+			$assoc_args['offset'] = 0;
 		}
+
+		$path = postmark_cli_add_query_params( $assoc_args, $path );
 
 		// Retrieves templates.
-		$response = $this->postmark_api_call( 'get', $url, null, null );
+		$response = $this->server_api_call( 'get', $path, null );
 
 		$body = json_decode( $response['body'], true );
 
 		// Successful call
-		if ( is_array( $response ) && 200 === wp_remote_retrieve_response_code( $response ) ) {
+		if ( 200 === wp_remote_retrieve_response_code( $response ) ) {
 
 			$data = array();
 
-			$fields = array( 'TemplateId', 'Alias', 'Name' );
+			$fields = array( __( 'TemplateId' ), __( 'Alias' ), __( 'Name' ) );
 
 			foreach ( $body['Templates'] as $template ) {
 
 				array_push(
 					$data,
 					array(
-						'TemplateId' => $template['TemplateId'],
-						'Alias'      => $template['Alias'],
-						'Name'       => $template['Name'],
+						__( 'TemplateId' ) => $template['TemplateId'],
+						__( 'Alias' )      => $template['Alias'],
+						__( 'Name' )       => $template['Name'],
 					)
 				);
 
@@ -1133,14 +1029,7 @@ class PostmarkPluginCLI {
 			// Non 200 API response
 		} else {
 
-			$error_message = [];
-
-			array_push( $error_message, 'Postmark API Error Code: ' . $body['ErrorCode'] );
-
-			array_push( $error_message, 'Postmark Error Message: ' . $body['Message'] );
-
-			// Displays Postmark API Error.
-			WP_CLI::error_multi_line( $error_message );
+			postmark_cli_handle_api_error( $response );
 
 		}
 
@@ -1158,12 +1047,12 @@ class PostmarkPluginCLI {
 	 */
 	public function delete_template( $args ) {
 
-		$url = "https://api.postmarkapp.com/templates/$args[0]";
+		$path = "templates/{$args[0]}";
 
 		// Deletes template.
-		$response = $this->postmark_api_call( 'delete', $url, null, null );
+		$response = $this->server_api_call( 'delete', $path, null );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -1203,7 +1092,7 @@ class PostmarkPluginCLI {
 	 */
 	public function validate_template( $args, $assoc_args ) {
 
-		$url = 'https://api.postmarkapp.com/templates/validate';
+		$path = 'templates/validate';
 
 		$template = array(
 			'Subject' => $args[0],
@@ -1230,9 +1119,9 @@ class PostmarkPluginCLI {
 		}
 
 		// Creates new template.
-		$response = $this->postmark_api_call( 'post', $url, wp_json_encode( $template ), null );
+		$response = $this->server_api_call( 'post', $path, wp_json_encode( $template ) );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -1251,24 +1140,20 @@ class PostmarkPluginCLI {
 	 */
 	public function send_batch_with_template( $args, $assoc_args ) {
 
-		if ( ! check_server_token_is_set() ) {
-			return;
-		}
-
-		$url = 'https://api.postmarkapp.com/email/batchWithTemplates';
+		$path = 'email/batchWithTemplates';
 
 		// Get file contents to use as JSON body.
 		$file = file_get_contents( $args[0], true );
 
 		// Sends batch of emails using the template(s).
-		$response = $this->postmark_api_call( 'post', $url, $file, null );
+		$response = $this->server_api_call( 'post', $path, $file );
 
 		$body = json_decode( $response['body'], true );
 
 		// Successful call
 		if ( 200 === wp_remote_retrieve_response_code( $response ) ) {
 
-			$fields = array( 'Recipient', 'Result', 'Message ID' );
+			$fields = array( __( 'Recipient' ), __( 'Result' ), __( 'Message ID' ) );
 
 			$data = array();
 
@@ -1277,9 +1162,9 @@ class PostmarkPluginCLI {
 				array_push(
 					$data,
 					array(
-						'Recipient'  => $send_result['To'],
-						'Result'     => $send_result['MessageID'] ? 'Sent' : "Failed - {$send_result['Message']}",
-						'Message ID' => $send_result['MessageID'] ? $send_result['MessageID'] : '',
+						__( 'Recipient' )  => $send_result['To'],
+						__( 'Result' )     => $send_result['MessageID'] ? 'Sent' : "Failed - {$send_result['Message']}",
+						__( 'Message ID' ) => $send_result['MessageID'] ? $send_result['MessageID'] : '',
 					)
 				);
 
@@ -1290,21 +1175,14 @@ class PostmarkPluginCLI {
 
 			if ( isset( $assoc_args['csv'] ) ) {
 
-				make_csv( "Recipient, Result, Message ID\n", $body, 'templated_batch_send' );
+				postmark_cli_make_csv( array( __( "Recipient" ), __( "Result" ), __( "Message ID" )  ), $body, 'templated_batch_send' );
 
 			}
 
 			// Non 200 API response
 		} else {
 
-			$error_message = [];
-
-			array_push( $error_message, 'Postmark API Error Code: ' . $body['ErrorCode'] );
-
-			array_push( $error_message, 'Postmark Error Message: ' . $body['Message'] );
-
-			// Displays Postmark API Error.
-			WP_CLI::error_multi_line( $error_message );
+			postmark_cli_handle_api_error( $response );
 
 		}
 
@@ -1337,41 +1215,17 @@ class PostmarkPluginCLI {
 	 */
 	public function get_outbound_overview( $args, $assoc_args ) {
 
-		if ( ! check_server_token_is_set() ) {
-			return;
-		}
+		$path = 'stats/outbound';
 
-		$url = 'https://api.postmarkapp.com/stats/outbound';
-
-		$queryparams = array();
-
-		// Checks for a tag parameter and uses it if set.
-		if ( isset( $assoc_args['tag'] ) ) {
-			$queryparams['tag'] = $assoc_args['tag'];
-		}
-
-		// Checks for a fromdate parameter and uses it if set.
-		if ( isset( $assoc_args['fromdate'] ) ) {
-			$queryparams['fromdate'] = $assoc_args['fromdate'];
-		}
-
-		// Checks for a todate parameter and uses it if set.
-		if ( isset( $assoc_args['todate'] ) ) {
-			$queryparams['todate'] = $assoc_args['todate'];
-		}
-
-		// Builds the URL with query params.
-		if ( isset( $queryparams ) ) {
-			$url .= '?' . http_build_query( $queryparams );
-		}
+		$path = postmark_cli_add_query_params( $assoc_args, $path );
 
 		// Retrieves outbound overview.
-		$response = $this->postmark_api_call( 'get', $url, null, null );
+		$response = $this->server_api_call( 'get', $path, null );
 
 		$body = json_decode( $response['body'], true );
 
 		// Successful call
-		if ( is_array( $response ) && 200 === wp_remote_retrieve_response_code( $response ) ) {
+		if ( 200 === wp_remote_retrieve_response_code( $response ) ) {
 
 			$fields = array( 'Statistic', 'Value' );
 
@@ -1408,21 +1262,14 @@ class PostmarkPluginCLI {
 
 			if ( isset( $assoc_args['csv'] ) ) {
 
-				make_csv( "Statistic, Value\n", $body, 'outbound_overview' );
+				postmark_cli_make_csv( array( __( "Statistic" ), __( "Value" ) ), $body, 'outbound_overview' );
 
 			}
 
 			// Non 200 API response
 		} else {
 
-			$error_message = [];
-
-			array_push( $error_message, 'Postmark API Error Code: ' . $body['ErrorCode'] );
-
-			array_push( $error_message, 'Postmark Error Message: ' . $body['Message'] );
-
-			// Displays Postmark API Error.
-			WP_CLI::error_multi_line( $error_message );
+			postmark_cli_handle_api_error( $response );
 		}
 
 	}
@@ -1445,38 +1292,14 @@ class PostmarkPluginCLI {
 	 */
 	public function get_sent_counts( $args, $assoc_args ) {
 
-		if ( ! check_server_token_is_set() ) {
-			return;
-		}
+		$path = 'stats/outbound/sends';
 
-		$url = 'https://api.postmarkapp.com/stats/outbound/sends';
-
-		$queryparams = array();
-
-		// Checks for a tag parameter and uses it if set.
-		if ( isset( $assoc_args['tag'] ) ) {
-			$queryparams['tag'] = $assoc_args['tag'];
-		}
-
-		// Checks for a fromdate parameter and uses it if set.
-		if ( isset( $assoc_args['fromdate'] ) ) {
-			$queryparams['fromdate'] = $assoc_args['fromdate'];
-		}
-
-		// Checks for a todate parameter and uses it if set.
-		if ( isset( $assoc_args['todate'] ) ) {
-			$queryparams['todate'] = $assoc_args['todate'];
-		}
-
-		// Builds the URL with query params.
-		if ( isset( $queryparams ) ) {
-			$url .= '?' . http_build_query( $queryparams );
-		}
+		$path = postmark_cli_add_query_params( $assoc_args, $path );
 
 		// Retrieves sent counts.
-		$response = $this->postmark_api_call( 'get', $url, null, null );
+		$response = $this->server_api_call( 'get', $path, null );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -1499,38 +1322,14 @@ class PostmarkPluginCLI {
 	 */
 	public function get_bounce_counts( $args, $assoc_args ) {
 
-		if ( ! check_server_token_is_set() ) {
-			return;
-		}
+		$path = 'stats/outbound/bounces';
 
-		$url = 'https://api.postmarkapp.com/stats/outbound/bounces';
-
-		$queryparams = array();
-
-		// Checks for a tag parameter and uses it if set.
-		if ( isset( $assoc_args['tag'] ) ) {
-			$queryparams['tag'] = $assoc_args['tag'];
-		}
-
-		// Checks for a fromdate parameter and uses it if set.
-		if ( isset( $assoc_args['fromdate'] ) ) {
-			$queryparams['fromdate'] = $assoc_args['fromdate'];
-		}
-
-		// Checks for a todate parameter and uses it if set.
-		if ( isset( $assoc_args['todate'] ) ) {
-			$queryparams['todate'] = $assoc_args['todate'];
-		}
-
-		// Builds the URL with query params.
-		if ( isset( $queryparams ) ) {
-			$url .= '?' . http_build_query( $queryparams );
-		}
+		$path = postmark_cli_add_query_params( $assoc_args, $path );
 
 		// Retrieves bounce counts.
-		$response = $this->postmark_api_call( 'get', $url, null, null );
+		$response = $this->server_api_call( 'get', $path, null );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -1553,38 +1352,14 @@ class PostmarkPluginCLI {
 	 */
 	public function get_spam_complaints_counts( $args, $assoc_args ) {
 
-		if ( ! check_server_token_is_set() ) {
-			return;
-		}
+		$path = 'stats/outbound/spam';
 
-		$url = 'https://api.postmarkapp.com/stats/outbound/spam';
-
-		$queryparams = array();
-
-		// Checks for a tag parameter and uses it if set.
-		if ( isset( $assoc_args['tag'] ) ) {
-			$queryparams['tag'] = $assoc_args['tag'];
-		}
-
-		// Checks for a fromdate parameter and uses it if set.
-		if ( isset( $assoc_args['fromdate'] ) ) {
-			$queryparams['fromdate'] = $assoc_args['fromdate'];
-		}
-
-		// Checks for a todate parameter and uses it if set.
-		if ( isset( $assoc_args['todate'] ) ) {
-			$queryparams['todate'] = $assoc_args['todate'];
-		}
-
-		// Builds the URL with query params.
-		if ( isset( $queryparams ) ) {
-			$url .= '?' . http_build_query( $queryparams );
-		}
+		$path = postmark_cli_add_query_params( $assoc_args, $path );
 
 		// Retrieves spam complaint counts.
-		$response = $this->postmark_api_call( 'get', $url, null, null );
+		$response = $this->server_api_call( 'get', $path, null );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -1607,38 +1382,14 @@ class PostmarkPluginCLI {
 	 */
 	public function get_tracked_email_counts( $args, $assoc_args ) {
 
-		if ( ! check_server_token_is_set() ) {
-			return;
-		}
+		$path = 'stats/outbound/tracked';
 
-		$url = 'https://api.postmarkapp.com/stats/outbound/tracked';
-
-		$queryparams = array();
-
-		// Checks for a tag parameter and uses it if set.
-		if ( isset( $assoc_args['tag'] ) ) {
-			$queryparams['tag'] = $assoc_args['tag'];
-		}
-
-		// Checks for a fromdate parameter and uses it if set.
-		if ( isset( $assoc_args['fromdate'] ) ) {
-			$queryparams['fromdate'] = $assoc_args['fromdate'];
-		}
-
-		// Checks for a todate parameter and uses it if set.
-		if ( isset( $assoc_args['todate'] ) ) {
-			$queryparams['todate'] = $assoc_args['todate'];
-		}
-
-		// Builds the URL with query params.
-		if ( isset( $queryparams ) ) {
-			$url .= '?' . http_build_query( $queryparams );
-		}
+		$path = postmark_cli_add_query_params( $assoc_args, $path );
 
 		// Retrieves tracked email counts.
-		$response = $this->postmark_api_call( 'get', $url, null, null );
+		$response = $this->server_api_call( 'get', $path, null);
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -1662,38 +1413,14 @@ class PostmarkPluginCLI {
 	 */
 	public function get_email_open_counts( $args, $assoc_args ) {
 
-		if ( ! check_server_token_is_set() ) {
-			return;
-		}
+		$path = 'stats/outbound/opens';
 
-		$url = 'https://api.postmarkapp.com/stats/outbound/opens';
-
-		$queryparams = array();
-
-		// Checks for a tag parameter and uses it if set.
-		if ( isset( $assoc_args['tag'] ) ) {
-			$queryparams['tag'] = $assoc_args['tag'];
-		}
-
-		// Checks for a fromdate parameter and uses it if set.
-		if ( isset( $assoc_args['fromdate'] ) ) {
-			$queryparams['fromdate'] = $assoc_args['fromdate'];
-		}
-
-		// Checks for a todate parameter and uses it if set.
-		if ( isset( $assoc_args['todate'] ) ) {
-			$queryparams['todate'] = $assoc_args['todate'];
-		}
-
-		// Builds the URL with query params.
-		if ( isset( $queryparams ) ) {
-			$url .= '?' . http_build_query( $queryparams );
-		}
+		$path = postmark_cli_add_query_params( $assoc_args, $path );
 
 		// Retrieves open counts.
-		$response = $this->postmark_api_call( 'get', $url, null, null );
+		$response = $this->server_api_call( 'get', $path, null );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -1718,38 +1445,14 @@ class PostmarkPluginCLI {
 	 */
 	public function get_email_platform_usage( $args, $assoc_args ) {
 
-		if ( ! check_server_token_is_set() ) {
-			return;
-		}
+		$path = 'stats/outbound/opens/platforms';
 
-		$url = 'https://api.postmarkapp.com/stats/outbound/opens/platforms';
-
-		$queryparams = array();
-
-		// Checks for a tag parameter and uses it if set.
-		if ( isset( $assoc_args['tag'] ) ) {
-			$queryparams['tag'] = $assoc_args['tag'];
-		}
-
-		// Checks for a fromdate parameter and uses it if set.
-		if ( isset( $assoc_args['fromdate'] ) ) {
-			$queryparams['fromdate'] = $assoc_args['fromdate'];
-		}
-
-		// Checks for a todate parameter and uses it if set.
-		if ( isset( $assoc_args['todate'] ) ) {
-			$queryparams['todate'] = $assoc_args['todate'];
-		}
-
-		// Builds the URL with query params.
-		if ( isset( $queryparams ) ) {
-			$url .= '?' . http_build_query( $queryparams );
-		}
+		$path = postmark_cli_add_query_params( $assoc_args, $path );
 
 		// Retrieves email platform usage.
-		$response = $this->postmark_api_call( 'get', $url, null, null );
+		$response = $this->server_api_call( 'get', $path, null );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -1772,38 +1475,14 @@ class PostmarkPluginCLI {
 	 */
 	public function get_email_client_usage( $args, $assoc_args ) {
 
-		if ( ! check_server_token_is_set() ) {
-			return;
-		}
+		$path = 'stats/outbound/opens/emailclients';
 
-		$url = 'https://api.postmarkapp.com/stats/outbound/opens/emailclients';
-
-		$queryparams = array();
-
-		// Checks for a tag parameter and uses it if set.
-		if ( isset( $assoc_args['tag'] ) ) {
-			$queryparams['tag'] = $assoc_args['tag'];
-		}
-
-		// Checks for a fromdate parameter and uses it if set.
-		if ( isset( $assoc_args['fromdate'] ) ) {
-			$queryparams['fromdate'] = $assoc_args['fromdate'];
-		}
-
-		// Checks for a todate parameter and uses it if set.
-		if ( isset( $assoc_args['todate'] ) ) {
-			$queryparams['todate'] = $assoc_args['todate'];
-		}
-
-		// Builds the URL with query params.
-		if ( isset( $queryparams ) ) {
-			$url .= '?' . http_build_query( $queryparams );
-		}
+		$path = postmark_cli_add_query_params( $assoc_args, $path );
 
 		// Retrieves email client usage.
-		$response = $this->postmark_api_call( 'get', $url, null, null );
+		$response = $this->server_api_call( 'get', $path, null );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -1826,38 +1505,14 @@ class PostmarkPluginCLI {
 	 */
 	public function get_click_counts( $args, $assoc_args ) {
 
-		if ( ! check_server_token_is_set() ) {
-			return;
-		}
+		$path = 'stats/outbound/clicks';
 
-		$url = 'https://api.postmarkapp.com/stats/outbound/clicks';
-
-		$queryparams = array();
-
-		// Checks for a tag parameter and uses it if set.
-		if ( isset( $assoc_args['tag'] ) ) {
-			$queryparams['tag'] = $assoc_args['tag'];
-		}
-
-		// Checks for a fromdate parameter and uses it if set.
-		if ( isset( $assoc_args['fromdate'] ) ) {
-			$queryparams['fromdate'] = $assoc_args['fromdate'];
-		}
-
-		// Checks for a todate parameter and uses it if set.
-		if ( isset( $assoc_args['todate'] ) ) {
-			$queryparams['todate'] = $assoc_args['todate'];
-		}
-
-		// Builds the URL with query params.
-		if ( isset( $queryparams ) ) {
-			$url .= '?' . http_build_query( $queryparams );
-		}
+		$path = postmark_cli_add_query_params( $assoc_args, $path );
 
 		// Retrieves click counts.
-		$response = $this->postmark_api_call( 'get', $url, null, null );
+		$response = $this->server_api_call( 'get', $path, null );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -1881,38 +1536,14 @@ class PostmarkPluginCLI {
 	 */
 	public function get_browser_usage( $args, $assoc_args ) {
 
-		if ( ! check_server_token_is_set() ) {
-			return;
-		}
+		$path = 'stats/outbound/clicks/browserfamilies';
 
-		$url = 'https://api.postmarkapp.com/stats/outbound/clicks/browserfamilies';
-
-		$queryparams = array();
-
-		// Checks for a tag parameter and uses it if set.
-		if ( isset( $assoc_args['tag'] ) ) {
-			$queryparams['tag'] = $assoc_args['tag'];
-		}
-
-		// Checks for a fromdate parameter and uses it if set.
-		if ( isset( $assoc_args['fromdate'] ) ) {
-			$queryparams['fromdate'] = $assoc_args['fromdate'];
-		}
-
-		// Checks for a todate parameter and uses it if set.
-		if ( isset( $assoc_args['todate'] ) ) {
-			$queryparams['todate'] = $assoc_args['todate'];
-		}
-
-		// Builds the URL with query params.
-		if ( isset( $queryparams ) ) {
-			$url .= '?' . http_build_query( $queryparams );
-		}
+		$path = postmark_cli_add_query_params( $assoc_args, $path );
 
 		// Retrieves click browser usage.
-		$response = $this->postmark_api_call( 'get', $url, null, null );
+		$response = $this->server_api_call( 'get', $path, null );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -1934,38 +1565,14 @@ class PostmarkPluginCLI {
 	 */
 	public function get_browser_platform_usage( $args, $assoc_args ) {
 
-		if ( ! check_server_token_is_set() ) {
-			return;
-		}
+		$path = 'stats/outbound/clicks/platforms';
 
-		$url = 'https://api.postmarkapp.com/stats/outbound/clicks/platforms';
-
-		$queryparams = array();
-
-		// Checks for a tag parameter and uses it if set.
-		if ( isset( $assoc_args['tag'] ) ) {
-			$queryparams['tag'] = $assoc_args['tag'];
-		}
-
-		// Checks for a fromdate parameter and uses it if set.
-		if ( isset( $assoc_args['fromdate'] ) ) {
-			$queryparams['fromdate'] = $assoc_args['fromdate'];
-		}
-
-		// Checks for a todate parameter and uses it if set.
-		if ( isset( $assoc_args['todate'] ) ) {
-			$queryparams['todate'] = $assoc_args['todate'];
-		}
-
-		// Builds the URL with query params.
-		if ( isset( $queryparams ) ) {
-			$url .= '?' . http_build_query( $queryparams );
-		}
+		$path = postmark_cli_add_query_params( $assoc_args, $path );
 
 		// Retrieves click browser platform usage.
-		$response = $this->postmark_api_call( 'get', $url, null, null );
+		$response = $this->server_api_call( 'get', $path, null );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -1988,38 +1595,14 @@ class PostmarkPluginCLI {
 	 */
 	public function get_click_locations( $args, $assoc_args ) {
 
-		if ( ! check_server_token_is_set() ) {
-			return;
-		}
+		$path = 'stats/outbound/clicks/location';
 
-		$url = 'https://api.postmarkapp.com/stats/outbound/clicks/location';
-
-		$queryparams = array();
-
-		// Checks for a tag parameter and uses it if set.
-		if ( isset( $assoc_args['tag'] ) ) {
-			$queryparams['tag'] = $assoc_args['tag'];
-		}
-
-		// Checks for a fromdate parameter and uses it if set.
-		if ( isset( $assoc_args['fromdate'] ) ) {
-			$queryparams['fromdate'] = $assoc_args['fromdate'];
-		}
-
-		// Checks for a todate parameter and uses it if set.
-		if ( isset( $assoc_args['todate'] ) ) {
-			$queryparams['todate'] = $assoc_args['todate'];
-		}
-
-		// Builds the URL with query params.
-		if ( isset( $queryparams ) ) {
-			$url .= '?' . http_build_query( $queryparams );
-		}
+		$path = postmark_cli_add_query_params( $assoc_args, $path );
 
 		// Retrieves click browser location stats.
-		$response = $this->postmark_api_call( 'get', $url, null, null );
+		$response = $this->server_api_call( 'get', $path, null );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	} // End Stats API
 
@@ -2043,48 +1626,48 @@ class PostmarkPluginCLI {
 	 */
 	public function get_signatures( $args, $assoc_args ) {
 
-		$url = 'https://api.postmarkapp.com/senders';
+		$path = 'senders';
 
 		// Checks for a count parameter and uses it if set.
 		if ( isset( $assoc_args['count'] ) && is_int( $assoc_args['count'] ) && $assoc_args['count'] < 501 && $assoc_args['count'] > 0 ) {
-			$url .= "?count={$assoc_args['count']}";
+			$path .= "?count={$assoc_args['count']}";
 
 			// Uses 500 for default count if count not specified.
 		} else {
-			$url .= '?count=500';
+			$path .= '?count=500';
 		}
 
 		// Checks for an offset parameter and uses it if set.
 		if ( isset( $assoc_args['offset'] ) && is_int( $assoc_args['offset'] ) ) {
-			$url .= "&offset={$assoc_args['offset']}";
+			$path .= "&offset={$assoc_args['offset']}";
 
 			// Uses 0 for default offset if offset not specified.
 		} else {
-			$url .= '&offset=0';
+			$path .= '&offset=0';
 		}
 
 		// Retrieves signatures list
-		$response = $this->postmark_api_call( 'get', $url, null, POSTMARK_ACCOUNT_TOKEN );
+		$response = $this->account_api_call( 'get', $path, null );
 
 		$body = json_decode( $response['body'], true );
 
 		// Successful call
-		if ( is_array( $response ) && 200 === wp_remote_retrieve_response_code( $response ) ) {
+		if ( 200 === wp_remote_retrieve_response_code( $response ) ) {
 
 			$data = array();
 
-			$fields = array( 'ID', 'Email Address', 'Name', 'Reply-To Address', 'Confirmed' );
+			$fields = array( __( 'ID' ), __( 'Email Address' ), __( 'Name' ), __( 'Reply-To Address' ), __( 'Confirmed' ) );
 
 			foreach ( $body['SenderSignatures'] as $signature ) {
 
 				array_push(
 					$data,
 					array(
-						'ID'               => $signature['ID'],
-						'Email Address'    => $signature['EmailAddress'],
-						'Name'             => $signature['Name'],
-						'Reply-To Address' => $signature['ReplyToEmailAddress'],
-						'Confirmed'        => $signature['Confirmed'] ? 'Yes' : 'No',
+						__( 'ID' )               => $signature['ID'],
+						__( 'Email Address' )    => $signature['EmailAddress'],
+						__( 'Name' )             => $signature['Name'],
+						__( 'Reply-To Address' ) => $signature['ReplyToEmailAddress'],
+						__( 'Confirmed' )        => $signature['Confirmed'] ? 'Yes' : 'No',
 					)
 				);
 
@@ -2095,14 +1678,7 @@ class PostmarkPluginCLI {
 			// Non 200 API response
 		} else {
 
-			$error_message = [];
-
-			array_push( $error_message, 'Postmark API Error Code: ' . $body['ErrorCode'] );
-
-			array_push( $error_message, 'Postmark Error Message: ' . $body['Message'] );
-
-			// Displays Postmark API Error.
-			WP_CLI::error_multi_line( $error_message );
+			postmark_cli_handle_api_error ( $response );
 
 		}
 
@@ -2120,12 +1696,12 @@ class PostmarkPluginCLI {
 	 */
 	public function get_signature( $args ) {
 
-		$url = "https://api.postmarkapp.com/senders/{$args[0]}";
+		$path = "senders/{$args[0]}";
 
 		// Retrieves signatures list
-		$response = $this->postmark_api_call( 'get', $url, null, POSTMARK_ACCOUNT_TOKEN, null );
+		$response = $this->account_api_call( 'get', $path, null );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -2152,7 +1728,7 @@ class PostmarkPluginCLI {
 	 */
 	public function create_signature( $args, $assoc_args ) {
 
-		$url = 'https://api.postmarkapp.com/senders';
+		$path = 'senders';
 
 		// Checks for ReplyToEmail.
 		if ( isset( $assoc_args['replytoemail'] ) ) {
@@ -2182,9 +1758,9 @@ class PostmarkPluginCLI {
 		);
 
 		// Calls Signatures API to create new signature.
-		$response = $this->postmark_api_call( 'post', $url, $body, POSTMARK_ACCOUNT_TOKEN );
+		$response = $this->account_api_call( 'post', $path, $body );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -2212,7 +1788,7 @@ class PostmarkPluginCLI {
 	 */
 	public function edit_signature( $args, $assoc_args ) {
 
-		$url = "https://api.postmarkapp.com/senders/{$args[0]}";
+		$path = "senders/{$args[0]}";
 
 		$body = array(
 			'Name' => "{$args[1]}",
@@ -2226,9 +1802,9 @@ class PostmarkPluginCLI {
 			$body['ReturnPathDomain'] = $assoc_args['returnpathdomain'];
 		}
 
-		$response = $this->postmark_api_call( 'put', $url, wp_json_encode( $body ), POSTMARK_ACCOUNT_TOKEN );
+		$response = $this->account_api_call( 'put', $path, wp_json_encode( $body ) );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -2244,12 +1820,12 @@ class PostmarkPluginCLI {
 	 */
 	public function delete_signature( $args ) {
 
-		$url = "https://api.postmarkapp.com/senders/{$args[0]}";
+		$path = "senders/{$args[0]}";
 
 		// Deletes signature.
-		$response = $this->postmark_api_call( 'delete', $url, null, POSTMARK_ACCOUNT_TOKEN );
+		$response = $this->account_api_call( 'delete', $path, null );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -2265,14 +1841,14 @@ class PostmarkPluginCLI {
 	 */
 	public function resend_confirmation( $args ) {
 
-		$url = "https://api.postmarkapp.com/senders/{$args[0]}/resend";
+		$path = "https://api.postmarkapp.com/senders/{$args[0]}/resend";
 
 		$body = '';
 
 		// Calls Signatures API to resend confirmation email.
-		$response = $this->postmark_api_call( 'post', $url, $body, POSTMARK_ACCOUNT_TOKEN );
+		$response = $this->account_api_call( 'post', $path, $body );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	} // End Signatures API
 
@@ -2295,30 +1871,30 @@ class PostmarkPluginCLI {
 	 */
 	public function get_domains( $args, $assoc_args ) {
 
-		$url = 'https://api.postmarkapp.com/domains';
+		$path = 'https://api.postmarkapp.com/domains';
 
 		// Checks for a count parameter and uses it if set.
-		if ( isset( $assoc_args['count'] ) && is_int( $assoc_args['count'] ) && $assoc_args['count'] < 501 && $assoc_args['count'] > 0 ) {
-			$url .= "?count={$assoc_args['count']}";
+		if ( isset( $assoc_args['count'] ) ) {
+			$path .= "?count={$assoc_args['count']}";
 
-			// Uses 500 for default count if count not specified.
+		// Uses 500 for default count if count not specified.
 		} elseif ( ! isset( $assoc_args['count'] ) ) {
-			$url .= '?count=500';
+			$path .= '?count=500';
 		}
 
 		// Checks for an offset parameter and uses it if set.
-		if ( isset( $assoc_args['offset'] ) && is_int( $assoc_args['offset'] ) ) {
-			$url .= "&offset={$assoc_args['offset']}";
+		if ( isset( $assoc_args['offset'] ) ) {
+			$path .= "&offset={$assoc_args['offset']}";
 
 			// Uses 0 for default offset if offset not specified.
 		} elseif ( ! isset( $assoc_args['offset'] ) ) {
-			$url .= '&offset=0';
+			$path .= '&offset=0';
 		}
 
 		// Retrieves domains.
-		$response = $this->postmark_api_call( 'get', $url, null, POSTMARK_ACCOUNT_TOKEN );
+		$response = $this->account_api_call( 'get', $path, null );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -2334,12 +1910,12 @@ class PostmarkPluginCLI {
 	 */
 	public function get_domain( $args ) {
 
-		$url = 'https://api.postmarkapp.com/domains/' . $args[0];
+		$path = "domains/{$args[0]}" ;
 
 		// Retrieves domain information.
-		$response = $this->postmark_api_call( 'get', $url, null, POSTMARK_ACCOUNT_TOKEN );
+		$response = $this->account_api_call( 'get', $path, null );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -2360,7 +1936,7 @@ class PostmarkPluginCLI {
 	 */
 	public function create_domain( $args, $assoc_args ) {
 
-		$url = 'https://api.postmarkapp.com/domains';
+		$path = 'domains';
 
 		// Checks for ReturnPathDomain.
 		if ( isset( $assoc_args['returnpathdomain'] ) ) {
@@ -2380,9 +1956,9 @@ class PostmarkPluginCLI {
 		);
 
 		// Calls Domains API to create new domain.
-		$response = $this->postmark_api_call( 'post', $url, $body, POSTMARK_ACCOUNT_TOKEN );
+		$response = $this->account_api_call( 'post', $path, $body );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -2403,15 +1979,15 @@ class PostmarkPluginCLI {
 	 */
 	public function edit_domain( $args ) {
 
-		$url = "https://api.postmarkapp.com/domains/{$args[0]}";
+		$path = "domains/{$args[0]}";
 
 		$body = wp_json_encode(
 			array( 'ReturnPathDomain' => "{$args[1]}" )
 		);
 
-		$response = $this->postmark_api_call( 'put', $url, $body, POSTMARK_ACCOUNT_TOKEN );
+		$response = $this->account_api_call( 'put', $path, $body );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -2427,11 +2003,11 @@ class PostmarkPluginCLI {
 	 */
 	public function delete_domain( $args ) {
 
-		$url = "https://api.postmarkapp.com/domains/{$args[0]}";
+		$path = "domains/{$args[0]}";
 
-		$response = $this->postmark_api_call( 'delete', $url, null, POSTMARK_ACCOUNT_TOKEN );
+		$response = $this->account_api_call( 'delete', $path, null );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -2447,11 +2023,11 @@ class PostmarkPluginCLI {
 	 */
 	public function verify_dkim( $args ) {
 
-		$url = "https://api.postmarkapp.com/domains/{$args[0]}/verifyDkim";
+		$path = "domains/{$args[0]}/verifyDkim";
 
-		$response = $this->postmark_api_call( 'put', $url, ' ', POSTMARK_ACCOUNT_TOKEN );
+		$response = $this->account_api_call( 'put', $path, ' ' );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -2467,11 +2043,11 @@ class PostmarkPluginCLI {
 	 */
 	public function verify_return_path( $args ) {
 
-		$url = "https://api.postmarkapp.com/domains/{$args[0]}/verifyReturnPath";
+		$path = "domains/{$args[0]}/verifyReturnPath";
 
-		$response = $this->postmark_api_call( 'put', $url, ' ', POSTMARK_ACCOUNT_TOKEN );
+		$response = $this->account_api_call( 'put', $path, ' ' );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 	}
 
 	/**
@@ -2486,12 +2062,12 @@ class PostmarkPluginCLI {
 	 */
 	public function rotate_dkim( $args ) {
 
-		$url = "https://api.postmarkapp.com/domains/{$args[0]}/rotatedkim";
+		$path = "domains/{$args[0]}/rotatedkim";
 
 		// Rotates DKIM key.
-		$response = $this->postmark_api_call( 'post', $url, ' ', POSTMARK_ACCOUNT_TOKEN );
+		$response = $this->account_api_call( 'post', $path, ' ' );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	} // End Domains API
 
@@ -2581,67 +2157,39 @@ class PostmarkPluginCLI {
 	 */
 	public function outbound_message_search( $args, $assoc_args ) {
 
-		$url = 'https://api.postmarkapp.com/messages/outbound';
+		$path = 'messages/outbound';
 
-		if ( isset( $assoc_args['count'] ) ) {
-			$url .= '?count=' . $assoc_args['count'];
-		} else {
-			$url .= '?count=500';
+		// Sets count & offset values for convenience.
+		if ( !isset( $assoc_args['count'] ) ) {
+			$assoc_args['count'] = 500;
 		}
 
-		if ( isset( $assoc_args['offset'] ) ) {
-			$url .= '&offset=' . $assoc_args['offset'];
-		} else {
-			$url .= '&offset=0';
+		if ( !isset( $assoc_args['offset'] ) ) {
+			$assoc_args['offset'] = 0;
 		}
 
-		if ( isset( $assoc_args['recipient'] ) ) {
-			$url .= '&recipient=' . $assoc_args['recipient'];
-		}
+		$path = postmark_cli_add_query_params( $assoc_args, $path );
 
-		if ( isset( $assoc_args['fromemail'] ) ) {
-			$url .= '&fromemail=' . $assoc_args['fromemail'];
-		}
-
-		if ( isset( $assoc_args['tag'] ) ) {
-			$url .= '&tag=' . $assoc_args['tag'];
-		}
-
-		if ( isset( $assoc_args['status'] ) ) {
-			$url .= '&status=' . $assoc_args['status'];
-		}
-
-		if ( isset( $assoc_args['todate'] ) ) {
-			$url .= '&todate=' . $assoc_args['todate'];
-		}
-
-		if ( isset( $assoc_args['fromdate'] ) ) {
-			$url .= '&fromdate=' . $assoc_args['fromdate'];
-		}
-
-		if ( isset( $assoc_args['subject'] ) ) {
-			$url .= '&subject=' . $assoc_args['subject'];
-		}
-
+		// Special handling of metadata values.
 		if ( isset( $assoc_args['metadatakey'] ) && isset( $assoc_args['metadatavalue'] ) ) {
-			$url .= "&metadata_{$assoc_args['metadatakey']}={$assoc_args['metadatavalue']}";
+			$path .= "&metadata_{$assoc_args['metadatakey']}={$assoc_args['metadatavalue']}";
 		}
 
 		// Retrieves results of outbound message search.
-		$response = $this->postmark_api_call( 'get', $url, null, null );
+		$response = $this->server_api_call( 'get', $path, null );
 
 		// Successful call
-		if ( is_array( $response ) && 200 === wp_remote_retrieve_response_code( $response ) ) {
+		if ( 200 === wp_remote_retrieve_response_code( $response ) ) {
 
-			$body = json_decode( $response['body'], true );
+			$body = json_decode( wp_remote_retrieve_body( $response ), true );
 
 			if ( $body['TotalCount'] > 0 ) {
 
-				WP_CLI::log( WP_CLI::colorize( "%G{$body['TotalCount']} hits from search.%n" ) );
+				WP_CLI::log( WP_CLI::colorize( __( "%G{$body['TotalCount']} hits from search.%n" ) ) );
 
 				$count = 1;
 
-				$fields = array( 'Date', 'Message ID', 'Subject' );
+				$fields = array( __( 'Date') , __( 'Message ID' ), __( 'Subject' ) );
 
 				$data = array();
 
@@ -2649,9 +2197,9 @@ class PostmarkPluginCLI {
 					array_push(
 						$data,
 						array(
-							'Date'       => $message['ReceivedAt'],
-							'Message ID' => $message['MessageID'],
-							'Subject'    => $message['Subject'],
+							__( 'Date' )       => $message['ReceivedAt'],
+							__ ('Message ID' ) => $message['MessageID'],
+							__ ('Subject' )    => $message['Subject'],
 						)
 					);
 					$count++;
@@ -2662,21 +2210,13 @@ class PostmarkPluginCLI {
 				// No results from search
 			} else {
 
-				WP_CLI::log( WP_CLI::colorize( '%RNo hits from search.%n' ) );
+				WP_CLI::log( WP_CLI::colorize( __( '%RNo hits from search.%n' ) ) );
 
 			}
 
 			// Non 200 API response
 		} else {
-
-			$error_message = [];
-
-			array_push( $error_message, 'Postmark API Error Code: ' . $body->ErrorCode );
-
-			array_push( $error_message, 'Postmark Error Message: ' . $body->Message );
-
-			// Displays Postmark API Error.
-			WP_CLI::error_multi_line( $error_message );
+			postmark_cli_handle_api_error( $response );
 		}
 
 	}
@@ -2693,15 +2233,15 @@ class PostmarkPluginCLI {
 	 */
 	public function get_outbound_message_details( $args ) {
 
-		$url = "https://api.postmarkapp.com/messages/outbound/{$args[0]}/details";
+		$path = "messages/outbound/{$args[0]}/details";
 
 		// Retrieves outbound message details.
-		$response = $this->postmark_api_call( 'get', $url, null, null );
+		$response = $this->server_api_call( 'get', $path, null );
 
-		$body = json_decode( $response['body'], true );
+		$body = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		// Successful call
-		if ( is_array( $response ) && 200 === wp_remote_retrieve_response_code( $response ) ) {
+		if ( 200 === wp_remote_retrieve_response_code( $response ) ) {
 
 			WP_CLI::log( WP_CLI::colorize( "%9Subject:%n {$body['Subject']}" ) );
 
@@ -2733,7 +2273,7 @@ class PostmarkPluginCLI {
 				);
 			}
 
-			$fields = array( 'Recipient', 'Result', 'Details' );
+			$fields = array( __( 'Recipient' ), __( 'Result' ), __( 'Details' ) );
 
 			$data = array();
 
@@ -2746,9 +2286,9 @@ class PostmarkPluginCLI {
 						array_push(
 							$data,
 							array(
-								'Recipient' => $event['Recipient'],
-								'Result'    => $event['Type'],
-								'Details'   => $event['Details']['DeliveryMessage'],
+								__( 'Recipient' ) => $event['Recipient'],
+								__( 'Result' )    => $event['Type'],
+								__( 'Details' )   => $event['Details']['DeliveryMessage'],
 							)
 						);
 						break;
@@ -2758,10 +2298,9 @@ class PostmarkPluginCLI {
 						array_push(
 							$data,
 							array(
-								'Recipient' => $event['Recipient'],
-								'Result'    => $event['Type'],
-								'Details'   => "Bounce ID {$event['Details']['BounceID']} " .
-								"{$event['Details']['Summary']}",
+								__( 'Recipient' ) => $event['Recipient'],
+								__( 'Result' )    => $event['Type'],
+								__( 'Details' )   => "Bounce ID {$event['Details']['BounceID']} " . "{$event['Details']['Summary']}",
 							)
 						);
 				}
@@ -2773,14 +2312,7 @@ class PostmarkPluginCLI {
 			// Non 200 API response
 		} else {
 
-			$error_message = [];
-
-			array_push( $error_message, 'Postmark API Error Code: ' . $body['ErrorCode'] );
-
-			array_push( $error_message, 'Postmark Error Message: ' . $body['Message'] );
-
-			// Displays Postmark API Error.
-			WP_CLI::error_multi_line( $error_message );
+			postmark_cli_handle_api_error( $response );
 		}
 
 	}
@@ -2807,12 +2339,12 @@ class PostmarkPluginCLI {
 	 */
 	public function get_outbound_message_dump( $args ) {
 
-		$url = "https://api.postmarkapp.com/messages/outbound/{$args[0]}/dump";
+		$path = "messages/outbound/{$args[0]}/dump";
 
 		// Retrieves outbound message dump.
-		$response = $this->postmark_api_call( 'get', $url, null, null );
+		$response = $this->server_api_call( 'get', $path, null );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -2856,56 +2388,26 @@ class PostmarkPluginCLI {
 	 */
 	public function inbound_message_search( $args, $assoc_args ) {
 
-		$url = 'https://api.postmarkapp.com/messages/inbound';
+		$path = 'messages/inbound';
 
 		if ( isset( $assoc_args['count'] ) ) {
-			$url .= '?count=' . $assoc_args['count'];
+			$path .= '?count=' . $assoc_args['count'];
 		} else {
-			$url .= '?count=500';
+			$path .= '?count=500';
 		}
 
 		if ( isset( $assoc_args['offset'] ) ) {
-			$url .= '&offset=' . $assoc_args['offset'];
+			$path .= '&offset=' . $assoc_args['offset'];
 		} else {
-			$url .= '&offset=0';
+			$path .= '&offset=0';
 		}
 
-		if ( isset( $assoc_args['recipient'] ) ) {
-			$url .= '&recipient=' . $assoc_args['recipient'];
-		}
-
-		if ( isset( $assoc_args['fromemail'] ) ) {
-			$url .= '&fromemail=' . $assoc_args['fromemail'];
-		}
-
-		if ( isset( $assoc_args['tag'] ) ) {
-			$url .= '&tag=' . $assoc_args['tag'];
-		}
-
-		if ( isset( $assoc_args['subject'] ) ) {
-			$url .= '&subject=' . $assoc_args['subject'];
-		}
-
-		if ( isset( $assoc_args['mailboxhash'] ) ) {
-			$url .= '&mailboxhash=' . $assoc_args['mailboxhash'];
-		}
-
-		if ( isset( $assoc_args['status'] ) ) {
-			$url .= '&status=' . $assoc_args['status'];
-		}
-
-		if ( isset( $assoc_args['todate'] ) ) {
-			$url .= '&todate=' . $assoc_args['todate'];
-		}
-
-		if ( isset( $assoc_args['fromdate'] ) ) {
-			$url .= '&fromdate=' . $assoc_args['fromdate'];
-		}
+		$path = postmark_cli_add_query_params( $assoc_args, $path );
 
 		// Retrieves results of inbound message search.
-		$response = $this->postmark_api_call( 'get', $url, null, null );
+		$response = $this->server_api_call( 'get', $path, null );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -2920,12 +2422,12 @@ class PostmarkPluginCLI {
 	 */
 	public function get_inbound_message_details( $args ) {
 
-		$url = "https://api.postmarkapp.com/messages/inbound/{$args[0]}/details";
+		$path = "messages/inbound/{$args[0]}/details";
 
 		// Retrieves inbound message details.
-		$response = $this->postmark_api_call( 'get', $url, null, null );
+		$response = $this->server_api_call( 'get', $path, null );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -2941,12 +2443,12 @@ class PostmarkPluginCLI {
 	 */
 	public function bypass_inbound_message( $args ) {
 
-		$url = "https://api.postmarkapp.com/messages/inbound/{$args[0]}/bypass";
+		$path = "messages/inbound/{$args[0]}/bypass";
 
 		// Performs the bypass.
-		$response = $this->postmark_api_call( 'put', $url, ' ', null );
+		$response = $this->server_api_call( 'put', $path, ' ' );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -2963,12 +2465,12 @@ class PostmarkPluginCLI {
 	 */
 	public function retry_inbound_message( $args ) {
 
-		$url = "https://api.postmarkapp.com/messages/inbound/{$args[0]}/retry";
+		$path = "messages/inbound/{$args[0]}/retry";
 
 		// Performs the bypass.
-		$response = $this->postmark_api_call( 'put', $url, ' ', null );
+		$response = $this->server_api_call( 'put', $path, ' ' );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -3023,72 +2525,26 @@ class PostmarkPluginCLI {
 	 */
 	public function get_opens( $args, $assoc_args ) {
 
-		$url = 'https://api.postmarkapp.com/messages/outbound/opens';
+		$path = 'messages/outbound/opens';
 
 		if ( isset( $assoc_args['count'] ) ) {
-			$url .= '?count=' . $assoc_args['count'];
+			$path .= '?count=' . $assoc_args['count'];
 		} else {
-			$url .= '?count=500';
+			$path .= '?count=500';
 		}
 
 		if ( isset( $assoc_args['offset'] ) ) {
-			$url .= '&offset=' . $assoc_args['offset'];
+			$path .= '&offset=' . $assoc_args['offset'];
 		} else {
-			$url .= '&offset=0';
+			$path .= '&offset=0';
 		}
 
-		if ( isset( $assoc_args['recipient'] ) ) {
-			$url .= '&recipient=' . $assoc_args['recipient'];
-		}
-
-		if ( isset( $assoc_args['tag'] ) ) {
-			$url .= '&tag=' . $assoc_args['tag'];
-		}
-
-		if ( isset( $assoc_args['client_name'] ) ) {
-			$url .= '&client_name=' . $assoc_args['client_name'];
-		}
-
-		if ( isset( $assoc_args['client_company'] ) ) {
-			$url .= '&client_company=' . $assoc_args['client_company'];
-		}
-
-		if ( isset( $assoc_args['client_family'] ) ) {
-			$url .= '&client_family=' . $assoc_args['client_family'];
-		}
-
-		if ( isset( $assoc_args['os_name'] ) ) {
-			$url .= '&os_name=' . $assoc_args['os_name'];
-		}
-
-		if ( isset( $assoc_args['os_family'] ) ) {
-			$url .= '&os_family=' . $assoc_args['os_family'];
-		}
-
-		if ( isset( $assoc_args['os_company'] ) ) {
-			$url .= '&os_company=' . $assoc_args['os_company'];
-		}
-
-		if ( isset( $assoc_args['platform'] ) ) {
-			$url .= '&platform=' . $assoc_args['platform'];
-		}
-
-		if ( isset( $assoc_args['country'] ) ) {
-			$url .= '&country=' . $assoc_args['country'];
-		}
-
-		if ( isset( $assoc_args['region'] ) ) {
-			$url .= '&region=' . $assoc_args['region'];
-		}
-
-		if ( isset( $assoc_args['city'] ) ) {
-			$url .= '&city=' . $assoc_args['city'];
-		}
+		$path = postmark_cli_add_query_params( $assoc_args, $path );
 
 		// Retrieves opens.
-		$response = $this->postmark_api_call( 'get', $url, null, null );
+		$response = $this->server_api_call( 'get', $path, null );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -3110,24 +2566,24 @@ class PostmarkPluginCLI {
 	 */
 	public function get_message_opens( $args, $assoc_args ) {
 
-		$url = "https://api.postmarkapp.com/messages/outbound/opens/{$args[0]}";
+		$path = "messages/outbound/opens/{$args[0]}";
 
 		if ( isset( $assoc_args['count'] ) ) {
-			$url .= '?count=' . $assoc_args['count'];
+			$path .= '?count=' . $assoc_args['count'];
 		} else {
-			$url .= '?count=500';
+			$path .= '?count=500';
 		}
 
 		if ( isset( $assoc_args['offset'] ) ) {
-			$url .= '&offset=' . $assoc_args['offset'];
+			$path .= '&offset=' . $assoc_args['offset'];
 		} else {
-			$url .= '&offset=0';
+			$path .= '&offset=0';
 		}
 
 		// Retrieves message opens.
-		$response = $this->postmark_api_call( 'get', $url, null, null );
+		$response = $this->server_api_call( 'get', $path, null );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -3183,72 +2639,26 @@ class PostmarkPluginCLI {
 	 */
 	public function get_clicks( $args, $assoc_args ) {
 
-		$url = 'https://api.postmarkapp.com/messages/outbound/clicks';
+		$path = 'messages/outbound/clicks';
 
 		if ( isset( $assoc_args['count'] ) ) {
-			$url .= '?count=' . $assoc_args['count'];
+			$path .= '?count=' . $assoc_args['count'];
 		} else {
-			$url .= '?count=500';
+			$path .= '?count=500';
 		}
 
 		if ( isset( $assoc_args['offset'] ) ) {
-			$url .= '&offset=' . $assoc_args['offset'];
+			$path .= '&offset=' . $assoc_args['offset'];
 		} else {
-			$url .= '&offset=0';
+			$path .= '&offset=0';
 		}
 
-		if ( isset( $assoc_args['recipient'] ) ) {
-			$url .= '&recipient=' . $assoc_args['recipient'];
-		}
-
-		if ( isset( $assoc_args['tag'] ) ) {
-			$url .= '&tag=' . $assoc_args['tag'];
-		}
-
-		if ( isset( $assoc_args['client_name'] ) ) {
-			$url .= '&client_name=' . $assoc_args['client_name'];
-		}
-
-		if ( isset( $assoc_args['client_company'] ) ) {
-			$url .= '&client_company=' . $assoc_args['client_company'];
-		}
-
-		if ( isset( $assoc_args['client_family'] ) ) {
-			$url .= '&client_family=' . $assoc_args['client_family'];
-		}
-
-		if ( isset( $assoc_args['os_name'] ) ) {
-			$url .= '&os_name=' . $assoc_args['os_name'];
-		}
-
-		if ( isset( $assoc_args['os_family'] ) ) {
-			$url .= '&os_family=' . $assoc_args['os_family'];
-		}
-
-		if ( isset( $assoc_args['os_company'] ) ) {
-			$url .= '&os_company=' . $assoc_args['os_company'];
-		}
-
-		if ( isset( $assoc_args['platform'] ) ) {
-			$url .= '&platform=' . $assoc_args['platform'];
-		}
-
-		if ( isset( $assoc_args['country'] ) ) {
-			$url .= '&country=' . $assoc_args['country'];
-		}
-
-		if ( isset( $assoc_args['region'] ) ) {
-			$url .= '&region=' . $assoc_args['region'];
-		}
-
-		if ( isset( $assoc_args['city'] ) ) {
-			$url .= '&city=' . $assoc_args['city'];
-		}
+		$path = postmark_cli_add_query_params( $assoc_args, $path );
 
 		// Retrieves clicks.
-		$response = $this->postmark_api_call( 'get', $url, null, null );
+		$response = $this->server_api_call( 'get', $path, null );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -3270,24 +2680,24 @@ class PostmarkPluginCLI {
 	 */
 	public function get_message_clicks( $args, $assoc_args ) {
 
-		$url = "https://api.postmarkapp.com/messages/outbound/clicks/{$args[0]}";
+		$path = "messages/outbound/clicks/{$args[0]}";
 
 		if ( isset( $assoc_args['count'] ) ) {
-			$url .= '?count=' . $assoc_args['count'];
+			$path .= '?count=' . $assoc_args['count'];
 		} else {
-			$url .= '?count=500';
+			$path .= '?count=500';
 		}
 
 		if ( isset( $assoc_args['offset'] ) ) {
-			$url .= '&offset=' . $assoc_args['offset'];
+			$path .= '&offset=' . $assoc_args['offset'];
 		} else {
-			$url .= '&offset=0';
+			$path .= '&offset=0';
 		}
 
 		// Retrieves a message's clicks.
-		$response = $this->postmark_api_call( 'get', $url, null, null );
+		$response = $this->server_api_call( 'get', $path, null );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	} // End Messages API
 
@@ -3307,12 +2717,12 @@ class PostmarkPluginCLI {
 	 */
 	public function get_server( $args, $assoc_args ) {
 
-		$url = "https://api.postmarkapp.com/servers/{$args[0]}";
+		$path = "servers/{$args[0]}";
 
 		// Retrieves server details.
-		$response = $this->postmark_api_call( 'get', $url, null, POSTMARK_ACCOUNT_TOKEN );
+		$response = $this->account_api_call( 'get', $path, null );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -3381,7 +2791,7 @@ class PostmarkPluginCLI {
 	 */
 	public function create_server( $args, $assoc_args ) {
 
-		$url = 'https://api.postmarkapp.com/servers';
+		$path = 'servers';
 
 		$new_server = array( 'Name' => "{$args[0]}" );
 
@@ -3501,9 +2911,9 @@ class PostmarkPluginCLI {
 		}
 
 		// Creates new server.
-		$response = $this->postmark_api_call( 'post', $url, wp_json_encode( $new_server ), POSTMARK_ACCOUNT_TOKEN );
+		$response = $this->account_api_call( 'post', $path, wp_json_encode( $new_server ) );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -3575,7 +2985,7 @@ class PostmarkPluginCLI {
 	 */
 	public function edit_server( $args, $assoc_args ) {
 
-		$url = "https://api.postmarkapp.com/servers/{$args[0]}";
+		$path = "servers/{$args[0]}";
 
 		$server_edits = array();
 
@@ -3704,9 +3114,9 @@ class PostmarkPluginCLI {
 		}
 
 		// Edits the server.
-		$response = $this->postmark_api_call( 'put', $url, wp_json_encode( $server_edits ), POSTMARK_ACCOUNT_TOKEN );
+		$response = $this->account_api_call( 'put', $path, wp_json_encode( $server_edits ) );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -3729,28 +3139,28 @@ class PostmarkPluginCLI {
 	 */
 	public function get_servers( $args, $assoc_args ) {
 
-		$url = 'https://api.postmarkapp.com/servers/';
+		$path = 'servers';
 
 		if ( isset( $assoc_args['count'] ) ) {
-			$url .= '?count=' . $assoc_args['count'];
+			$path .= '?count=' . $assoc_args['count'];
 		} else {
-			$url .= '?count=500';
+			$path .= '?count=500';
 		}
 
 		if ( isset( $assoc_args['offset'] ) ) {
-			$url .= '&offset=' . $assoc_args['offset'];
+			$path .= '&offset=' . $assoc_args['offset'];
 		} else {
-			$url .= '&offset=0';
+			$path .= '&offset=0';
 		}
 
 		if ( isset( $assoc_args['name'] ) ) {
-			$url .= '&name=' . $assoc_args['name'];
+			$path .= '&name=' . $assoc_args['name'];
 		}
 
 		// Retrieves server details.
-		$response = $this->postmark_api_call( 'get', $url, null, POSTMARK_ACCOUNT_TOKEN );
+		$response = $this->account_api_call( 'get', $path, null );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	}
 
@@ -3766,50 +3176,55 @@ class PostmarkPluginCLI {
 	 */
 	public function delete_server( $args, $assoc_args ) {
 
-		$url = "https://api.postmarkapp.com/servers/{$args[0]}";
+		$path = "servers/{$args[0]}";
 
 		// Deletes the server.
-		$response = $this->postmark_api_call( 'delete', $url, null, POSTMARK_ACCOUNT_TOKEN );
+		$response = $this->account_api_call( 'delete', $path, null );
 
-		postmark_handle_response( $response );
+		postmark_cli_handle_response( $response );
 
 	} // End Servers API
 
 } // End PostmarkPluginCLI
 
 // Helper function for displaying Postmark API response in CLI.
-function postmark_handle_response( $response ) {
+function postmark_cli_handle_response( $response ) {
+
+	$body = json_decode( wp_remote_retrieve_body( $response ) );
 
 	// Successful API call (200 response).
-	if ( is_array( $response ) && 200 === wp_remote_retrieve_response_code( $response ) ) {
+	if ( 200 === wp_remote_retrieve_response_code( $response ) ) {
 
-		$response['body'] = json_decode( $response['body'] );
-		WP_CLI::success( wp_json_encode( $response['body'], JSON_PRETTY_PRINT ) );
+		WP_CLI::success( wp_json_encode( $body, JSON_PRETTY_PRINT ) );
 
-		// Non-200 response from Postmark API.
-	} elseif ( is_array( $response ) && false === ( 200 === wp_remote_retrieve_response_code( $response ) ) ) {
+	// Non-200 response from Postmark API.
+	} elseif ( false === ( 200 === wp_remote_retrieve_response_code( $response ) ) ) {
 
-		WP_CLI::warning( 'Error occurred.' );
-
-		$response_body = json_decode( $response['body'] );
-
-		$error_message = [];
-
-		array_push( $error_message, 'Postmark API Error Code: ' . $response_body->ErrorCode );
-
-		array_push( $error_message, 'Postmark Error Message: ' . $response_body->Message );
-
-		// Displays Postmark API Error Code and Message for debugging.
-		WP_CLI::error_multi_line( $error_message );
+		postmark_cli_handle_api_error( $response );
 
 	} else {
 
-		WP_CLI::error( 'Error occurred with command. API call unsuccessful.' );
+		WP_CLI::error( 'Error occurred with command. API call failed.' );
 	}
 }
 
+// Displays Postmark API error response codes + messages.
+function postmark_cli_handle_api_error( $response ) {
+	WP_CLI::warning( 'Error occurred. Check API response from Postmark for more details.' );
+
+	$error_message = [];
+
+	$error_body =  json_decode( wp_remote_retrieve_body( $response ), true );
+
+	array_push( $error_message, 'Postmark API Error Code: ' . $error_body["ErrorCode"] );
+
+	array_push( $error_message, 'Postmark Error Message: ' . $error_body["Message"] );
+
+	WP_CLI::error_multi_line( $error_message );
+}
+
 // Generates a csv file.
-function make_csv( $csv_headers, $body, $type ) {
+function postmark_cli_make_csv( $csv_headers, $body, $type ) {
 
 	$current_time = str_replace( ':', ' ', ( date( 'F j, Y, g:i a' ) ) );
 
@@ -3820,19 +3235,32 @@ function make_csv( $csv_headers, $body, $type ) {
 
 	// Outputs data to a CSV file.
 
-	$csv_data = $csv_headers;
+	$csv_data = array();
+
+	array_push($csv_data, $csv_headers);
 
 	switch ( $type ) {
 
 		case 'delivery_stats':
+
 			foreach ( $body as $key => $value ) {
 
-				$csv_data .= "{$key}, {$value}\n";
+				if ( "InactiveMails" == $key ) {
 
+					array_push( $csv_data, array($key, '', $value) );
+
+				} else {
+
+					foreach ( $value as $v ) {
+						array_push( $csv_data, array($v['Type'], $v['Name'], $v['Count'] ) );
+					}
+				}
 			}
+
 			break;
 
 		case 'templated_batch_send':
+
 			foreach ( $body as $send_result ) {
 
 				$recipients = $send_result['To'];
@@ -3841,11 +3269,9 @@ function make_csv( $csv_headers, $body, $type ) {
 
 				$message_id = $send_result['MessageID'] ? $send_result['MessageID'] : '';
 
-				$csv_data .= $recipients . ','
-				. $status . ','
-				. $message_id . "\n";
-
+				array_push( $csv_data, array( $recipients, $status, $message_id ) );
 			}
+
 			break;
 
 		case 'batch_send':
@@ -3857,29 +3283,30 @@ function make_csv( $csv_headers, $body, $type ) {
 
 				$message_id = $send_result['MessageID'] ? $send_result['MessageID'] : '';
 
-				$csv_data .= $recipients . ','
-				. $status . ','
-				. $message_id . "\n";
+				array_push( $csv_data, array( $recipients, $status, $message_id) );
 
 			}
 			break;
 
 		case 'bounces':
+
 			foreach ( $body['Bounces'] as $bounce ) {
 
-				$csv_data .= "{$bounce['Email']}, {$bounce['Type']}, {$bounce['ID']}, {$bounce['BouncedAt']}\n";
+				array_push( $csv_data, array( $bounce['Email'], $bounce['Type'], $bounce['ID'], $bounce['BouncedAt'] ) );
 
 			}
 			break;
 	}
 
-	file_put_contents( "{$dir}/{$type}_{$current_time}.csv", $csv_data );
+	foreach ($csv_data as $fields) {
+    fputcsv($file, $fields);
+	}
 
 	fclose( $file );
 }
 
 // Checks if server token is set in Postmark plugin settings.
-function check_server_token_is_set() {
+function postmark_cli_check_server_token_is_set() {
 
 	$postmark_settings = json_decode( get_option( 'postmark_settings' ), true );
 
@@ -3897,9 +3324,35 @@ function check_server_token_is_set() {
 
 }
 
+function postmark_cli_check_account_token_is_set() {
+
+	if ( null === POSTMARK_ACCOUNT_TOKEN ) {
+
+		WP_CLI::error( 'You need to set your Account API Token in your wp-config.php file.' );
+
+		return false;
+
+	} else {
+
+		return true;
+
+	}
+
+}
+
+// Adds query params to API call endpoint from associated arguments.
+function postmark_cli_add_query_params( $assoc_args, $path ) {
+	// Adds query params, if present.
+	foreach( $assoc_args as $qp => $value ) {
+		$path = add_query_arg( $qp, $value, $path );
+	}
+
+	return $path;
+}
+
 // Makes sure Postmark plugin is activated before adding
 // Postmark wp cli commands.
-if ( class_exists( 'Postmark_Mail' ) ) {
+if ( class_exists( 'Postmark_Mail' ) && class_exists( 'WP_CLI' ) ) {
 
 	WP_CLI::add_command( 'postmark', 'PostmarkPluginCLI' );
 
