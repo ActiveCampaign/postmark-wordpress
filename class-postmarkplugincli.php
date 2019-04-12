@@ -1649,6 +1649,10 @@ class PostmarkPluginCLI {
 
 			foreach ( $body['SenderSignatures'] as $signature ) {
 
+				if ( !isset( $signature['ReplyToEmailAddress'] ) ) {
+					$signature['ReplyToEmailAddress'] = "";
+				}
+
 				array_push(
 					$data,
 					array(
@@ -3264,7 +3268,7 @@ function postmark_cli_check_server_token_is_set() {
 
 function postmark_cli_check_account_token_is_set() {
 
-	if ( null === POSTMARK_ACCOUNT_TOKEN ) {
+	if ( !defined( 'POSTMARK_ACCOUNT_TOKEN' ) ) {
 
 		WP_CLI::error( 'You need to set your Account API Token in your wp-config.php file.' );
 
