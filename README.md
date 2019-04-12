@@ -59,6 +59,9 @@ This plugin detects HTML by checking the headers sent by other WordPress plugins
 
 ## Changelog
 
+### v1.12
+* Adds Postmark commands to  WP-CLI.
+
 ### v1.11.2
 * Fixes no index error with track links check in wp_mail.
 
