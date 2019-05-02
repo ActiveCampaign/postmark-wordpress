@@ -221,12 +221,24 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
     if (isset($settings['enable_logs']) && $settings['enable_logs'] == 1) {
       global $wpdb;
       $table = $wpdb->prefix . "postmark_log";
+			$to = $body["To"];
+
+			// Only store the To address, not the To name.
+			if ( false !== strpos( $body["To"], '<' ) && false !== strpos( $to, '>' ) ) {
+				$to = substr( $body["To"], strpos( $body["To"], '<' ), -1);
+			}
+
+			// Only store the From address, not the From name.
+			if ( false !== strpos( $from, '<' ) && false !== strpos( $from, '>' ) ) {
+				$from = substr( $from, strpos( $from, "<" ), strpos( $from, ">" ) -1 );
+			}
+
       $wpdb->insert($table, array(
         'log_entry_date' => current_time( 'mysql' ),
-        'fromaddress' => sanitize_email($from),
-        'toaddress' => sanitize_email($body["To"]),
-        'subject' => sanitize_text_field($subject),
-        'response' => sanitize_text_field($response['body'])
+        'fromaddress' => sanitize_email( $from ),
+        'toaddress' => sanitize_email( $to ),
+        'subject' => sanitize_text_field( $subject ),
+        'response' => sanitize_text_field( $response['body'] )
       ));
     }
 

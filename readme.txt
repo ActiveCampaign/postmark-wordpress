@@ -88,6 +88,9 @@ And save the changes to the file.
 1. Postmark WP Plugin Settings screen.
 
 == Changelog ==
+= v1.11.3 =
+* Fixes log page display of From/To addresses including the From/To names. Only email addresses will now appear in logs page, to avoid confusion, while also preserving the sanitation of email addresses before inserting into db.
+
 = v1.11.2 =
 * Fixes no index error with track links check in wp_mail.
 
