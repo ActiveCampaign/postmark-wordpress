@@ -1,6 +1,5 @@
 <?php
 require_once(dirname( __FILE__ ).'/postmark.php');
-
 function postmark_determine_mime_content_type( $filename ){
     if (function_exists( 'mime_content_type' )) {
 	    return mime_content_type($filename);
@@ -114,6 +113,7 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
     }
     $content_type = apply_filters( 'wp_mail_content_type', $content_type );
 
+
     /*
     ==================================================
         Generate POST payload
@@ -125,6 +125,35 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 
     if ( isset( $recognized_headers['From'] ) ) {
         $from = $recognized_headers['From'];
+    }
+
+    $bracket_pos = strpos( $from, '<' );
+    
+    if ( $bracket_pos !== false ) {
+        // Text before the bracketed email is the "From" name.
+        if ( $bracket_pos > 0 ) {
+            $from_name = substr( $from, 0, $bracket_pos - 1 );
+            $from_name = str_replace( '"', '', $from_name );
+            $from_name = trim( $from_name );
+        }
+
+        $from_email = substr( $from, $bracket_pos + 1 );
+        $from_email = str_replace( '>', '', $from_email );
+        $from_email = trim( $from_email );
+
+        // Avoid setting an empty $from_email.
+    } elseif ( '' !== trim( $from ) ) {
+        $from_email = trim( $from );
+    }
+
+    $from_email = apply_filters( 'wp_mail_from', $from_email );
+
+    if ( isset( $from_name ) ) {
+        $from_name = apply_filters( 'wp_mail_from_name', $from_name );
+
+        $from = "${from_name} <${from}>";
+    } else {
+        $from = $from_email;
     }
 
     $body = array(
@@ -172,13 +201,13 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
         }
     }
 
-    if ( 1 == (int) $settings['force_html'] || 'text/html' == $content_type || 1 == $track_opens ) {
+    if ( 1 == (int) $settings['force_html'] || 'text/html' == $from_type || 1 == $track_opens ) {
         $body['HtmlBody'] = $message;
         // The user really, truly wants this sent as HTML, don't send it as text, too.
         // For historical reasons, we can't "force html" and "track opens" set both html and text bodies,
         // which is incorrect, but in order not to break existing behavior, we only strip out the textbody when
         // the user has gone to the trouble of specifying content type of 'text/html' in their headers.
-        if ('text/html' == $content_type) {
+        if ('text/html' == $from_type) {
             unset($body['TextBody']);
         }
     }
@@ -195,7 +224,7 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
         if ( is_readable( $attachment ) ) {
             $body['Attachments'][] = array(
                 'Name'          => basename( $attachment ),
-                'Content'       => base64_encode( file_get_contents( $attachment ) ),
+                'Content'       => base64_encode( file_get_content( $attachment ) ),
                 'ContentType'   => postmark_determine_mime_content_type( $attachment ),
             );
         }
