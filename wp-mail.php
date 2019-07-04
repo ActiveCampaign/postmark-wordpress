@@ -218,34 +218,42 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
     $response = wp_remote_post( 'https://api.postmarkapp.com/email', $args );
 
     // Logs send attempt, if logging enabled.
-    if (isset($settings['enable_logs']) && $settings['enable_logs'] == 1) {
+    if ( isset( $settings['enable_logs']) && $settings['enable_logs'] == 1 ) {
       global $wpdb;
       $table = $wpdb->prefix . "postmark_log";
-			$to = $body["To"];
+      $to = $body["To"];
 
-			// Only store the To address, not the To name.
-			if ( false !== strpos( $body["To"], '<' ) && false !== strpos( $to, '>' ) ) {
-				$to = substr( $body["To"], strpos( $body["To"], '<' ), -1);
-			}
+      // Only store the To address, not the To name.
+      if ( false !== strpos( $body["To"], '<' ) && false !== strpos( $to, '>' ) ) {
+        $to = substr( $body["To"], strpos( $body["To"], '<' ), -1);
+      }
 
-			// Only store the From address, not the From name.
-			if ( false !== strpos( $from, '<' ) && false !== strpos( $from, '>' ) ) {
-				$from = substr( $from, strpos( $from, "<" ), strpos( $from, ">" ) -1 );
-			}
+      // Only store the From address, not the From name.
+      if ( false !== strpos( $from, '<' ) && false !== strpos( $from, '>' ) ) {
+        $from = substr( $from, strpos( $from, "<" ), strpos( $from, ">" ) -1 );
+      }
 
-      $wpdb->insert($table, array(
-        'log_entry_date' => current_time( 'mysql' ),
-        'fromaddress' => sanitize_email( $from ),
-        'toaddress' => sanitize_email( $to ),
-        'subject' => sanitize_text_field( $subject ),
-        'response' => sanitize_text_field( $response['body'] )
-      ));
+      $log_entry = array(
+        "log_entry_date" => current_time( 'mysql' ),
+        "fromaddress" => sanitize_email( $from ),
+        "toaddress" => sanitize_email( $to ),
+        "subject" => sanitize_text_field( $subject ),
+      );
+
+      if ( is_array( $response ) ) {
+        $log_entry["response"] = sanitize_text_field( $response['body'] );
+
+      } elseif ( is_wp_error( $response ) ) {
+        $log_entry["response"] = $response->get_error_message();
+      }
+
+      $wpdb->insert($table, $log_entry);
     }
 
     if ( is_wp_error( $response ) || 200 != wp_remote_retrieve_response_code( $response ) ) {
-        do_action('postmark_error', $response, $headers);
-	Postmark_Mail::$LAST_ERROR = $response;
-        return false;
+      do_action('postmark_error', $response, $headers);
+      Postmark_Mail::$LAST_ERROR = $response;
+      return false;
     }
 
     do_action('postmark_response', $response, $headers);
