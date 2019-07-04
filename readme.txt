@@ -13,6 +13,8 @@ If you're still sending email with default SMTP, you're blind to delivery proble
 
 If you don't already have a Postmark account, you can get one in minutes, sign up at https://postmarkapp.com
 
+Check out our video on how to set up the Postmark for WordPress plugin [here](https://postmarkapp.com/webinars/postmark-wordpress).
+
 == Installation ==
 
 1. Upload postmark directory to your /wp-content/plugins directory
@@ -41,9 +43,9 @@ No worries, our expert team can help. Just send an email to support@postmarkapp.
 
 = Why should I trust you with my email sending? =
 
-Because we've been in this business for many years. We’ve been running an email marketing service, Newsberry, for five years. Through trial and error we already know what it takes to manage a large volume of email. We handle things like whitelisting, ISP throttling, reverse DNS, feedback loops, content scanning, and delivery monitoring to ensure your emails get to the inbox.
+Because we've been in this business for many years. Weâ€™ve been running an email marketing service, Newsberry, for five years. Through trial and error we already know what it takes to manage a large volume of email. We handle things like whitelisting, ISP throttling, reverse DNS, feedback loops, content scanning, and delivery monitoring to ensure your emails get to the inbox.
 
-Most importantly, a great product requires great support and even better education. Our team is spread out across six time zones to offer fast support on everything from using Postmark to best practices on content and user engagement. A solid infrastructure only goes so far, that’s why improving our customer’s sending practices helps achieve incredible results
+Most importantly, a great product requires great support and even better education. Our team is spread out across six time zones to offer fast support on everything from using Postmark to best practices on content and user engagement. A solid infrastructure only goes so far, thatâ€™s why improving our customerâ€™s sending practices helps achieve incredible results
 
 = Why aren't my HTML emails being sent? =
 
@@ -63,11 +65,11 @@ There are a couple ways to resolve this issue.
 
 Change this line:
 
-    $message .= ‘<‘ . network_site_url(“wp-login.php?action=rp&key=$key&login=” . rawurlencode($user_login), ‘login’) . “>\r\n”;
+    $message .= â€˜<â€˜ . network_site_url(â€œwp-login.php?action=rp&key=$key&login=â€ . rawurlencode($user_login), â€˜loginâ€™) . â€œ>\r\nâ€;
 
 Remove the brackets, so it becomes:
 
-    $message .= network_site_url(“wp-login.php?action=rp&key=$key&login=” . rawurlencode($user_login), ‘login’) . “\r\n”;
+    $message .= network_site_url(â€œwp-login.php?action=rp&key=$key&login=â€ . rawurlencode($user_login), â€˜loginâ€™) . â€œ\r\nâ€;
 
 And save the changes to the file.
 
