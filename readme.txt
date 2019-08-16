@@ -43,9 +43,9 @@ No worries, our expert team can help. Just send an email to support@postmarkapp.
 
 = Why should I trust you with my email sending? =
 
-Because we've been in this business for many years. Weâ€™ve been running an email marketing service, Newsberry, for five years. Through trial and error we already know what it takes to manage a large volume of email. We handle things like whitelisting, ISP throttling, reverse DNS, feedback loops, content scanning, and delivery monitoring to ensure your emails get to the inbox.
+Because we've been in this business for many years. We’ve been running an email marketing service, Newsberry, for five years. Through trial and error we already know what it takes to manage a large volume of email. We handle things like whitelisting, ISP throttling, reverse DNS, feedback loops, content scanning, and delivery monitoring to ensure your emails get to the inbox.
 
-Most importantly, a great product requires great support and even better education. Our team is spread out across six time zones to offer fast support on everything from using Postmark to best practices on content and user engagement. A solid infrastructure only goes so far, thatâ€™s why improving our customerâ€™s sending practices helps achieve incredible results
+Most importantly, a great product requires great support and even better education. Our team is spread out across six time zones to offer fast support on everything from using Postmark to best practices on content and user engagement. A solid infrastructure only goes so far, that’s why improving our customer’s sending practices helps achieve incredible results
 
 = Why aren't my HTML emails being sent? =
 
@@ -65,11 +65,11 @@ There are a couple ways to resolve this issue.
 
 Change this line:
 
-    $message .= â€˜<â€˜ . network_site_url(â€œwp-login.php?action=rp&key=$key&login=â€ . rawurlencode($user_login), â€˜loginâ€™) . â€œ>\r\nâ€;
+    $message .= ‘<‘ . network_site_url(“wp-login.php?action=rp&key=$key&login=” . rawurlencode($user_login), ‘login’) . “>\r\n”;
 
 Remove the brackets, so it becomes:
 
-    $message .= network_site_url(â€œwp-login.php?action=rp&key=$key&login=â€ . rawurlencode($user_login), â€˜loginâ€™) . â€œ\r\nâ€;
+    $message .= network_site_url(“wp-login.php?action=rp&key=$key&login=” . rawurlencode($user_login), ‘login’) . “\r\n”;
 
 And save the changes to the file.
 
@@ -90,6 +90,9 @@ And save the changes to the file.
 1. Postmark WP Plugin Settings screen.
 
 == Changelog ==
+= v1.11.5 =
+* Allows using POSTMARK_API_TEST in the plugin settings for generating test send requests that aren't actually delivered.
+
 = v1.11.4 =
 * Fixes handling of situation where call to Postmark API results in WP_Error instead of array for response, such as during incidents of the API being offline and not returning a response.
 

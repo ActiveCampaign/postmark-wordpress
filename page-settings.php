@@ -32,14 +32,14 @@ wp_nonce_field( 'postmark_nonce' );
         <a class="nav-tab" rel="general">General</a>
         <a class="nav-tab" rel="test">Send Test Email</a>
         <a class="nav-tab" rel="overrides">Overrides</a>
-        <!-- Only show Log tab if logging is enabled -->
-        <?php if (isset($this->settings['enable_logs']) && $this->settings['enable_logs'] == true) : ?>
+        <!-- Only show Logs tab if logging is enabled -->
+        <?php if ( isset( $this->settings['enable_logs'] ) && $this->settings['enable_logs'] == true ) : ?>
  			    <a class="nav-tab" rel="log" id="pm-log-nav-tab">Logs</a>
         <?php else : ?>
           <a class="nav-tab hidden" rel="log" id="pm-log-nav-tab">Logs</a>
  		    <?php endif; ?>
 
-       <?php if ( isset($_ENV['POSTMARK_PLUGIN_TESTING']) && 'POSTMARK_PLUGIN_TESTING' == $_ENV['POSTMARK_PLUGIN_TESTING'] ) : ?>
+       <?php if ( isset( $_ENV['POSTMARK_PLUGIN_TESTING'] ) && 'POSTMARK_PLUGIN_TESTING' == $_ENV['POSTMARK_PLUGIN_TESTING'] ) : ?>
 			      <a class="nav-tab" rel="plugin-testing">Plugin Testing</a>
 		  <?php endif; ?>
     </h1>

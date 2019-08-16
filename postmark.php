@@ -2,8 +2,8 @@
 /*
 Plugin Name: Postmark (Official)
 Plugin URI: https://postmarkapp.com/
-Description: Overwrites wp_mail to send emails through Postmark
-Version: 1.11.4
+Description: Overrides wp_mail to send emails through Postmark
+Version: 1.11.5
 Author: Andrew Yates & Matt Gibbs
 */
 
@@ -13,7 +13,7 @@ class Postmark_Mail
     public static $LAST_ERROR = null;
 
     function __construct() {
-        define( 'POSTMARK_VERSION', '1.11.3' );
+        define( 'POSTMARK_VERSION', '1.11.5' );
         define( 'POSTMARK_DIR', dirname( __FILE__ ) );
         define( 'POSTMARK_URL', plugins_url( basename( POSTMARK_DIR ) ) );
 
@@ -51,7 +51,7 @@ class Postmark_Mail
             return $settings;
         }
 
-        if (is_array($settings) && !isset($settings['track_links'])) {
+        if ( is_array( $settings ) && !isset( $settings['track_links'] ) ) {
           $settings['track_links'] = 0;
           update_option( 'postmark_settings', json_encode( $settings ) );
           return $settings;
@@ -171,18 +171,18 @@ class Postmark_Mail
 
     function save_settings() {
 	    // We check the wp_nonce.
-	    if ( ! isset($_POST['_wpnonce']) || ! wp_verify_nonce( $_POST['_wpnonce'], 'postmark_nonce' ) ) {
-		    wp_die(__('We were unable to verify this request, please reload the page and try again.'));
+	    if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], 'postmark_nonce' ) ) {
+		    wp_die(__( 'We were unable to verify this request, please reload the page and try again.' ) );
 	    }
 
 	    // We check that the current user is allowed to update settings.
-	    if ( ! current_user_can('manage_options') ) {
-		    wp_die(__('We were unable to verify this request, please reload the page and try again.'));
+	    if ( ! current_user_can( 'manage_options' ) ) {
+		    wp_die(__( 'We were unable to verify this request, please reload the page and try again.' ) );
 	    }
 
 	    // We check that we have received some data.
-	    if ( ! isset($_POST['data']) ) {
-		    wp_die(__('We were unable to verify this request, please reload the page and try again.'));
+	    if ( ! isset( $_POST['data'] ) ) {
+		    wp_die(__( 'We were unable to verify this request, please reload the page and try again.' ) );
       }
 
         $data = json_decode( stripslashes( $_POST['data'] ), true);
@@ -190,12 +190,12 @@ class Postmark_Mail
         $settings = array();
 
         // We check that we were able to decode data.
-        if ( ! is_array($data) ) {
-	        wp_die(__('Something went wrong!', 'postmark-wordpress'));
+        if ( ! is_array( $data ) ) {
+	        wp_die(__( 'Something went wrong!', 'postmark-wordpress' ) );
         }
 
         // We validate that 'enabled' is a numeric boolean
-        if ( isset($data['enabled']) && 1 === $data['enabled'] ) {
+        if ( isset( $data['enabled'] ) && 1 === $data['enabled'] ) {
 	        $settings['enabled'] = 1;
         }
         else {
@@ -203,7 +203,7 @@ class Postmark_Mail
         }
 
         // We validate that 'api_key' contains only allowed caracters [letters, numbers, dash]
-        if ( isset($data['api_key']) && 1 === preg_match('/^[A-Za-z0-9\-]*$/', $data['api_key']) ) {
+        if ( isset( $data['api_key'] ) && ( 1 === preg_match('/^[A-Za-z0-9\-]*$/', $data['api_key'] || 'POSTMARK_API_TEST' === $data['api_key'] ) ) ) {
 	        $settings['api_key'] = $data['api_key'];
         }
         else {
@@ -211,15 +211,15 @@ class Postmark_Mail
         }
 
         // We validate that 'sender_address' is a valid email address
-        if ( isset($data['sender_address']) && is_email($data['sender_address']) ) {
-	        $settings['sender_address'] = sanitize_email($data['sender_address']);
+        if ( isset( $data['sender_address']) && is_email( $data['sender_address'] ) ) {
+	        $settings['sender_address'] = sanitize_email( $data['sender_address'] );
         }
         else {
 	        $settings['sender_address'] = '';
         }
 
         // We validate that 'force_html' is a numeric boolean
-        if ( isset($data['force_html']) && 1 === $data['force_html'] ) {
+        if ( isset( $data['force_html'] ) && 1 === $data['force_html'] ) {
 	        $settings['force_html'] = 1;
         }
         else {
@@ -227,7 +227,7 @@ class Postmark_Mail
         }
 
         // We validate that 'track_opens' is a numeric boolean
-        if ( isset($data['track_opens']) && 1 === $data['track_opens'] ) {
+        if ( isset( $data['track_opens'] ) && 1 === $data['track_opens'] ) {
 	        $settings['track_opens'] = 1;
         }
         else {
@@ -235,7 +235,7 @@ class Postmark_Mail
         }
 
         // We validate that 'track_links' is a numeric boolean
-        if ( isset($data['track_links']) && 1 === $data['track_links'] ) {
+        if ( isset( $data['track_links'] ) && 1 === $data['track_links'] ) {
 	        $settings['track_links'] = 1;
         }
         else {
@@ -243,7 +243,7 @@ class Postmark_Mail
         }
 
         // Validates that 'enable_logs' is a numeric boolean and creates table for storing logs.
-        if ( isset($data['enable_logs']) && 1 === $data['enable_logs'] ) {
+        if ( isset( $data['enable_logs'] ) && 1 === $data['enable_logs'] ) {
 	        $settings['enable_logs'] = 1;
           // check if logs table exists, if not create it
           pm_log_create_db();
@@ -257,7 +257,7 @@ class Postmark_Mail
 
         update_option( 'postmark_settings', json_encode($settings) );
 
-        wp_die('Settings saved');
+        wp_die( 'Settings saved' );
     }
 
     function settings_html() {
@@ -273,7 +273,7 @@ function pm_log_create_db() {
   $table_name = $wpdb->prefix . 'postmark_log';
 
   // Creates a logs table if it doesn't exist already.
-  if( $wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name ) {
+  if( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) != $table_name ) {
 
     $charset_collate = $wpdb->get_charset_collate();
 
@@ -305,7 +305,7 @@ function pm_log_cron_activation() {
 }
 
 // Attaches pm_clear_old_logs function to cron job hook.
-add_action('pm_log_cron_job', 'pm_clear_old_logs');
+add_action( 'pm_log_cron_job', 'pm_clear_old_logs' );
 
 // Deletes up to 500 Postmark logs at a time that are older than 7 days.
 function pm_clear_old_logs() {
@@ -315,15 +315,15 @@ function pm_clear_old_logs() {
   $table_name = $wpdb->prefix . 'postmark_log';
 
   // Checks if there are any logs older than seven days to delete.
-  $rows_to_delete_count = $wpdb->get_var($wpdb->prepare(
+  $rows_to_delete_count = $wpdb->get_var( $wpdb->prepare(
          "SELECT COUNT(*) FROM $table_name
           WHERE %s < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL %d DAY)) LIMIT 500
          "
-          , 'log_entry_date', 7));
+          , 'log_entry_date', 7 ) );
 
   // Deletes logs that are more than 7 days old, limited to 500 log deletions at a time to prevent locking up db.
 
-  if ($rows_to_delete_count > 0) {
+  if ( $rows_to_delete_count > 0 ) {
 
     $wpdb->query(
   	   $wpdb->prepare(
@@ -342,14 +342,14 @@ function pm_clear_old_logs() {
 function pm_log_cron_deactivate() {
 
 	// Checks when the next cron job was scheduled for.
-	$timestamp = wp_next_scheduled('pm_log_cron_job');
+	$timestamp = wp_next_scheduled( 'pm_log_cron_job' );
 
 	// Unschedules upcoming cron job.
-	wp_unschedule_event($timestamp, 'pm_log_cron_job');
+	wp_unschedule_event( $timestamp, 'pm_log_cron_job' );
 }
 
 // Removes cron job for deleting old logs, if plugin is disabled.
-register_deactivation_hook (__FILE__, 'pm_log_cron_deactivate');
+register_deactivation_hook ( __FILE__, 'pm_log_cron_deactivate' );
 
 // Creates logs table on activation, if it doesn't exist
 register_activation_hook( __FILE__, 'pm_log_create_db' );
@@ -368,7 +368,7 @@ register_uninstall_hook( __FILE__, 'postmark_log_remove_table' );
 if ( ! function_exists( 'wp_mail' ) ) {
     $postmark = new Postmark_Mail();
 
-    if ( is_array($postmark->settings) && (1 == $postmark->settings['enabled']) ) {
+    if ( is_array( $postmark->settings ) && ( 1 == $postmark->settings['enabled'] ) ) {
         include( POSTMARK_DIR . '/wp-mail.php' );
     }
 }
