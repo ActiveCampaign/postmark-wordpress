@@ -59,7 +59,7 @@ wp_nonce_field( 'postmark_nonce' );
                 <th><label>API Key</label></th>
                 <td>
                     <input type="text" class="pm-api-key" value="" />
-                    <div class="footnote">Your API key is in the <strong>Credentials</strong> screen of your <a href="https://account.postmarkapp.com/servers" target="_blank">Postmark Server</a>.</div>
+                    <div class="footnote">Your API key is in the <strong>API Tokens</strong> tab of your <a href="https://account.postmarkapp.com/servers" target="_blank">Postmark Server</a>.</div>
                 </td>
             </tr>
             <tr>

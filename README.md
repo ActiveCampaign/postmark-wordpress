@@ -58,6 +58,10 @@ This plugin detects HTML by checking the headers sent by other WordPress plugins
 [Can I use the Postmark for WordPress plugin with Divi contact forms?](https://postmarkapp.com/support/article/1128-can-i-use-the-postmark-for-wordpress-plugin-with-divi-contact-forms)
 
 ## Changelog
+
+### v1.11.6
+* * Updates server API token location hint in plugin settings.
+
 ### v1.11.5
 * Changes Settings form field validation to allow using POSTMARK_API_TEST for server token.
 

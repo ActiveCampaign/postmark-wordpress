@@ -90,6 +90,9 @@ And save the changes to the file.
 1. Postmark WP Plugin Settings screen.
 
 == Changelog ==
+= v1.11.6 =
+* Updates server API token location hint in plugin settings.
+
 = v1.11.5 =
 * Allows using POSTMARK_API_TEST in the plugin settings for generating test send requests that aren't actually delivered.
 
