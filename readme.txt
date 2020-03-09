@@ -2,7 +2,7 @@
 Contributors: andy7629, alexknowshtml, mgibbs189, jptoto, atheken, prileygraham
 Tags: postmark, email, smtp, notifications, wp_mail, wildbit
 Requires at least: 4.0
-Tested up to: 5.3
+Tested up to: 5.4
 Stable tag: trunk
 
 The *officially-supported* Postmark plugin for Wordpress.
