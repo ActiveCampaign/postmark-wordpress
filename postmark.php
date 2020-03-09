@@ -13,9 +13,17 @@ class Postmark_Mail
     public static $LAST_ERROR = null;
 
     function __construct() {
-        define( 'POSTMARK_VERSION', '1.11.6' );
-        define( 'POSTMARK_DIR', dirname( __FILE__ ) );
-        define( 'POSTMARK_URL', plugins_url( basename( POSTMARK_DIR ) ) );
+        if ( ! defined( 'POSTMARK_VERSION' ) ) {
+            define( 'POSTMARK_VERSION', '1.11.6' );
+        }
+
+        if ( ! defined( 'POSTMARK_DIR' ) ) {
+            define( 'POSTMARK_DIR', dirname( __FILE__ ) );
+        }
+
+        if ( ! defined( 'POSTMARK_URL' ) ) {
+            define( 'POSTMARK_URL', plugins_url( basename( POSTMARK_DIR ) ) );
+        }
 
         add_filter( 'init', array( $this, 'init' ) );
 
