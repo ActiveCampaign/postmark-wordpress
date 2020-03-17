@@ -2,7 +2,7 @@
 require_once dirname( __FILE__ ) . '/postmark.php';
 
 /**
- * Determine MIME Content Tyep.
+ * Determine MIME Content Type.
  *
  * @param  string $filename Filename.
  */
