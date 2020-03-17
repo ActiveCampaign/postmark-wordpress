@@ -29,7 +29,7 @@ wp_nonce_field( 'postmark_nonce' );
 		<a class="nav-tab" rel="test">Send Test Email</a>
 		<a class="nav-tab" rel="overrides">Overrides</a>
 		<!-- Only show Logs tab if logging is enabled -->
-		<?php if ( isset( $this->settings['enable_logs'] ) && true === $this->settings['enable_logs'] ) : ?>
+		<?php if ( isset( $this->settings['enable_logs'] ) && true == $this->settings['enable_logs'] ) : ?>
 				 <a class="nav-tab" rel="log" id="pm-log-nav-tab">Logs</a>
 		<?php else : ?>
 		  <a class="nav-tab hidden" rel="log" id="pm-log-nav-tab">Logs</a>
@@ -147,7 +147,7 @@ wp_nonce_field( 'postmark_nonce' );
 
 	<!-- Sending logs tab -->
 	<!-- Only show Log tab if logging is enabled -->
-	<?php if ( isset( $this->settings['enable_logs'] ) && true === $this->settings['enable_logs'] ) : ?>
+	<?php if ( isset( $this->settings['enable_logs'] ) && true == $this->settings['enable_logs'] ) : ?>
 	  <div class="tab-content tab-log">
 
 		  <?php
