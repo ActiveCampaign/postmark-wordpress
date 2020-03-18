@@ -90,6 +90,9 @@ And save the changes to the file.
 1. Postmark WP Plugin Settings screen.
 
 == Changelog ==
+= v1.12 =
+* Adds support for message streams.
+
 = v1.11.6 =
 * Updates server API token location hint in plugin settings.
 
