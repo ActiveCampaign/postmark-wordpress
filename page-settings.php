@@ -59,6 +59,13 @@ wp_nonce_field( 'postmark_nonce' );
 				</td>
 			</tr>
 			<tr>
+				<th><label>Message Stream</label></th>
+				<td>
+					<input type="text" class="pm-stream-name" value="" placeholder="outbound" />
+					<div class="footnote">Optional - leave blank to use the default outbound transactional stream (<em>outbound</em>)</a>.</div>
+				</td>
+			</tr>
+			<tr>
 				<th><label>Sender Email</label></th>
 				<td>
 					<input type="text" class="pm-sender-address" value="" />

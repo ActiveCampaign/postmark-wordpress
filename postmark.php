@@ -70,6 +70,7 @@ class Postmark_Mail {
 			$settings = array(
 				'enabled'        => get_option( 'postmark_enabled', 0 ),
 				'api_key'        => get_option( 'postmark_api_key', '' ),
+				'stream_name'    => get_option( 'postmark_stream_name', 'outbound'),
 				'sender_address' => get_option( 'postmark_sender_address', '' ),
 				'force_html'     => get_option( 'postmark_force_html', 0 ),
 				'track_opens'    => get_option( 'postmark_trackopens', 0 ),
@@ -84,6 +85,12 @@ class Postmark_Mail {
 
 		if ( is_array( $settings ) && ! isset( $settings['track_links'] ) ) {
 			$settings['track_links'] = 0;
+			update_option( 'postmark_settings', wp_json_encode( $settings ) );
+			return $settings;
+		}
+
+		if ( is_array( $settings ) && ! isset( $settings['stream_name'] ) ) {
+			$settings['stream_name'] = 'outbound';
 			update_option( 'postmark_settings', wp_json_encode( $settings ) );
 			return $settings;
 		}
@@ -244,6 +251,13 @@ class Postmark_Mail {
 			$settings['api_key'] = $data['api_key'];
 		} else {
 			$settings['api_key'] = '';
+		}
+
+		// We validate that 'stream_name' contains only allowed caracters [letters, numbers, dash].
+		if ( isset( $data['stream_name'] ) && ( 1 === preg_match( '/^[A-Za-z0-9\-]*$/', $data['stream_name'] ) ) ) {
+			$settings['stream_name'] = $data['stream_name'];
+		} else {
+			$settings['stream_name'] = 'outbound';
 		}
 
 		// We validate that 'sender_address' is a valid email address.

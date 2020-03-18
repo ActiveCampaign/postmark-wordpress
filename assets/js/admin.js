@@ -4,6 +4,7 @@
         var logs_offset = 10;
         $('.pm-enabled').prop('checked', settings.enabled);
         $('.pm-api-key').val(settings.api_key);
+        $('.pm-stream-name').val(settings.stream_name);
         $('.pm-sender-address').val(settings.sender_address);
         $('.pm-force-html').prop('checked', settings.force_html);
         $('.pm-track-opens').prop('checked', settings.track_opens);
@@ -15,6 +16,7 @@
             var data = {
                 'enabled': $('.pm-enabled').is(':checked') ? 1 : 0,
                 'api_key': $('.pm-api-key').val(),
+                'stream_name': $('.pm-stream-name').val() ? $('.pm-stream-name').val() : 'outbound',
                 'sender_address': $('.pm-sender-address').val(),
                 'force_html': $('.pm-force-html').is(':checked') ? 1 : 0,
                 'track_opens': $('.pm-track-opens').is(':checked') ? 1 : 0,
