@@ -59,8 +59,11 @@ This plugin detects HTML by checking the headers sent by other WordPress plugins
 
 ## Changelog
 
+### v1.12
+* Adds support for message streams.
+
 ### v1.11.6
-* * Updates server API token location hint in plugin settings.
+* Updates server API token location hint in plugin settings.
 
 ### v1.11.5
 * Changes Settings form field validation to allow using POSTMARK_API_TEST for server token.

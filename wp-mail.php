@@ -201,6 +201,12 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 		$body['TrackLinks'] = 'HtmlAndText';
 	}
 
+	if ( 'outbound' !== $settings['stream_name'] ) {
+		$body['MessageStream'] = $settings['stream_name'];
+	} else {
+		$body['MessageStream'] = 'outbound';
+	}
+
 	foreach ( $attachments as $attachment ) {
 		if ( is_readable( $attachment ) ) {
 			$body['Attachments'][] = array(
