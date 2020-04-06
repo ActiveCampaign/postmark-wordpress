@@ -201,7 +201,7 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 		$body['TrackLinks'] = 'HtmlAndText';
 	}
 
-	if ( 'outbound' !== $settings['stream_name'] ) {
+	if ( isset( $settings['stream_name'] ) && 'outbound' !== $settings['stream_name'] ) {
 		$body['MessageStream'] = $settings['stream_name'];
 	} else {
 		$body['MessageStream'] = 'outbound';

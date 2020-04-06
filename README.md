@@ -59,6 +59,9 @@ This plugin detects HTML by checking the headers sent by other WordPress plugins
 
 ## Changelog
 
+### v1.12.1
+* Checks if stream_name is set in settings before determining which stream to use.
+
 ### v1.12
 * Adds support for message streams.
 
