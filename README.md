@@ -58,6 +58,8 @@ This plugin detects HTML by checking the headers sent by other WordPress plugins
 [Can I use the Postmark for WordPress plugin with Divi contact forms?](https://postmarkapp.com/support/article/1128-can-i-use-the-postmark-for-wordpress-plugin-with-divi-contact-forms)
 
 ## Changelog
+### v1.12.2
+* Corrects SQL for deletion of log entries older than 7 days.
 
 ### v1.12.1
 * Checks if stream_name is set in settings before determining which stream to use.

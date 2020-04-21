@@ -3,7 +3,7 @@
  * Plugin Name: Postmark (Official)
  * Plugin URI: https://postmarkapp.com/
  * Description: Overrides wp_mail to send emails through Postmark
- * Version: 1.12.1
+ * Version: 1.12.2
  * Author: Andrew Yates & Matt Gibbs
  */
 
@@ -372,9 +372,10 @@ function pm_clear_old_logs() {
 	// Checks if there are any logs older than seven days to delete.
 	$rows_to_delete_count = $wpdb->get_var(
 		$wpdb->prepare(
-			"SELECT COUNT(*) FROM $table_name
-          WHERE %s < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL %d DAY)) LIMIT 500
-         ",
+			"SELECT COUNT(*)
+			 FROM $table_name
+             WHERE %s < DATE_SUB(NOW(), INTERVAL %d DAY)
+			 LIMIT 500",
 			'log_entry_date',
 			7
 		)
@@ -386,8 +387,8 @@ function pm_clear_old_logs() {
 		$wpdb->query(
 			$wpdb->prepare(
 				"DELETE FROM $table_name
-            WHERE %s < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL %d DAY)) LIMIT %d
-           ",
+            	 WHERE %s < DATE_SUB(NOW(), INTERVAL %d DAY)
+				 LIMIT %d",
 				'log_entry_date',
 				7,
 				$rows_to_delete_count

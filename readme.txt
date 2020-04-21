@@ -90,7 +90,10 @@ And save the changes to the file.
 1. Postmark WP Plugin Settings screen.
 
 == Changelog ==
-= v1.12.1 =
+= v 1.12.2 =
+* Corrects SQL for deletion of log entries older than 7 days.
+
+= v 1.12.1 =
 * Checks if stream_name is set in settings before determining which stream to use.
 
 = v1.12 =
