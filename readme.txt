@@ -90,6 +90,9 @@ And save the changes to the file.
 1. Postmark WP Plugin Settings screen.
 
 == Changelog ==
+= v 1.12.3 =
+* Uses count() for check of logs query result count.
+
 = v 1.12.2 =
 * Corrects SQL for deletion of log entries older than 7 days.
 
