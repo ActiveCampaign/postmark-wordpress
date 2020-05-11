@@ -58,6 +58,9 @@ This plugin detects HTML by checking the headers sent by other WordPress plugins
 [Can I use the Postmark for WordPress plugin with Divi contact forms?](https://postmarkapp.com/support/article/1128-can-i-use-the-postmark-for-wordpress-plugin-with-divi-contact-forms)
 
 ## Changelog
+### v1.12.4
+* Fixes potential collation mismatch errors from date comparisons during old sending logs deletion.
+
 ### v1.12.3
 * Uses count() for check of logs query result count.
 

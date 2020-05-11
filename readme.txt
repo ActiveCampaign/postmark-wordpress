@@ -90,13 +90,16 @@ And save the changes to the file.
 1. Postmark WP Plugin Settings screen.
 
 == Changelog ==
-= v 1.12.3 =
+= v1.12.4 =
+* Fixes potential collation mismatch errors from date comparisons during old sending logs deletion.
+
+= v1.12.3 =
 * Uses count() for check of logs query result count.
 
-= v 1.12.2 =
+= v1.12.2 =
 * Corrects SQL for deletion of log entries older than 7 days.
 
-= v 1.12.1 =
+= v1.12.1 =
 * Checks if stream_name is set in settings before determining which stream to use.
 
 = v1.12 =
