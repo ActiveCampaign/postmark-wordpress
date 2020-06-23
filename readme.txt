@@ -91,7 +91,7 @@ And save the changes to the file.
 
 == Changelog ==
 = v1.12.5 =
-* Fixes 'POSTMARK_DIR is undefined' is undefined warning when upgrading other plugins via the CLI.
+* Fixes 'POSTMARK_DIR is undefined' warning when upgrading other plugins via the CLI.
 
 = v1.12.4 =
 * Fixes potential collation mismatch errors from date comparisons during old sending logs deletion.
