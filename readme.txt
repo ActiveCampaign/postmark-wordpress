@@ -90,6 +90,9 @@ And save the changes to the file.
 1. Postmark WP Plugin Settings screen.
 
 == Changelog ==
+= v1.12.5 =
+* Fixes 'POSTMARK_DIR is undefined' is undefined warning when upgrading other plugins via the CLI.
+
 = v1.12.4 =
 * Fixes potential collation mismatch errors from date comparisons during old sending logs deletion.
 
