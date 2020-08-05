@@ -2,7 +2,7 @@
 Contributors: andy7629, alexknowshtml, mgibbs189, jptoto, atheken, prileygraham
 Tags: postmark, email, smtp, notifications, wp_mail, wildbit
 Requires at least: 4.0
-Tested up to: 5.4
+Tested up to: 5.5
 Stable tag: trunk
 
 The *officially-supported* Postmark plugin for Wordpress.
@@ -31,7 +31,7 @@ Postmark is a hosted service that expertly handles all delivery of transactional
 
 = Will this plugin work with my WordPress site? =
 
-The Postmark for WordPress plugin overrides any usage of the wp_mail() function. Because of this, if any 3rd party code or plugins send mail directly using the PHP mail function, or any other method, we cannot override it. Please contact the makers of any offending plugins and let them know that they should use wp_mail() instead of unsupported mailing funcitons.
+The Postmark for WordPress plugin overrides any usage of the wp_mail() function. Because of this, if any 3rd party code or plugins send mail directly using the PHP mail function, or any other method, we cannot override it. Please contact the makers of any offending plugins and let them know that they should use wp_mail() instead of unsupported mailing functions.
 
 = Does this cost me money? =
 
