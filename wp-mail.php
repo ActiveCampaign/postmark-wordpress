@@ -137,6 +137,13 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 		$from = $recognized_headers['From'];
 	}
 
+	// Support using wp_mail_from_name filter.
+	$from_name = apply_filters( 'from_name', $from_name );
+
+	if ( isset ( $from_name ) ) {
+		$from = $from_name . ' <' . $from . '>';
+	}
+
 	$body = array(
 		'To'       => is_array( $to ) ? implode( ',', $to ) : $to,
 		'From'     => $from,
