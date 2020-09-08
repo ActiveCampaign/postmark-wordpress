@@ -90,6 +90,12 @@ And save the changes to the file.
 1. Postmark WP Plugin Settings screen.
 
 == Changelog ==
+= v1.13.2 =
+* Fixes error when upgrading by ensuring $postmark is set before trying to load settings.
+
+= v1.13.1 =
+* Fixes error from using incorrect filter name and mailparse_rfc822_parse_addresses function.
+
 = v1.13.0 =
 * Adds support for using the wp_mail_from_name filter to specify a from_name when sending.
 

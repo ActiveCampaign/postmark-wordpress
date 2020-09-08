@@ -58,6 +58,12 @@ This plugin detects HTML by checking the headers sent by other WordPress plugins
 [Can I use the Postmark for WordPress plugin with Divi contact forms?](https://postmarkapp.com/support/article/1128-can-i-use-the-postmark-for-wordpress-plugin-with-divi-contact-forms)
 
 ## Changelog
+### v1.13.2
+* Fixes error when upgrading by ensuring $postmark is set before trying to load settings.
+
+### v1.13.1
+* Fixes error from using incorrect filter name and mailparse_rfc822_parse_addresses function.
+
 ### v1.13.0
 * Adds support for using the wp_mail_from_name filter to specify a from_name when sending.
 
