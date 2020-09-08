@@ -26,7 +26,13 @@ function postmark_determine_mime_content_type( $filename ) {
  * @param  string $from_name From header display name.
  */
 function build_from_header_with_name( $from, $from_name ) {
-	$email_address = mailparse_rfc822_parse_addresses($from)[0]["address"];
+	// Check if email address is already in Display Name <email@domain.com> format.
+	if ( false !== strpos( $from, '<' ) && false !== strpos( $from, '>' ) ) {
+		$email_address = substr( $from, strpos( $from, '<' ), strpos( $from, '>' ) -1 );
+	} else {
+		$email_address = $from;
+	}
+
 	return $from_name . ' <' . $email_address . '>';
 }
 
@@ -149,10 +155,11 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 	}
 
 	// Support using wp_mail_from_name filter.
-	$from_name = apply_filters( 'from_name', $from_name );
+	$from_name = '';
+	$from_name = apply_filters( 'wp_mail_from_name', $from_name );
 
-	if ( isset ( $from_name ) ) {
-		$from = build_from_header_with_name($from, $from_name);
+	if ( ! empty ( $from_name ) ) {
+		$from = build_from_header_with_name( $from, $from_name );
 	}
 
 	$body = array(
