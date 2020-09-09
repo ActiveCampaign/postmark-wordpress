@@ -90,6 +90,9 @@ And save the changes to the file.
 1. Postmark WP Plugin Settings screen.
 
 == Changelog ==
+= v1.14.0 =
+* Adds support for setting a Tag on messages via X-PM-Tag header.
+
 = v1.13.2 =
 * Fixes error when upgrading by ensuring $postmark is set before trying to load settings.
 

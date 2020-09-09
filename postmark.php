@@ -3,7 +3,7 @@
  * Plugin Name: Postmark (Official)
  * Plugin URI: https://postmarkapp.com/
  * Description: Overrides wp_mail to send emails through Postmark
- * Version: 1.13.2
+ * Version: 1.14.0
  * Author: Andrew Yates & Matt Gibbs
  */
 
@@ -31,7 +31,7 @@ class Postmark_Mail {
 	 */
 	public function __construct() {
 		if ( ! defined( 'POSTMARK_VERSION' ) ) {
-			define( 'POSTMARK_VERSION', '1.13.2' );
+			define( 'POSTMARK_VERSION', '1.14.0' );
 		}
 
 		if ( ! defined( 'POSTMARK_DIR' ) ) {
@@ -188,9 +188,10 @@ class Postmark_Mail {
 		$headers       = array();
 
 		if ( isset( $_POST['with_tracking_and_html'] ) && $_POST['with_tracking_and_html'] ) {
-			$message = 'This is an <strong>HTML</strong> test email sent using the Postmark plugin. It has <a href="https://postmarkapp.com/developer/user-guide/tracking-opens">Open Tracking</a> and <a href="https://postmarkapp.com/developer/user-guide/tracking-links">Link Tracking</a> enabled.';
+			$message = 'This is an <strong>HTML</strong> test email sent using the Postmark plugin. It has <a href="https://postmarkapp.com/developer/user-guide/tracking-opens">Open Tracking</a> and <a href="https://postmarkapp.com/developer/user-guide/tracking-links">Link Tracking</a> enabled and is tagged.';
 			array_push( $headers, 'X-PM-Track-Opens: true' );
 			array_push( $headers, 'X-PM-TrackLinks: HtmlAndText' );
+			array_push( $headers, 'X-PM-Tag: PostmarkPluginTest');
 		} else {
 			$message = 'This is a test email sent using the Postmark plugin.';
 		}

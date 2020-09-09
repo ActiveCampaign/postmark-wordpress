@@ -118,7 +118,7 @@ wp_nonce_field( 'postmark_nonce' );
 				<td><input type="text" class="pm-test-email-sender" value="" placeholder="sender@example.com" /></td>
 			</tr>
 			<tr>
-				<td colspan="2"><input type="checkbox" name="with_tracking_and_html" class="pm-test-with-opens" value="" />Send test as HTML, with Open and Link Tracking enabled.</td>
+				<td colspan="2"><input type="checkbox" name="with_tracking_and_html" class="pm-test-with-opens" value="" />Send test as HTML, with both Open Tracking and Link Tracking enabled, and a Tag.</td>
 			</tr>
 		</table>
 
