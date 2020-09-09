@@ -28,7 +28,9 @@ function postmark_determine_mime_content_type( $filename ) {
 function build_from_header_with_name( $from, $from_name ) {
 	// Check if email address is already in Display Name <email@domain.com> format.
 	if ( false !== strpos( $from, '<' ) && false !== strpos( $from, '>' ) ) {
-		$email_address = substr( $from, strpos( $from, '<' ), strpos( $from, '>' ) -1 );
+		$email_address_start = strpos( $from, '<' ) + 1;
+		$email_address_end = strpos( $from, '>' );
+    	$email_address = substr( $from, $email_address_start, ( $email_address_end - $email_address_start ) );
 	} else {
 		$email_address = $from;
 	}
