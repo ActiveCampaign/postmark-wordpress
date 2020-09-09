@@ -90,6 +90,9 @@ And save the changes to the file.
 1. Postmark WP Plugin Settings screen.
 
 == Changelog ==
+= v1.13.3 =
+* Additional bugfix for using wp_mail_from_name filter.
+
 = v1.13.2 =
 * Fixes error when upgrading by ensuring $postmark is set before trying to load settings.
 
