@@ -25,6 +25,16 @@ Postmark is a hosted service that expertly handles all delivery of transactional
 
 The Postmark for WordPress plugin overrides any usage of the `wp_mail()` function. Because of this, if any 3rd party code or plugins send mail directly using the PHP mail function, or any other method, we cannot override it. Please contact the makers of any offending plugins and let them know that they should use `wp_mail()` instead of unsupported mailing functions.
 
+### TLS Version Requirements/Compatibility
+
+The Postmark API requires TLS 1.2 support. You can check your TLS 1.2 compatibility using [this plugin](https://wordpress.org/plugins/tls-1-2-compatibility-test/). After installing the plugin, change the dropdown for 'Select API Endpoint' to _How's My SSL?_ and run the test. If compatibility with TLS 1.2 is not detected, contact your server host or make the necessary upgrades to support TLS 1.2.
+
+TLS 1.2 requires:
+
+- PHP 5.5.19 or higher
+- cURL 7.34.0 or higher
+- OpenSSL 1.0.1 or higher
+
 ### Does this cost me money?
 
 The Postmark service (and this plugin) are free to get started, for up to 100 emails a month. You can sign up at https://postmarkapp.com/. When you need to process more than 100 emails a month, Postmark offers monthly plans to fit your needs.
