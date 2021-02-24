@@ -27,7 +27,9 @@ The Postmark for WordPress plugin overrides any usage of the `wp_mail()` functio
 
 ### TLS Version Requirements/Compatibility
 
-The Postmark API requires TLS 1.2 support. You can check your TLS 1.2 compatibility using [this plugin](https://wordpress.org/plugins/tls-1-2-compatibility-test/). After installing the plugin, change the dropdown for 'Select API Endpoint' to _How's My SSL?_ and run the test. If compatibility with TLS 1.2 is not detected, contact your server host or make the necessary upgrades to support TLS 1.2.
+The Postmark API requires TLS v1.1 or v1.2 support. We recommend using TLS v1.2.
+
+You can check your TLS v1.2 compatibility using [this plugin](https://wordpress.org/plugins/tls-1-2-compatibility-test/). After installing the plugin, change the dropdown for 'Select API Endpoint' to _How's My SSL?_ and run the test. If compatibility with TLS v1.2 is not detected, contact your server host or make the necessary upgrades to support TLS v1.1 or v1.2. 
 
 TLS 1.2 requires:
 
