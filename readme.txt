@@ -21,17 +21,17 @@ Check out our video on how to set up the Postmark for WordPress plugin [here](ht
 2. Activate plugin in WordPress admin
 3. In WordPress admin, go to Settings then Postmark. You will then want to insert your Postmark details. If you don't already have a Postmark account, get one at http://postmarkapp.com
 4. Verify sending by entering a recipient email address you have access to and pressing the "Send Test Email" button.
-5. Once verified, then check "Enable" to override wp_mail and send using Postmark instead.
+5. Once verified, then check "Enable" to override `wp_mail` and send using the Postmark API instead.
 
 == Frequently Asked Questions ==
 
 = What is Postmark? =
 
-Postmark is a hosted service that expertly handles all delivery of transactional webapp and web site email. This includes welcome emails, password resets, comment notifications, and more. If you've ever installed WordPress and had issues with PHP's mail() function not working right, or your WordPress install sends comment notifications or password resets to spam, Postmark makes all of these problems vanish in seconds. Without Postmark, you may not even know you're having delivery problems. Find out in seconds by installing and configuring this plugin.
+Postmark is a hosted service that expertly handles all delivery of transactional webapp and web site email. This includes welcome emails, password resets, comment notifications, and more. If you've ever installed WordPress and had issues with PHP's `mail()` function not working right, or your WordPress install sends comment notifications or password resets to spam, Postmark makes all of these problems vanish in seconds. Without Postmark, you may not even know you're having delivery problems. Find out in seconds by installing and configuring this plugin.
 
 = Will this plugin work with my WordPress site? =
 
-The Postmark for WordPress plugin overrides any usage of the wp_mail() function. Because of this, if any 3rd party code or plugins send mail directly using the PHP mail function, or any other method, we cannot override it. Please contact the makers of any offending plugins and let them know that they should use wp_mail() instead of unsupported mailing functions.
+The Postmark for WordPress plugin overrides any usage of the `wp_mail()` function. Because of this, if any 3rd party code or plugins send mail directly using the PHP mail function, or any other method, we cannot override it. Please contact the makers of any offending plugins and let them know that they should use `wp_mail()` instead of unsupported mailing functions.
 
 = TLS Version Requirements/Compatibility =
 
@@ -51,7 +51,7 @@ The Postmark service (and this plugin) are free to get started. You can sign up 
 
 = My emails are still not sending, or they are going to spam! HELP!? =
 
-No worries, our expert team can help. Just send an email to support@postmarkapp.com or tweet @postmarkapp for help. Be sure to include as much detail as possible.
+No worries, our expert team can help. Just send an email to [support@postmarkapp.com](mailto:support@postmarkapp.com) or tweet [@postmarkapp](https://twitter.com/postmarkapp) for help. Be sure to include as much detail as possible.
 
 = Why should I trust you with my email sending? =
 
@@ -59,9 +59,6 @@ Because we've been in this business for many years. We’ve been running an emai
 
 Most importantly, a great product requires great support and even better education. Our team is spread out across six time zones to offer fast support on everything from using Postmark to best practices on content and user engagement. A solid infrastructure only goes so far, that’s why improving our customer’s sending practices helps achieve incredible results
 
-= Why aren't my HTML emails being sent? =
-
-This plugin detects HTML by checking the headers sent by other WordPress plugins. If a "text/html" content type isn't set then this plugin won't send the HTML to Postmark to be sent out only the plain text version of the email.
 
 = Why aren't my HTML emails being sent? =
 
@@ -73,17 +70,21 @@ There are a couple ways to resolve this issue.
 
 1. Open the Postmark plugin settings and uncheck Force HTML and click Save Changes. If the default WordPress password reset email is sent in Plain Text format, the link will render as expected.
 
-2. Access your WordPress site directory and open the wp-login.php file.
+2. Access your WordPress site directory and open the `wp-login.php` file.
 
 Change this line:
 
-    $message .= ‘<‘ . network_site_url(“wp-login.php?action=rp&key=$key&login=” . rawurlencode($user_login), ‘login’) . “>\r\n”;
+    `$message .= ‘<‘ . network_site_url(“wp-login.php?action=rp&key=$key&login=” . rawurlencode($user_login), ‘login’) . “>\r\n”;`
 
 Remove the brackets, so it becomes:
 
-    $message .= network_site_url(“wp-login.php?action=rp&key=$key&login=” . rawurlencode($user_login), ‘login’) . “\r\n”;
+    `$message .= network_site_url(“wp-login.php?action=rp&key=$key&login=” . rawurlencode($user_login), ‘login’) . “\r\n”;`
 
 And save the changes to the file.
+
+= How do I set the from name? =
+
+The plugin supports using the `wp_mail_from_name` filter for manually setting a name in the From header.
 
 == Additional Resources ==
 
