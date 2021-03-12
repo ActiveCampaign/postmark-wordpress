@@ -92,6 +92,10 @@ The plugin supports using the `wp_mail_from_name` filter for manually setting a 
 [Can I use the Postmark for WordPress plugin with Divi contact forms?](https://postmarkapp.com/support/article/1128-can-i-use-the-postmark-for-wordpress-plugin-with-divi-contact-forms)
 
 ## Changelog
+
+### v1.13.4
+* Handle special characters in site titles for test emails.
+
 ### v1.13.3
 * Additional bugfix for using wp_mail_from_name filter.
 

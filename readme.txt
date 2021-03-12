@@ -103,6 +103,10 @@ The plugin supports using the `wp_mail_from_name` filter for manually setting a 
 1. Postmark WP Plugin Settings screen.
 
 == Changelog ==
+
+= v1.13.4 =
+* Handle special characters in site titles for test emails.
+
 = v1.13.3 =
 * Additional bugfix for using wp_mail_from_name filter.
 
