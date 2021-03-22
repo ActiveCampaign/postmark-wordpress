@@ -149,9 +149,17 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 	==================================================
 	*/
 
-	// Allow overriding the From address when specified in the headers.
+	// Default From address specified in plugin settings.
 	$from = $settings['sender_address'];
 
+	// Allow overriding the From address when specified via wp_mail_from hook.
+	$from_email = apply_filters( 'wp_mail_from', $from_email );
+
+	if ( isset( $from_email ) ) {
+		$from = $from_email;
+	}
+
+	// Allow overriding the From address when specified via header.
 	if ( isset( $recognized_headers['From'] ) ) {
 		$from = $recognized_headers['From'];
 	}
