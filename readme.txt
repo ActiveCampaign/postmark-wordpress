@@ -103,6 +103,8 @@ The plugin supports using the `wp_mail_from_name` filter for manually setting a 
 1. Postmark WP Plugin Settings screen.
 
 == Changelog ==
+= v.1.14.0 =
+* Support using wp_mail_from hook to set From address. Overriding From address via header still has priority.
 
 = v1.13.4 =
 * Handle special characters in site titles for test emails.
