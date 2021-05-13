@@ -104,6 +104,9 @@ The plugin supports using the `wp_mail_from_name` filter for manually setting a 
 
 == Changelog ==
 
+= v1.13.5 =
+* Handle apostrophes in email address From names. These are sometimes used in site titles, which can be the default From address name with other plugins.
+
 = v1.13.4 =
 * Handle special characters in site titles for test emails.
 

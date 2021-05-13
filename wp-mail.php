@@ -35,7 +35,8 @@ function build_from_header_with_name( $from, $from_name ) {
 		$email_address = $from;
 	}
 
-	return $from_name . ' <' . $email_address . '>';
+	// Handle ' in email addresses by escaping them (they are sometimes used in site titles)
+	return addcslashes( $from_name, "'" ) . ' <' . $email_address . '>';
 }
 
 /**
