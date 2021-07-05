@@ -103,6 +103,8 @@ The plugin supports using the `wp_mail_from_name` filter for manually setting a 
 1. Postmark WP Plugin Settings screen.
 
 == Changelog ==
+= v1.13.6 =
+* Even better handling of apostrophes in email address From names.
 
 = v1.13.5 =
 * Handle apostrophes in email address From names. These are sometimes used in site titles, which can be the default From address name with other plugins.

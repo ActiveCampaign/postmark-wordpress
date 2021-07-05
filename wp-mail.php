@@ -35,8 +35,7 @@ function build_from_header_with_name( $from, $from_name ) {
 		$email_address = $from;
 	}
 
-	// Handle ' in email addresses by escaping them (they are sometimes used in site titles)
-	return addcslashes( $from_name, "'" ) . ' <' . $email_address . '>';
+	return $from_name . ' <' . $email_address . '>';
 }
 
 /**
@@ -166,8 +165,8 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 	}
 
 	$body = array(
-		'To'       => is_array( $to ) ? implode( ',', $to ) : $to,
 		'From'     => $from,
+		'To'       => is_array( $to ) ? implode( ',', $to ) : $to,
 		'Subject'  => $subject,
 		'TextBody' => $message,
 	);
@@ -251,13 +250,16 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 	==================================================
 	*/
 
+	// Handle apostrophes in email address From names by escaping them for the Postmark API.
+	$from_regex = "/(\"From\": \"[a-zA-Z\\d]+)*[\\\\]{2,}'/";
+
 	$args     = array(
 		'headers' => array(
 			'Accept'                  => 'application/json',
 			'Content-Type'            => 'application/json',
 			'X-Postmark-Server-Token' => $settings['api_key'],
 		),
-		'body'    => wp_json_encode( $body ),
+		'body'    => preg_replace( $from_regex, "'", wp_json_encode( $body ), 1 ),
 	);
 	$response = wp_remote_post( 'https://api.postmarkapp.com/email', $args );
 
