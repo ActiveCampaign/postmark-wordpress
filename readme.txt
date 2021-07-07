@@ -103,6 +103,9 @@ The plugin supports using the `wp_mail_from_name` filter for manually setting a 
 1. Postmark WP Plugin Settings screen.
 
 == Changelog ==
+= v1.13.7 =
+* Fix limit of 500 sending logs deleted per day.
+
 = v1.13.6 =
 * Even better handling of apostrophes in email address From names.
 
