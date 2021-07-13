@@ -52,7 +52,7 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 	// Compact the input, apply the filters, and extract them back out.
 	extract( apply_filters( 'wp_mail', compact( 'to', 'subject', 'message', 'headers', 'attachments' ) ) );
 
-	$settings = json_decode( get_option( 'postmark_settings' ), true );
+	$settings = include POSTMARK_DIR . '/postmark-settings.php';
 
 	if ( ! is_array( $attachments ) ) {
 		$attachments = explode( "\n", str_replace( "\r\n", "\n", $attachments ) );
