@@ -20,6 +20,13 @@ class Postmark_Mail {
 	public $settings;
 
 	/**
+	 * Overridden Settings.
+	 *
+	 * @var array
+	 */
+	public $overridden_settings;
+
+	/**
 	 * Last Error.
 	 *
 	 * @var [type]
@@ -45,6 +52,7 @@ class Postmark_Mail {
 		add_filter( 'init', array( $this, 'init' ) );
 
 		$this->settings = $this->load_settings();
+		$this->overridden_settings = include POSTMARK_DIR . '/postmark-settings.php';
 	}
 
 	/**
