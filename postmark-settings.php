@@ -13,4 +13,7 @@ $settings_from_constants = array(
 );
 $settings_from_constants = array_filter($settings_from_constants);
 $settings = array_merge( $settings, $settings_from_constants );
-return $settings;
+return array(
+    'settings' => $settings,
+    'settings_from_constants' => $settings_from_constants,
+);
