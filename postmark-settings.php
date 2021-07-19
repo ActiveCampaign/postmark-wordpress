@@ -11,5 +11,6 @@ $settings_from_constants = array(
     'stream_name'    => defined('POSTMARK_STREAM_NAME') ? POSTMARK_STREAM_NAME : null,
     'sender_address' => defined('POSTMARK_SENDER_ADDRESS') ? POSTMARK_SENDER_ADDRESS : null,
 );
+$settings_from_constants = array_filter($settings_from_constants);
 $settings = array_merge( $settings, $settings_from_constants );
 return $settings;
