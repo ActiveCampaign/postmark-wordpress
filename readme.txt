@@ -103,6 +103,9 @@ The plugin supports using the `wp_mail_from_name` filter for manually setting a 
 1. Postmark WP Plugin Settings screen.
 
 == Changelog ==
+= v1.14.0 =
+* Adds ability to override settings for environment specific Postmark plugin settings.
+
 = v1.13.7 =
 * Fix limit of 500 sending logs deleted per day.
 
