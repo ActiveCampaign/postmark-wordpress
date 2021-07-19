@@ -53,6 +53,7 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 	extract( apply_filters( 'wp_mail', compact( 'to', 'subject', 'message', 'headers', 'attachments' ) ) );
 
 	$settings = include POSTMARK_DIR . '/postmark-settings.php';
+	$settings = $settings['settings'];
 
 	if ( ! is_array( $attachments ) ) {
 		$attachments = explode( "\n", str_replace( "\r\n", "\n", $attachments ) );

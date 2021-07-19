@@ -53,6 +53,7 @@ class Postmark_Mail {
 
 		$this->settings = $this->load_settings();
 		$this->overridden_settings = include POSTMARK_DIR . '/postmark-settings.php';
+		$this->overridden_settings = $this->overridden_settings['settings_from_constants'];
 	}
 
 	/**
