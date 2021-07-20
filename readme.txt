@@ -59,10 +59,21 @@ Because we've been in this business for many years. We’ve been running an emai
 
 Most importantly, a great product requires great support and even better education. Our team is spread out across six time zones to offer fast support on everything from using Postmark to best practices on content and user engagement. A solid infrastructure only goes so far, that’s why improving our customer’s sending practices helps achieve incredible results
 
-
 = Why aren't my HTML emails being sent? =
 
 This plugin detects HTML by checking the headers sent by other WordPress plugins. If a "text/html" content type isn't set then this plugin won't send the HTML to Postmark to be sent out only the plain text version of the email.
+
+= How do I set environment specific Postmark plugin settings?
+
+You can optionally set the Postmark API Token, message stream, and default sending address by adding the following to your `wp-config.php` file:
+
+```
+define( 'POSTMARK_API_KEY', '<api token>' );
+define( 'POSTMARK_STREAM_NAME', 'stream-name' );
+define( 'POSTMARK_SENDER_ADDRESS', 'from@example.com' );
+```
+
+Setting any of these here will override what is set via the plugin's UI.
 
 = Why are password reset links not showing in emails sent with this plugin? =
 
@@ -103,6 +114,9 @@ The plugin supports using the `wp_mail_from_name` filter for manually setting a 
 1. Postmark WP Plugin Settings screen.
 
 == Changelog ==
+= v1.14.0 =
+* Adds ability to override settings for environment specific Postmark plugin settings.
+
 = v1.13.7 =
 * Fix limit of 500 sending logs deleted per day.
 

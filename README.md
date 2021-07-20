@@ -92,6 +92,9 @@ The plugin supports using the `wp_mail_from_name` filter for manually setting a 
 [Can I use the Postmark for WordPress plugin with Divi contact forms?](https://postmarkapp.com/support/article/1128-can-i-use-the-postmark-for-wordpress-plugin-with-divi-contact-forms)
 
 ## Changelog
+### v1.14.0
+* Adds ability to override settings for environment specific Postmark plugin settings.
+
 ### v1.13.7
 * Fix limit of 500 sending logs deleted per day.
 

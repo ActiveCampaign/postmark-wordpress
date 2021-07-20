@@ -42,6 +42,18 @@ wp_nonce_field( 'postmark_nonce' );
 
 	<div class="updated notice pm-notice hidden"></div>
 
+	<?php if ( isset( $this->overridden_settings['api_key'] ) ) : ?>
+		<div class="notice notice-info"><code>POSTMARK_API_KEY</code> is defined in your wp-config.php and overrides the <code>API Key</code> set here.</div>
+	<?php endif; ?>
+
+	<?php if ( isset( $this->overridden_settings['stream_name'] ) ) : ?>
+		<div class="notice notice-info"><code>POSTMARK_STREAM_NAME</code> is defined in your wp-config.php and overrides the <code>Message Stream</code> set here.</div>
+	<?php endif; ?>
+
+	<?php if ( isset( $this->overridden_settings['sender_address'] ) ) : ?>
+		<div class="notice notice-info"><code>POSTMARK_SENDER_ADDRESS</code> is defined in your wp-config.php and overrides the <code>Sender Email</code> set here.</div>
+	<?php endif; ?>
+
 	<div class="tab-content tab-general">
 		<table class="form-table">
 			<tr>
