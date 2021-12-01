@@ -81,6 +81,7 @@ class Postmark_Mail {
 				'api_key'        => get_option( 'postmark_api_key', '' ),
 				'stream_name'    => get_option( 'postmark_stream_name', 'outbound'),
 				'sender_address' => get_option( 'postmark_sender_address', '' ),
+                'force_from'     => get_option( 'postmark_force_from', 0 ),
 				'force_html'     => get_option( 'postmark_force_html', 0 ),
 				'track_opens'    => get_option( 'postmark_trackopens', 0 ),
 				'track_links'    => get_option( 'postmark_tracklinks', 0 ),
@@ -103,6 +104,12 @@ class Postmark_Mail {
 			update_option( 'postmark_settings', wp_json_encode( $settings ) );
 			return $settings;
 		}
+        
+        if ( is_array( $settings ) && ! isset( $settings['force_from'] ) ) {
+            $settings['force_from'] = 0;
+            update_option( 'postmark_settings', wp_json_encode( $settings ) );
+            return $settings;
+        }
 
 		return json_decode( $settings, true );
 	}
@@ -275,6 +282,13 @@ class Postmark_Mail {
 		} else {
 			$settings['sender_address'] = '';
 		}
+        
+        // We validate that 'force_from' is a numeric boolean.
+        if ( isset( $data['force_from'] ) && 1 === $data['force_from'] ) {
+            $settings['force_from'] = 1;
+        } else {
+            $settings['force_from'] = 0;
+        }
 
 		// We validate that 'force_html' is a numeric boolean.
 		if ( isset( $data['force_html'] ) && 1 === $data['force_html'] ) {
