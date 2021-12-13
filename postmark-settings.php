@@ -10,6 +10,7 @@ $settings_from_constants = array(
     'api_key'        => defined( 'POSTMARK_API_KEY' ) ? POSTMARK_API_KEY : null,
     'stream_name'    => defined( 'POSTMARK_STREAM_NAME' ) ? POSTMARK_STREAM_NAME : null,
     'sender_address' => defined( 'POSTMARK_SENDER_ADDRESS' ) ? POSTMARK_SENDER_ADDRESS : null,
+    'force_from'     => defined( 'POSTMARK_FORCE_FROM' ) ? POSTMARK_FORCE_FROM : null,
 );
 $settings_from_constants = array_filter( $settings_from_constants );
 $settings = array_merge( $settings, $settings_from_constants );
