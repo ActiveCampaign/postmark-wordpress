@@ -38,7 +38,7 @@ class Postmark_Mail {
 	 */
 	public function __construct() {
 		if ( ! defined( 'POSTMARK_VERSION' ) ) {
-			define( 'POSTMARK_VERSION', '1.15.0 );
+			define( 'POSTMARK_VERSION', '1.15.0' );
 		}
 
 		if ( ! defined( 'POSTMARK_DIR' ) ) {
