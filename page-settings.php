@@ -88,13 +88,13 @@ wp_nonce_field( 'postmark_nonce' );
 					<div class="footnote">This email must be a verified <a href="https://account.postmarkapp.com/signatures" target="_blank">Sender Signature</a>. It will appear as the "from" address on all outbound emails.</div>
 				</td>
 			</tr>
-            <tr>
-                <th><label>Force Sender Email</label></th>
-                <td>
-                    <input type="checkbox" class="pm-force-from" value="1" />
-                    <span class="footnote">Force emails to be sent from the Sender Email specified above. Disallows overriding using the <code>$headers</code> array.</span>
-                </td>
-            </tr>
+		        <tr>
+                                <th><label>Force Sender Email</label></th>
+			        <td>
+			    		<input type="checkbox" class="pm-force-from" value="1" />
+			    		<span class="footnote">Force emails to be sent from the Sender Email specified above. Disallows overriding using the <code>$headers</code> array.</span>
+                		</td>
+            		</tr>
 			<tr>
 				<th><label>Force HTML</label></th>
 				<td>
