@@ -153,7 +153,7 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 	// Allow overriding the From address when specified in the headers.
 	$from = $settings['sender_address'];
 
-    $force_from = isset($settings['force_from']) && $settings['force_from'];
+    $force_from = isset( $settings['force_from'] ) && $settings['force_from'];
 	if ( false === $force_from && isset( $recognized_headers['From'] ) ) {
 		$from = $recognized_headers['From'];
 	}
