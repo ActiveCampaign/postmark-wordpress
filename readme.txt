@@ -114,7 +114,10 @@ The plugin supports using the `wp_mail_from_name` filter for manually setting a 
 1. Postmark WP Plugin Settings screen.
 
 == Changelog ==
-= v.1.15.0 =
+= v1.15.1 =
+* Bugfix for using Force From setting.
+
+= v1.15.0 =
 * Adds new Force From setting to allow preventing override of From address using headers, if desired.
 
 = v1.14.0 =
