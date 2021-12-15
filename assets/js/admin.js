@@ -6,6 +6,7 @@
         $('.pm-api-key').val(settings.api_key);
         $('.pm-stream-name').val(settings.stream_name);
         $('.pm-sender-address').val(settings.sender_address);
+        $('.pm-force-from').prop('checked', settings.force_from);
         $('.pm-force-html').prop('checked', settings.force_html);
         $('.pm-track-opens').prop('checked', settings.track_opens);
         $('.pm-track-links').prop('checked', settings.track_links);
@@ -18,6 +19,7 @@
                 'api_key': $('.pm-api-key').val(),
                 'stream_name': $('.pm-stream-name').val() ? $('.pm-stream-name').val() : 'outbound',
                 'sender_address': $('.pm-sender-address').val(),
+                'force_from': $('.pm-force-from').is(':checked') ? 1 : 0,
                 'force_html': $('.pm-force-html').is(':checked') ? 1 : 0,
                 'track_opens': $('.pm-track-opens').is(':checked') ? 1 : 0,
                 'track_links': $('.pm-track-links').is(':checked') ? 1 : 0,
