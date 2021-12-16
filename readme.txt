@@ -3,7 +3,7 @@ Contributors: andy7629, alexknowshtml, mgibbs189, jptoto, atheken, prileygraham
 Tags: postmark, email, smtp, notifications, wp_mail, wildbit
 Requires at least: 4.0
 Tested up to: 5.8
-Stable tag: 1.14.0
+Stable tag: trunk
 
 The *officially-supported* Postmark plugin for Wordpress.
 
@@ -114,6 +114,9 @@ The plugin supports using the `wp_mail_from_name` filter for manually setting a 
 1. Postmark WP Plugin Settings screen.
 
 == Changelog ==
+= v1.15.2 =
+* Use correct admin.js file version.
+
 = v1.15.1 =
 * Bugfix for using Force From setting.
 
