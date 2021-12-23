@@ -114,6 +114,9 @@ The plugin supports using the `wp_mail_from_name` filter for manually setting a 
 1. Postmark WP Plugin Settings screen.
 
 == Changelog ==
+= v1.15.3 =
+* Ensure Postmark plugin is loaded before attempting to load settings from it after upgrading.
+
 = v1.15.2 =
 * Use correct admin.js file version.
 
