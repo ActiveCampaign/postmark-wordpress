@@ -54,7 +54,7 @@ wp_nonce_field( 'postmark_nonce' );
 		<div class="notice notice-info"><code>POSTMARK_SENDER_ADDRESS</code> is defined in your wp-config.php and overrides the <code>Sender Email</code> set here.</div>
 	<?php endif; ?>
     
-    <?php if ( isset( $this->overridden_settings['sender_address'] ) ) : ?>
+    <?php if ( isset( $this->overridden_settings['force_from'] ) ) : ?>
         <div class="notice notice-info"><code>POSTMARK_FORCE_FROM</code> is defined in your wp-config.php and overrides the <code>Force From</code> set here.</div>
     <?php endif; ?>
 
