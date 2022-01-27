@@ -92,6 +92,8 @@ The plugin supports using the `wp_mail_from_name` filter for manually setting a 
 [Can I use the Postmark for WordPress plugin with Divi contact forms?](https://postmarkapp.com/support/article/1128-can-i-use-the-postmark-for-wordpress-plugin-with-divi-contact-forms)
 
 ## Changelog
+### v1.15.4
+* Fix notice when overriding force_from setting.
 ### v1.15.3
 * Ensure Postmark plugin is loaded before attempting to load settings from it after upgrading.
 
