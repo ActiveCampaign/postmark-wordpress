@@ -50,7 +50,15 @@ function build_from_header_with_name( $from, $from_name ) {
 function wp_mail( $to, $subject, $message, $headers = '', $attachments = array() ) {
 
 	// Compact the input, apply the filters, and extract them back out.
-	extract( apply_filters( 'wp_mail', compact( 'to', 'subject', 'message', 'headers', 'attachments' ) ) );
+	$atts = apply_filters( 'wp_mail', compact( 'to', 'subject', 'message', 'headers', 'attachments' ) );
+	extract( $atts );
+
+	// Support using pre_wp_mail filter to short-circuit email sending.
+	$pre_wp_mail = apply_filters( 'pre_wp_mail', null, $atts );
+
+	if ( null !== $pre_wp_mail ) {
+		return $pre_wp_mail;
+	}
 
 	$settings = include POSTMARK_DIR . '/postmark-settings.php';
 	$settings = $settings['settings'];
