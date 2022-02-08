@@ -314,5 +314,14 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 
 	do_action( 'postmark_response', $response, $headers );
 
+    // Support wp_mail_succeeded action
+    do_action('wp_mail_succeeded', array(
+        'to' => $body['From'],
+        'subject' => $body['Subject'],
+        'message' => $body['TextBody'] ?? $body['HtmlBody'],
+        'headers' => $recognized_headers,
+        'attachments' => $body['Attachments'] ?? null,
+    ));
+
 	return true;
 }
