@@ -316,7 +316,7 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 
     // Support wp_mail_succeeded action
     do_action('wp_mail_succeeded', array(
-        'to' => $body['From'],
+        'to' => $body['To'],
         'subject' => $body['Subject'],
         'message' => $body['TextBody'] ?? $body['HtmlBody'],
         'headers' => $recognized_headers,
