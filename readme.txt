@@ -114,6 +114,9 @@ The plugin supports using the `wp_mail_from_name` filter for manually setting a 
 1. Postmark WP Plugin Settings screen.
 
 == Changelog ==
+= v1.15.6 =
+* Do wp_mail_succeeded action after successful sends (introduced in WordPress v5.9).
+
 = v1.15.5 =
 * Honour pre_wp_mail filters.
 
