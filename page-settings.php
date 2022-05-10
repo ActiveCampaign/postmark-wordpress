@@ -21,7 +21,7 @@ wp_nonce_field( 'postmark_nonce' );
 ?>
 <div class="wrap">
 	<div class="logo-bar">
-		<a href="https://postmarkapp.com/" target="_blank"><img src="<?php echo esc_url( POSTMARK_URL . '/assets/images/logo.png' ); ?>" width="130" height="21" alt="" /></a>
+		<a href="https://postmarkapp.com/" target="_blank"><img src="<?php echo esc_url( POSTMARK_URL . '/assets/images/logo.png' ); ?>" width="150" height="40" alt="" /></a>
 	</div>
 
 	<h1 class="nav-tab-wrapper">
@@ -64,7 +64,7 @@ wp_nonce_field( 'postmark_nonce' );
 				<th><label>Enabled?</label></th>
 				<td>
 					<input type="checkbox" class="pm-enabled" value="1" />
-					<span class="footnote">Send emails using Postmark</span>
+					<span class="footnote">Send emails using ActiveCampaign Postmark</span>
 				</td>
 			</tr>
 			<tr>
