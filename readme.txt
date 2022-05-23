@@ -2,7 +2,7 @@
 Contributors: andy7629, alexknowshtml, mgibbs189, jptoto, atheken, prileygraham
 Tags: postmark, email, smtp, notifications, wp_mail, wildbit
 Requires at least: 7.0
-Tested up to: 5.9
+Tested up to: 6.0
 Stable tag: trunk
 
 The *officially-supported* ActiveCampaign Postmark plugin for Wordpress.
