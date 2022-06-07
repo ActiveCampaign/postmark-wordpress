@@ -490,3 +490,5 @@ function pm_upgrade_completed( $upgrader_object, $options ) {
 }
 
 add_action( 'upgrader_process_complete', 'pm_upgrade_completed', 10, 2 );
+
+include_once( 'includes/class-postmark-debug.php' );
