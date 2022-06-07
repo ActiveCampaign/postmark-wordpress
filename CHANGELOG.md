@@ -76,7 +76,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -  Fixes 'POSTMARK_DIR is undefined' warning when upgrading other plugins via the CLI.
 
-## [1.12.4]
+## [1.12.4] - 2020-05-11
 
 -  Fixes potential collation mismatch errors from date comparisons during old sending logs deletion.
 
@@ -112,7 +112,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -  Fixes log page display of From/To addresses including the From/To names. Only email addresses will now appear in logs page, to avoid confusion, while also preserving the sanitation of email addresses before inserting into db.
 
-## [1.11.2]
+## [1.11.2] - 2019-02-05
 
 -  Fixes no index error with track links check in wp_mail.
 
@@ -120,7 +120,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -  Fixes call of non-global load_settings function during upgrade.
 
-## [1.11.0]
+## [1.11.0] - 2018-12-13
 
 -  Adds link tracking support.
 -  Fixes send test with HTML/open tracking option not being honored in sent test email.
@@ -174,7 +174,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -  Fix case where 'From' header is specified as a literal string, instead of in an associative array.
 
-## [1.9]
+## [1.9] - 2016-04-01
 
 -  Allow the 'From' header to override the default sender.
 -  Don't send TextBody when the user has specified the 'Content-Type' header of 'text/html'
