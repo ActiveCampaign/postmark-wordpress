@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name: Postmark (Official)
+ * Plugin Name: ActiveCampaign Postmark (Official)
  * Plugin URI: https://postmarkapp.com/
- * Description: Overrides wp_mail to send emails through Postmark
- * Version: 1.15.6
+ * Description: Overrides wp_mail to send emails through ActiveCampaign Postmark
+ * Version: 1.15.7
  * Author: Andrew Yates & Matt Gibbs
  */
 
@@ -38,7 +38,7 @@ class Postmark_Mail {
 	 */
 	public function __construct() {
 		if ( ! defined( 'POSTMARK_VERSION' ) ) {
-			define( 'POSTMARK_VERSION', '1.15.6' );
+			define( 'POSTMARK_VERSION', '1.15.7' );
 		}
 
 		if ( ! defined( 'POSTMARK_DIR' ) ) {
@@ -118,7 +118,7 @@ class Postmark_Mail {
 	 * Admin Menu.
 	 */
 	public function admin_menu() {
-		add_options_page( 'Postmark', 'Postmark', 'manage_options', 'pm_admin', array( $this, 'settings_html' ) );
+		add_options_page( 'ActiveCampaign Postmark', 'ActiveCampaign Postmark', 'manage_options', 'ac_pm_admin', array( $this, 'settings_html' ) );
 	}
 
 	/**
