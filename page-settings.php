@@ -53,7 +53,7 @@ wp_nonce_field( 'postmark_nonce' );
 	<?php if ( isset( $this->overridden_settings['sender_address'] ) ) : ?>
 		<div class="notice notice-info"><code>POSTMARK_SENDER_ADDRESS</code> is defined in your wp-config.php and overrides the <code>Sender Email</code> set here.</div>
 	<?php endif; ?>
-    
+
     <?php if ( isset( $this->overridden_settings['force_from'] ) ) : ?>
         <div class="notice notice-info"><code>POSTMARK_FORCE_FROM</code> is defined in your wp-config.php and overrides the <code>Force From</code> set here.</div>
     <?php endif; ?>
@@ -70,21 +70,21 @@ wp_nonce_field( 'postmark_nonce' );
 			<tr>
 				<th><label>API Key</label></th>
 				<td>
-					<input type="text" class="pm-api-key" value="" />
+					<input type="password" class="pm-api-key postmark-input" value="" placeholder="API Key" />
 					<div class="footnote">Your API key is in the <strong>API Tokens</strong> tab of your <a href="https://account.postmarkapp.com/servers" target="_blank">Postmark Server</a>.</div>
 				</td>
 			</tr>
 			<tr>
 				<th><label>Message Stream</label></th>
 				<td>
-					<input type="text" class="pm-stream-name" value="" placeholder="outbound" />
+					<input type="text" class="pm-stream-name postmark-input" value="" placeholder="outbound" />
 					<div class="footnote">Optional - Default is 'outbound' if blank.</div>
 				</td>
 			</tr>
 			<tr>
 				<th><label>Sender Email</label></th>
 				<td>
-					<input type="text" class="pm-sender-address" value="" />
+					<input type="text" class="pm-sender-address postmark-input" value="" placeholder="example@domain.com" />
 					<div class="footnote">This email must be a verified <a href="https://account.postmarkapp.com/signatures" target="_blank">Sender Signature</a>. It will appear as the "from" address on all outbound emails.</div>
 				</td>
 			</tr>
