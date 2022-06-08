@@ -5,7 +5,7 @@ if( ! class_exists( 'Postmark_Debug' ) ) {
   class Postmark_Debug {
 
     /**
-     * [__construct description]
+     * Constructor.
      */
     public function __construct() {
       // https://make.wordpress.org/core/2019/04/25/site-health-check-in-5-2/
@@ -13,21 +13,19 @@ if( ! class_exists( 'Postmark_Debug' ) ) {
     }
 
     /**
-     * [debug_info description]
-     * @param  [type] $debug_info               [description]
-     * @return [type]             [description]
+     * WordPress Site Health Debug Info.
+     * @param  [type] $debug_info Debug Info.
      */
     public function debug_info( $debug_info ) {
 
     	$settings = json_decode( get_option( 'postmark_settings' ) );
-    	$enabled = $settings->enabled;
 
         $debug_info['postmark-wordpress'] = array(
             'label'    => __( 'Active Campaign Postmark', 'postmark-wordpress' ),
             'fields'   => array(
                 'status' => array(
                     'label'    => __( 'Enabled', 'postmark-wordpress' ),
-                    'value'   =>  $this->strbool( $enabled ),
+                    'value'   =>  $this->strbool( $settings->enabled ),
                     'private' => false,
                 ),
     						'version' => array(
@@ -91,6 +89,11 @@ if( ! class_exists( 'Postmark_Debug' ) ) {
         return $debug_info;
     }
 
+    /**
+     * String Boolean.
+     * @param  bool   $value  Value.
+     * @return string Yes or No based on boolean provided.
+     */
     private function strbool( bool $value ) {
       return $value ? 'Yes' : 'No';
     }
@@ -99,49 +102,4 @@ if( ! class_exists( 'Postmark_Debug' ) ) {
 
   new Postmark_Debug;
 
-}
-
-
-
-
-function myplugin_add_caching_test( $tests ) {
-    $tests['direct']['caching_plugin'] = array(
-        'label' => __( 'My Caching Test' ),
-        'test'  => 'myplugin_caching_test',
-    );
-    return $tests;
-}
-add_filter( 'site_status_tests', 'myplugin_add_caching_test' );
-
-function myplugin_caching_test() {
-    $result = array(
-        'label'       => __( 'Postmark is enabled' ),
-        'status'      => 'good',
-        'badge'       => array(
-            'label' => __( 'Email' ),
-            'color' => 'orange',
-        ),
-        'description' => sprintf(
-            '<p>%s</p>',
-            __( 'Caching can help load your site more quickly for visitors.' )
-        ),
-        'actions'     => '',
-        'test'        => 'caching_plugin',
-    );
-
-
-        $result['status'] = 'recommended';
-        $result['label'] = __( 'Postmark is not enabled' );
-        $result['description'] = sprintf(
-            '<p>%s</p>',
-            __( 'Caching is not currently enabled on your site. Caching can help load your site more quickly for visitors.' )
-        );
-        $result['actions'] .= sprintf(
-            '<p><a href="%s">%s</a></p>',
-            esc_url( admin_url( 'admin.php?page=cachingplugin&action=enable-caching' ) ),
-            __( 'Enable Caching' )
-        );
-
-
-    return $result;
 }
