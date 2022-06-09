@@ -5,18 +5,18 @@
 <?php
 
 // Registers script for JS.
-wp_register_script('pm-js', plugins_url('assets/js/admin.js', __FILE__), '', null, true);
+wp_register_script( 'pm-js', plugins_url( 'assets/js/admin.js', __FILE__ ), '', null, true );
 
 // Enqueues script for JS.
-wp_enqueue_script('pm-js');
+wp_enqueue_script( 'pm-js' );
 
 // Registers script for CSS.
-wp_register_style('pm-styles', plugins_url('assets/css/admin.css', __FILE__));
+wp_register_style( 'pm-styles', plugins_url( 'assets/css/admin.css', __FILE__ ) );
 
 // Enqueues script for CSS.
-wp_enqueue_style('pm-styles');
+wp_enqueue_style( 'pm-styles' );
 
-wp_nonce_field('postmark_nonce');
+wp_nonce_field( 'postmark_nonce' );
 
 ?>
 <div class="wrap">
@@ -30,32 +30,32 @@ wp_nonce_field('postmark_nonce');
 		<a class="nav-tab" rel="overrides">Overrides</a>
 		<a class="nav-tab" rel="status">Status</a>
 		<!-- Only show Logs tab if logging is enabled -->
-		<?php if (isset($this->settings['enable_logs']) && true == $this->settings['enable_logs']) : ?>
+		<?php if ( isset( $this->settings['enable_logs'] ) && true == $this->settings['enable_logs'] ) : ?>
 			<a class="nav-tab" rel="log" id="pm-log-nav-tab">Logs</a>
 		<?php else : ?>
 			<a class="nav-tab hidden" rel="log" id="pm-log-nav-tab">Logs</a>
 		<?php endif; ?>
 
-		<?php if (isset($_ENV['POSTMARK_PLUGIN_TESTING']) && 'POSTMARK_PLUGIN_TESTING' === $_ENV['POSTMARK_PLUGIN_TESTING']) : ?>
+		<?php if ( isset( $_ENV['POSTMARK_PLUGIN_TESTING'] ) && 'POSTMARK_PLUGIN_TESTING' === $_ENV['POSTMARK_PLUGIN_TESTING'] ) : ?>
 			<a class="nav-tab" rel="plugin-testing">Plugin Testing</a>
 		<?php endif; ?>
 	</h1>
 
 	<div class="updated notice pm-notice hidden"></div>
 
-	<?php if (isset($this->overridden_settings['api_key'])) : ?>
+	<?php if ( isset( $this->overridden_settings['api_key'] ) ) : ?>
 		<div class="notice notice-info"><code>POSTMARK_API_KEY</code> is defined in your wp-config.php and overrides the <code>API Key</code> set here.</div>
 	<?php endif; ?>
 
-	<?php if (isset($this->overridden_settings['stream_name'])) : ?>
+	<?php if ( isset( $this->overridden_settings['stream_name'] ) ) : ?>
 		<div class="notice notice-info"><code>POSTMARK_STREAM_NAME</code> is defined in your wp-config.php and overrides the <code>Message Stream</code> set here.</div>
 	<?php endif; ?>
 
-	<?php if (isset($this->overridden_settings['sender_address'])) : ?>
+	<?php if ( isset( $this->overridden_settings['sender_address'] ) ) : ?>
 		<div class="notice notice-info"><code>POSTMARK_SENDER_ADDRESS</code> is defined in your wp-config.php and overrides the <code>Sender Email</code> set here.</div>
 	<?php endif; ?>
 
-	<?php if (isset($this->overridden_settings['force_from'])) : ?>
+	<?php if ( isset( $this->overridden_settings['force_from'] ) ) : ?>
 		<div class="notice notice-info"><code>POSTMARK_FORCE_FROM</code> is defined in your wp-config.php and overrides the <code>Force From</code> set here.</div>
 	<?php endif; ?>
 
@@ -180,10 +180,19 @@ wp_nonce_field('postmark_nonce');
 	<div class="tab-content tab-status">
 		<?php
 
-		$status = json_decode(wp_remote_retrieve_body(wp_remote_get('https://status.postmarkapp.com/api/1.0/status/', array('headers' => array(
-			'Accept' => 'application/json',
-			'Content-Type' => 'application/json'
-		)))));
+		$status = json_decode(
+			wp_remote_retrieve_body(
+				wp_remote_get(
+					'https://status.postmarkapp.com/api/1.0/status/',
+					array(
+						'headers' => array(
+							'Accept'       => 'application/json',
+							'Content-Type' => 'application/json',
+						),
+					)
+				)
+			)
+		);
 
 		?>
 		<table class="form-table">
@@ -205,7 +214,7 @@ wp_nonce_field('postmark_nonce');
 
 	<!-- Sending logs tab -->
 	<!-- Only show Log tab if logging is enabled -->
-	<?php if (isset($this->settings['enable_logs']) && true == $this->settings['enable_logs']) : ?>
+	<?php if ( isset( $this->settings['enable_logs'] ) && true == $this->settings['enable_logs'] ) : ?>
 		<div class="tab-content tab-log">
 
 			<?php
@@ -214,13 +223,13 @@ wp_nonce_field('postmark_nonce');
 			$table = $wpdb->prefix . 'postmark_log';
 
 			// Checks how many logs are in the logs table.
-			$count = $wpdb->get_var('SELECT COUNT(*) FROM ' . $table);
+			$count = $wpdb->get_var( 'SELECT COUNT(*) FROM ' . $table );
 
 			// Only shows some logs if some logs are stored.
-			if ($count > 0) {
+			if ( $count > 0 ) {
 
 				// Pulls sending logs from db to display in UI. prepare() used to prevent SQL injections
-				$result = $wpdb->get_results($wpdb->prepare("SELECT * FROM $table ORDER BY log_entry_date DESC LIMIT %d", 10));
+				$result = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table ORDER BY log_entry_date DESC LIMIT %d", 10 ) );
 
 				// Logs table header HTML.
 				echo '<table class="pm-log" id="pm-log-table">
@@ -233,14 +242,14 @@ wp_nonce_field('postmark_nonce');
                      </thead><tbody>';
 
 				// Builds HTML for each log to show as a row in the logs table.
-				foreach ($result as $row) {
-					echo '<tr><td align="center">' . date('Y-m-d h:i A', strtotime(esc_html($row->log_entry_date))) . '</td><td align="center">  ' . esc_html($row->fromaddress) . '</td><td align="center">  ' . esc_html($row->toaddress) . '</td><td align="center">  ' . esc_html($row->subject) . '</td><td align="center">  ' . $row->response . '</td></tr>';
+				foreach ( $result as $row ) {
+					echo '<tr><td align="center">' . date( 'Y-m-d h:i A', strtotime( esc_html( $row->log_entry_date ) ) ) . '</td><td align="center">  ' . esc_html( $row->fromaddress ) . '</td><td align="center">  ' . esc_html( $row->toaddress ) . '</td><td align="center">  ' . esc_html( $row->subject ) . '</td><td align="center">  ' . $row->response . '</td></tr>';
 				}
 
 				echo '</tbody></table>';
 
 				// Shows a 'Load More' button if more than 10 logs in logs table.
-				if ($count > 10) {
+				if ( $count > 10 ) {
 					echo '<div class="submit load-more">
                      <input type="submit" class="button-primary" value="Load More" /></div>';
 				}
@@ -251,7 +260,7 @@ wp_nonce_field('postmark_nonce');
 		<?php endif; ?>
 		</div>
 
-		<?php if (isset($_ENV['POSTMARK_PLUGIN_TESTING']) && 'POSTMARK_PLUGIN_TESTING' === $_ENV['POSTMARK_PLUGIN_TESTING']) : ?>
+		<?php if ( isset( $_ENV['POSTMARK_PLUGIN_TESTING'] ) && 'POSTMARK_PLUGIN_TESTING' === $_ENV['POSTMARK_PLUGIN_TESTING'] ) : ?>
 			<div class="tab-content tab-plugin-testing">
 				<table class="form-table" style="max-width:740px;">
 					<tr>
