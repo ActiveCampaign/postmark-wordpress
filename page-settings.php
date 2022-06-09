@@ -180,7 +180,7 @@ wp_nonce_field( 'postmark_nonce' );
 	<div class="tab-content tab-status">
 		<?php
 
-		$status = json_decode(
+		$pm_status = json_decode(
 			wp_remote_retrieve_body(
 				wp_remote_get(
 					'https://status.postmarkapp.com/api/1.0/status/',
@@ -198,14 +198,24 @@ wp_nonce_field( 'postmark_nonce' );
 		<table class="form-table">
 			<tr>
 				<th><label>Status</label></th>
+
 				<td>
-					<?php echo $status->status; ?>
+					<?php echo $pm_status->status; ?>
 				</td>
 			</tr>
 			<tr>
 				<th><label>Last Checked</label></th>
 				<td>
-					<?php echo date( $status->lastCheckDate ); ?>
+				<?php
+					$unix_date   = gmdate( 'U', strtotime( $pm_status->lastCheckDate ) );
+					$date_format = get_option( 'date_format' );
+					$time_format = get_option( 'time_format' );
+					echo wp_date( "{$date_format} {$time_format}", $unix_date );
+				?>
+				</td>
+			</tr>
+			<tr>
+				<th><label><a href="https://status.postmarkapp.com/" target="_blank">Check Postmark Status Site</a></label></th>
 				</td>
 			</tr>
 		</table>
