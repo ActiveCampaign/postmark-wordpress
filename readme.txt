@@ -114,8 +114,8 @@ The plugin supports using the `wp_mail_from_name` filter for manually setting a 
 1. ActiveCampaign Postmark WP Plugin Settings screen.
 
 == Changelog ==
-= v1.15.7 =
-* ActiveCampaign branding update.
+= v1.16.0 =
+* Added a Status tab to the plugin's Settings page for quickly checking Postmark's current status.
 
 --------
 
