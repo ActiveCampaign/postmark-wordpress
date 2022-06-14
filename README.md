@@ -97,4 +97,4 @@ The plugin supports using the `wp_mail_from_name` filter for manually setting a 
 
 --------
 
-[See the previous changelogs here](https://github.com/wildbit/postmark-wordpress/blob/master/CHANGELOG.md)
+[See the previous changelogs here](https://github.com/ActiveCampaign/postmark-wordpress/blob/master/CHANGELOG.md)
