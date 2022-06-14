@@ -15,8 +15,8 @@
     margin-top: 5px;
 }
 
-input[type=text] {
-    width: 300px;
+.postmark-input {
+  width: 300px;
 }
 
 .nav-tab {
@@ -33,9 +33,6 @@ input[type=text] {
 
 .footnote {
     font-size: 13px;
-}
-input[type=text] {
-    width: 300px;
 }
 
 #wpbody-content > div.wrap > div.tab-content.tab-log.active > table.pm-log {
