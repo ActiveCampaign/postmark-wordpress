@@ -1,6 +1,6 @@
 <script>
-  var postmark = postmark || {};
-  postmark.settings = <?php echo wp_json_encode( $this->settings ); ?>;
+	var postmark = postmark || {};
+	postmark.settings = <?php echo wp_json_encode( $this->settings ); ?>;
 </script>
 <?php
 
@@ -28,16 +28,17 @@ wp_nonce_field( 'postmark_nonce' );
 		<a class="nav-tab" rel="general">General</a>
 		<a class="nav-tab" rel="test">Send Test Email</a>
 		<a class="nav-tab" rel="overrides">Overrides</a>
+		<a class="nav-tab" rel="status">Status</a>
 		<!-- Only show Logs tab if logging is enabled -->
 		<?php if ( isset( $this->settings['enable_logs'] ) && true == $this->settings['enable_logs'] ) : ?>
-				 <a class="nav-tab" rel="log" id="pm-log-nav-tab">Logs</a>
+			<a class="nav-tab" rel="log" id="pm-log-nav-tab">Logs</a>
 		<?php else : ?>
-		  <a class="nav-tab hidden" rel="log" id="pm-log-nav-tab">Logs</a>
-			<?php endif; ?>
+			<a class="nav-tab hidden" rel="log" id="pm-log-nav-tab">Logs</a>
+		<?php endif; ?>
 
-	   <?php if ( isset( $_ENV['POSTMARK_PLUGIN_TESTING'] ) && 'POSTMARK_PLUGIN_TESTING' === $_ENV['POSTMARK_PLUGIN_TESTING'] ) : ?>
-				  <a class="nav-tab" rel="plugin-testing">Plugin Testing</a>
-		  <?php endif; ?>
+		<?php if ( isset( $_ENV['POSTMARK_PLUGIN_TESTING'] ) && 'POSTMARK_PLUGIN_TESTING' === $_ENV['POSTMARK_PLUGIN_TESTING'] ) : ?>
+			<a class="nav-tab" rel="plugin-testing">Plugin Testing</a>
+		<?php endif; ?>
 	</h1>
 
 	<div class="updated notice pm-notice hidden"></div>
@@ -54,9 +55,9 @@ wp_nonce_field( 'postmark_nonce' );
 		<div class="notice notice-info"><code>POSTMARK_SENDER_ADDRESS</code> is defined in your wp-config.php and overrides the <code>Sender Email</code> set here.</div>
 	<?php endif; ?>
 
-    <?php if ( isset( $this->overridden_settings['force_from'] ) ) : ?>
-        <div class="notice notice-info"><code>POSTMARK_FORCE_FROM</code> is defined in your wp-config.php and overrides the <code>Force From</code> set here.</div>
-    <?php endif; ?>
+	<?php if ( isset( $this->overridden_settings['force_from'] ) ) : ?>
+		<div class="notice notice-info"><code>POSTMARK_FORCE_FROM</code> is defined in your wp-config.php and overrides the <code>Force From</code> set here.</div>
+	<?php endif; ?>
 
 	<div class="tab-content tab-general">
 		<table class="form-table">
@@ -88,13 +89,13 @@ wp_nonce_field( 'postmark_nonce' );
 					<div class="footnote">This email must be a verified <a href="https://account.postmarkapp.com/signatures" target="_blank">Sender Signature</a>. It will appear as the "from" address on all outbound emails.</div>
 				</td>
 			</tr>
-		        <tr>
-                                <th><label>Force Sender Email</label></th>
-			        <td>
-			    		<input type="checkbox" class="pm-force-from" value="1" />
-			    		<span class="footnote">Force emails to be sent from the Sender Email specified above. Disallows overriding using the <code>$headers</code> array.</span>
-                		</td>
-            		</tr>
+			<tr>
+				<th><label>Force Sender Email</label></th>
+				<td>
+					<input type="checkbox" class="pm-force-from" value="1" />
+					<span class="footnote">Force emails to be sent from the Sender Email specified above. Disallows overriding using the <code>$headers</code> array.</span>
+				</td>
+			</tr>
 			<tr>
 				<th><label>Force HTML</label></th>
 				<td>
@@ -175,12 +176,58 @@ wp_nonce_field( 'postmark_nonce' );
 		To learn more about <code>wp_mail</code>, see the <a href="https://developer.wordpress.org/reference/functions/wp_mail/">WordPress Codex page.</a>
 	</div>
 
+
+	<div class="tab-content tab-status">
+		<?php
+
+		$pm_status = json_decode(
+			wp_remote_retrieve_body(
+				wp_remote_get(
+					'https://status.postmarkapp.com/api/1.0/status/',
+					array(
+						'headers' => array(
+							'Accept'       => 'application/json',
+							'Content-Type' => 'application/json',
+						),
+					)
+				)
+			)
+		);
+
+		?>
+		<table class="form-table">
+			<tr>
+				<th><label>Status</label></th>
+
+				<td>
+					<?php echo $pm_status->status; ?>
+				</td>
+			</tr>
+			<tr>
+				<th><label>Last Checked</label></th>
+				<td>
+				<?php
+					$unix_date   = gmdate( 'U', strtotime( $pm_status->lastCheckDate ) );
+					$date_format = get_option( 'date_format' );
+					$time_format = get_option( 'time_format' );
+					echo wp_date( "{$date_format} {$time_format}", $unix_date );
+				?>
+				</td>
+			</tr>
+			<tr>
+				<th><label><a href="https://status.postmarkapp.com/" target="_blank">Check Postmark Status Site</a></label></th>
+				</td>
+			</tr>
+		</table>
+
+	</div>
+
 	<!-- Sending logs tab -->
 	<!-- Only show Log tab if logging is enabled -->
 	<?php if ( isset( $this->settings['enable_logs'] ) && true == $this->settings['enable_logs'] ) : ?>
-	  <div class="tab-content tab-log">
+		<div class="tab-content tab-log">
 
-		  <?php
+			<?php
 			global $wpdb;
 
 			$table = $wpdb->prefix . 'postmark_log';
@@ -220,41 +267,41 @@ wp_nonce_field( 'postmark_nonce' );
 				echo '<h2 align="center">No Logs</h2>';
 			}
 			?>
-		  <?php endif; ?>
-	</div>
-
-   <?php if ( isset( $_ENV['POSTMARK_PLUGIN_TESTING'] ) && 'POSTMARK_PLUGIN_TESTING' === $_ENV['POSTMARK_PLUGIN_TESTING'] ) : ?>
-	<div class="tab-content tab-plugin-testing">
-		<table class="form-table" style="max-width:740px;">
-			<tr>
-				<th><label>Headers</label></th>
-				<td>
-					<textarea name="pm-plugin-test-headers" class="pm-plugin-test-headers" cols=80 placeholder="Reply-To: john@example.com"></textarea>
-				</td>
-			</tr>
-			<tr>
-				<th><label>Subject</label></th>
-				<td>
-					<input type="text" name="pm-plugin-test-subject" class="pm-plugin-test-subject" placeholder="Dear Emily, I just wanted to say hello..."/>
-				</td>
-			</tr>
-			<tr>
-				<th><label>Body</label></th>
-				<td>
-					<textarea name="pm-plugin-test-body" class="pm-plugin-test-body" placeholder="Hi there!" cols=80 ></textarea>
-				</td>
-			</tr>
-			<tr>
-				<th><label>To Address</label></th>
-				<td>
-					<input type="text" name="pm-plugin-test-to-address" class="pm-plugin-test-to-address" value="" placeholder="emily@example.com" />
-				</td>
-			</tr>
-		</table>
-
-		<div class="submit">
-			<input type="submit" class="button-primary plugin-send-test" value="Send Test Message" />
+		<?php endif; ?>
 		</div>
-	</div>
-	<?php endif; ?>
+
+		<?php if ( isset( $_ENV['POSTMARK_PLUGIN_TESTING'] ) && 'POSTMARK_PLUGIN_TESTING' === $_ENV['POSTMARK_PLUGIN_TESTING'] ) : ?>
+			<div class="tab-content tab-plugin-testing">
+				<table class="form-table" style="max-width:740px;">
+					<tr>
+						<th><label>Headers</label></th>
+						<td>
+							<textarea name="pm-plugin-test-headers" class="pm-plugin-test-headers" cols=80 placeholder="Reply-To: john@example.com"></textarea>
+						</td>
+					</tr>
+					<tr>
+						<th><label>Subject</label></th>
+						<td>
+							<input type="text" name="pm-plugin-test-subject" class="pm-plugin-test-subject" placeholder="Dear Emily, I just wanted to say hello..." />
+						</td>
+					</tr>
+					<tr>
+						<th><label>Body</label></th>
+						<td>
+							<textarea name="pm-plugin-test-body" class="pm-plugin-test-body" placeholder="Hi there!" cols=80></textarea>
+						</td>
+					</tr>
+					<tr>
+						<th><label>To Address</label></th>
+						<td>
+							<input type="text" name="pm-plugin-test-to-address" class="pm-plugin-test-to-address" value="" placeholder="emily@example.com" />
+						</td>
+					</tr>
+				</table>
+
+				<div class="submit">
+					<input type="submit" class="button-primary plugin-send-test" value="Send Test Message" />
+				</div>
+			</div>
+		<?php endif; ?>
 </div>
