@@ -92,9 +92,11 @@ The plugin supports using the `wp_mail_from_name` filter for manually setting a 
 [Can I use the ActiveCampaign Postmark for WordPress plugin with Divi contact forms?](https://postmarkapp.com/support/article/1128-can-i-use-the-postmark-for-wordpress-plugin-with-divi-contact-forms)
 
 ## Changelog
-### v1.16.1
-* Obfuscate API Token in Settings page.
+## v1.17.0
+* Add ActiveCampaign Postmark for WordPress to Site Health.
 
 --------
 
 [See the previous changelogs here](https://github.com/ActiveCampaign/postmark-wordpress/blob/master/CHANGELOG.md)
+
+ActiveCampaign, 2022
