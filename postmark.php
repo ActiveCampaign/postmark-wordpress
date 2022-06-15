@@ -51,7 +51,7 @@ class Postmark_Mail {
 
 		add_filter( 'init', array( $this, 'init' ) );
 
-		$this->settings = $this->load_settings();
+		$this->settings            = $this->load_settings();
 		$this->overridden_settings = include POSTMARK_DIR . '/postmark-settings.php';
 		$this->overridden_settings = $this->overridden_settings['settings_from_constants'];
 	}
@@ -79,9 +79,9 @@ class Postmark_Mail {
 			$settings = array(
 				'enabled'        => get_option( 'postmark_enabled', 0 ),
 				'api_key'        => get_option( 'postmark_api_key', '' ),
-				'stream_name'    => get_option( 'postmark_stream_name', 'outbound'),
+				'stream_name'    => get_option( 'postmark_stream_name', 'outbound' ),
 				'sender_address' => get_option( 'postmark_sender_address', '' ),
-                		'force_from'     => get_option( 'postmark_force_from', 0 ),
+				'force_from'     => get_option( 'postmark_force_from', 0 ),
 				'force_html'     => get_option( 'postmark_force_html', 0 ),
 				'track_opens'    => get_option( 'postmark_trackopens', 0 ),
 				'track_links'    => get_option( 'postmark_tracklinks', 0 ),
@@ -106,9 +106,9 @@ class Postmark_Mail {
 		}
 
 		if ( is_array( $settings ) && ! isset( $settings['force_from'] ) ) {
-		        $settings['force_from'] = 0;
-		        update_option( 'postmark_settings', wp_json_encode( $settings ) );
-		        return $settings;
+				$settings['force_from'] = 0;
+				update_option( 'postmark_settings', wp_json_encode( $settings ) );
+				return $settings;
 		}
 
 		return json_decode( $settings, true );
@@ -144,7 +144,7 @@ class Postmark_Mail {
 
 		$has_more = true;
 
-		if ( sizeof($result) < 10 ) {
+		if ( sizeof( $result ) < 10 ) {
 			$has_more = false;
 		}
 
@@ -283,12 +283,12 @@ class Postmark_Mail {
 			$settings['sender_address'] = '';
 		}
 
-        // We validate that 'force_from' is a numeric boolean.
-        if ( isset( $data['force_from'] ) && 1 === $data['force_from'] ) {
-            $settings['force_from'] = 1;
-        } else {
-            $settings['force_from'] = 0;
-        }
+		// We validate that 'force_from' is a numeric boolean.
+		if ( isset( $data['force_from'] ) && 1 === $data['force_from'] ) {
+			$settings['force_from'] = 1;
+		} else {
+			$settings['force_from'] = 0;
+		}
 
 		// We validate that 'force_html' is a numeric boolean.
 		if ( isset( $data['force_html'] ) && 1 === $data['force_html'] ) {
@@ -481,9 +481,9 @@ function pm_upgrade_completed( $upgrader_object, $options ) {
 			if ( $plugin == $pm_plugin ) {
 				 pm_log_create_db();
 				 $postmark = new Postmark_Mail();
-				 if ( isset( $postmark ) ) {
+				if ( isset( $postmark ) ) {
 					$postmark->load_settings();
-				 }
+				}
 			}
 		}
 	}
@@ -491,4 +491,4 @@ function pm_upgrade_completed( $upgrader_object, $options ) {
 
 add_action( 'upgrader_process_complete', 'pm_upgrade_completed', 10, 2 );
 
-include_once( 'includes/class-postmark-debug.php' );
+require_once 'includes/class-postmark-debug.php';
