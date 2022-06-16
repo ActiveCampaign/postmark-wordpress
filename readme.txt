@@ -114,8 +114,8 @@ The plugin supports using the `wp_mail_from_name` filter for manually setting a 
 1. ActiveCampaign Postmark WP Plugin Settings screen.
 
 == Changelog ==
-= v1.16.1 =
-* Obfuscate API Token in Settings page.
+= v1.17.0 =
+* Add ActiveCampaign Postmark for WordPress to Site Health.
 
 --------
 
