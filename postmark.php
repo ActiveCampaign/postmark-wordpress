@@ -136,7 +136,7 @@ class Postmark_Mail {
 
 		// Checks the wp_nonce.
 		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], 'postmark_nonce' ) ) {
-			wp_die( __( 'We were unable to verify this request, please reload the page and try again.' ) );
+			wp_die( __( 'We were unable to verify this request, please reload the page and try again.', 'postmark-wordpress' ) );
 		}
 
 		// Retrieves more logs from logs table using offset and prepare() to prevent SQL injections.
@@ -170,12 +170,12 @@ class Postmark_Mail {
 	public function send_test_email() {
 		// We check the wp_nonce.
 		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], 'postmark_nonce' ) ) {
-			wp_die( __( 'We were unable to verify this request, please reload the page and try again.' ) );
+			wp_die( __( 'We were unable to verify this request, please reload the page and try again.', 'postmark-wordpress' ) );
 		}
 
 		// We check that the current user is allowed to update settings.
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( __( 'We were unable to verify this request, please reload the page and try again.' ) );
+			wp_die( __( 'We were unable to verify this request, please reload the page and try again.', 'postmark-wordpress' ) );
 		}
 
 		// We validate that 'email' is a valid email address.
@@ -233,17 +233,17 @@ class Postmark_Mail {
 	public function save_settings() {
 		// We check the wp_nonce.
 		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], 'postmark_nonce' ) ) {
-			wp_die( __( 'We were unable to verify this request, please reload the page and try again.' ) );
+			wp_die( __( 'We were unable to verify this request, please reload the page and try again.', 'postmark-wordpress' ) );
 		}
 
 		// We check that the current user is allowed to update settings.
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( __( 'We were unable to verify this request, please reload the page and try again.' ) );
+			wp_die( __( 'We were unable to verify this request, please reload the page and try again.', 'postmark-wordpress' ) );
 		}
 
 		// We check that we have received some data.
 		if ( ! isset( $_POST['data'] ) ) {
-			wp_die( __( 'We were unable to verify this request, please reload the page and try again.' ) );
+			wp_die( __( 'We were unable to verify this request, please reload the page and try again.', 'postmark-wordpress' ) );
 		}
 
 		$data = json_decode( stripslashes( $_POST['data'] ), true );
