@@ -21,7 +21,7 @@ wp_nonce_field( 'postmark_nonce' );
 ?>
 <div class="wrap">
 	<div class="logo-bar">
-		<a href="https://postmarkapp.com/" target="_blank"><img src="<?php echo esc_url( POSTMARK_URL . '/assets/images/logo.png' ); ?>" width="150" height="40" alt="" /></a>
+		<a href="https://postmarkapp.com/" target="_blank"><img src="<?php echo esc_url( POSTMARK_URL . '/assets/images/logo.png' ); ?>" width="150" height="40" alt="<?php _e( 'ActiveCampaign Postmark Logo', 'postmark-wordpress' ); ?>" /></a>
 	</div>
 
 	<h1 class="nav-tab-wrapper">
