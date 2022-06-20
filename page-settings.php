@@ -25,19 +25,19 @@ wp_nonce_field( 'postmark_nonce' );
 	</div>
 
 	<h1 class="nav-tab-wrapper">
-		<a class="nav-tab" rel="general">General</a>
-		<a class="nav-tab" rel="test">Send Test Email</a>
-		<a class="nav-tab" rel="overrides">Overrides</a>
-		<a class="nav-tab" rel="status">Status</a>
+		<a class="nav-tab" rel="general"><?php _e( 'General', 'postmark-wordpress' ); ?></a>
+		<a class="nav-tab" rel="test"><?php _e( 'Send Test Email', 'postmark-wordpress' ); ?></a>
+		<a class="nav-tab" rel="overrides"><?php _e( 'Overrides', 'postmark-wordpress' ); ?></a>
+		<a class="nav-tab" rel="status"><?php _e( 'Status', 'postmark-wordpress' ); ?></a>
 		<!-- Only show Logs tab if logging is enabled -->
 		<?php if ( isset( $this->settings['enable_logs'] ) && true == $this->settings['enable_logs'] ) : ?>
-			<a class="nav-tab" rel="log" id="pm-log-nav-tab">Logs</a>
+			<a class="nav-tab" rel="log" id="pm-log-nav-tab"><?php _e( 'Logs', 'postmark-wordpress' ); ?></a>
 		<?php else : ?>
-			<a class="nav-tab hidden" rel="log" id="pm-log-nav-tab">Logs</a>
+			<a class="nav-tab hidden" rel="log" id="pm-log-nav-tab"><?php _e( 'Logs', 'postmark-wordpress' ); ?></a>
 		<?php endif; ?>
 
 		<?php if ( isset( $_ENV['POSTMARK_PLUGIN_TESTING'] ) && 'POSTMARK_PLUGIN_TESTING' === $_ENV['POSTMARK_PLUGIN_TESTING'] ) : ?>
-			<a class="nav-tab" rel="plugin-testing">Plugin Testing</a>
+			<a class="nav-tab" rel="plugin-testing"><?php _e( 'Plugin Testing', 'postmark-wordpress' ); ?></a>
 		<?php endif; ?>
 	</h1>
 
@@ -62,66 +62,66 @@ wp_nonce_field( 'postmark_nonce' );
 	<div class="tab-content tab-general">
 		<table class="form-table">
 			<tr>
-				<th><label>Enabled?</label></th>
+				<th><label><?php _e( 'Enabled?', 'postmark-wordpress' ); ?></label></th>
 				<td>
 					<input type="checkbox" class="pm-enabled" value="1" />
-					<span class="footnote">Send emails using ActiveCampaign Postmark</span>
+					<span class="footnote"><?php _e( 'Send emails using ActiveCampaign Postmark.', 'postmark-wordpress' ); ?></span>
 				</td>
 			</tr>
 			<tr>
-				<th><label>API Key</label></th>
+				<th><label><?php _e( 'API Key', 'postmark-wordpress' ); ?></label></th>
 				<td>
 					<input type="password" class="pm-api-key postmark-input" value="" placeholder="API Key" />
 					<div class="footnote">Your API key is in the <strong>API Tokens</strong> tab of your <a href="https://account.postmarkapp.com/servers" target="_blank">Postmark Server</a>.</div>
 				</td>
 			</tr>
 			<tr>
-				<th><label>Message Stream</label></th>
+				<th><label><?php _e( 'Message Stream', 'postmark-wordpress' ); ?></label></th>
 				<td>
 					<input type="text" class="pm-stream-name postmark-input" value="" placeholder="outbound" />
-					<div class="footnote">Optional - Default is 'outbound' if blank.</div>
+					<div class="footnote"><?php _e( 'Optional - Default is \'outbound\' if blank.', 'postmark-wordpress' ); ?></div>
 				</td>
 			</tr>
 			<tr>
-				<th><label>Sender Email</label></th>
+				<th><label><?php _e( 'Sender Email', 'postmark-wordpress' ); ?></label></th>
 				<td>
 					<input type="text" class="pm-sender-address postmark-input" value="" placeholder="example@domain.com" />
 					<div class="footnote">This email must be a verified <a href="https://account.postmarkapp.com/signatures" target="_blank">Sender Signature</a>. It will appear as the "from" address on all outbound emails.</div>
 				</td>
 			</tr>
 			<tr>
-				<th><label>Force Sender Email</label></th>
+				<th><label><?php _e( 'Force Sender Email', 'postmark-wordpress' ); ?></label></th>
 				<td>
 					<input type="checkbox" class="pm-force-from" value="1" />
 					<span class="footnote">Force emails to be sent from the Sender Email specified above. Disallows overriding using the <code>$headers</code> array.</span>
 				</td>
 			</tr>
 			<tr>
-				<th><label>Force HTML</label></th>
+				<th><label><?php _e( 'Force HTML', 'postmark-wordpress' ); ?></label></th>
 				<td>
 					<input type="checkbox" class="pm-force-html" value="1" />
-					<span class="footnote">Force emails to be sent as HTML.</span>
+					<span class="footnote"><?php _e( 'Force emails to be sent as HTML.', 'postmark-wordpress' ); ?></span>
 				</td>
 			</tr>
 			<tr>
-				<th><label>Track Opens</label></th>
+				<th><label><?php _e( 'Track Opens', 'postmark-wordpress' ); ?></label></th>
 				<td>
 					<input type="checkbox" class="pm-track-opens" value="1" />
 					<span class="footnote">Track email opens (<code>Force HTML</code> is required).</span>
 				</td>
 			</tr>
 			<tr>
-				<th><label>Track Links</label></th>
+				<th><label><?php _e( 'Track Links', 'postmark-wordpress' ); ?></label></th>
 				<td>
 					<input type="checkbox" class="pm-track-links" value="1" />
-					<span class="footnote">Track links in emails.</span>
+					<span class="footnote"><?php _e( 'Track links in emails.', 'postmark-wordpress' ); ?></span>
 				</td>
 			</tr>
 			<tr>
-				<th><label>Enable Logs</label></th>
+				<th><label><?php _e( 'Enable Logs', 'postmark-wordpress' ); ?></label></th>
 				<td>
 					<input type="checkbox" class="pm-enable-logs" value="1" />
-					<span class="footnote">Log send attempts for historical/troubleshooting purposes (Recommended).</span>
+					<span class="footnote"><?php _e( 'Log send attempts for historical/troubleshooting purposes (Recommended).', 'postmark-wordpress' ); ?></span>
 				</td>
 			</tr>
 		</table>
@@ -134,15 +134,15 @@ wp_nonce_field( 'postmark_nonce' );
 	<div class="tab-content tab-test">
 		<table class="form-table">
 			<tr>
-				<th><label>To</label></th>
+				<th><label><?php _e( 'To', 'postmark-wordpress' ); ?></label></th>
 				<td><input type="text" class="pm-test-email" value="" placeholder="recipient@example.com" /></td>
 			</tr>
 			<tr>
-				<th><label>From (optional)</label></th>
+				<th><label><?php _e( 'From (optional)', 'postmark-wordpress' ); ?></label></th>
 				<td><input type="text" class="pm-test-email-sender" value="" placeholder="sender@example.com" /></td>
 			</tr>
 			<tr>
-				<td colspan="2"><input type="checkbox" name="with_tracking_and_html" class="pm-test-with-opens" value="" />Send test as HTML, with Open and Link Tracking enabled.</td>
+				<td colspan="2"><input type="checkbox" name="with_tracking_and_html" class="pm-test-with-opens" value="" /><?php _e( 'Send test as HTML, with Open and Link Tracking enabled.', 'postmark-wordpress' ); ?></td>
 			</tr>
 		</table>
 
@@ -152,7 +152,7 @@ wp_nonce_field( 'postmark_nonce' );
 	</div>
 
 	<div class="tab-content tab-overrides">
-		<h2>Developer overrides</h2>
+		<h2><?php _e( 'Developer overrides', 'postmark-wordpress' ); ?></h2>
 		<p>Instead of using <code>Force HTML</code>, we recommend setting <code>wp_mail</code> headers when possible.</p>
 		<pre>
 		$headers = array();
@@ -197,14 +197,14 @@ wp_nonce_field( 'postmark_nonce' );
 		?>
 		<table class="form-table">
 			<tr>
-				<th><label>Status</label></th>
+				<th><label><?php _e( 'Status', 'postmark-wordpress' ); ?></label></th>
 
 				<td>
 					<?php echo $pm_status->status; ?>
 				</td>
 			</tr>
 			<tr>
-				<th><label>Last Checked</label></th>
+				<th><label><?php _e( 'Last Checked', 'postmark-wordpress' ); ?></label></th>
 				<td>
 				<?php
 					$unix_date   = gmdate( 'U', strtotime( $pm_status->lastCheckDate ) );
@@ -215,7 +215,7 @@ wp_nonce_field( 'postmark_nonce' );
 				</td>
 			</tr>
 			<tr>
-				<th><label><a href="https://status.postmarkapp.com/" target="_blank">Check Postmark Status Site</a></label></th>
+				<th><label><a href="https://status.postmarkapp.com/" target="_blank"><?php _e( 'Check Postmark Status Site', 'postmark-wordpress' ); ?></a></label></th>
 				</td>
 			</tr>
 		</table>
@@ -274,25 +274,25 @@ wp_nonce_field( 'postmark_nonce' );
 			<div class="tab-content tab-plugin-testing">
 				<table class="form-table" style="max-width:740px;">
 					<tr>
-						<th><label>Headers</label></th>
+						<th><label><?php _e( 'Headers', 'postmark-wordpress' ); ?></label></th>
 						<td>
 							<textarea name="pm-plugin-test-headers" class="pm-plugin-test-headers" cols=80 placeholder="Reply-To: john@example.com"></textarea>
 						</td>
 					</tr>
 					<tr>
-						<th><label>Subject</label></th>
+						<th><label><?php _e( 'Subject', 'postmark-wordpress' ); ?></label></th>
 						<td>
 							<input type="text" name="pm-plugin-test-subject" class="pm-plugin-test-subject" placeholder="Dear Emily, I just wanted to say hello..." />
 						</td>
 					</tr>
 					<tr>
-						<th><label>Body</label></th>
+						<th><label><?php _e( 'Body', 'postmark-wordpress' ); ?></label></th>
 						<td>
 							<textarea name="pm-plugin-test-body" class="pm-plugin-test-body" placeholder="Hi there!" cols=80></textarea>
 						</td>
 					</tr>
 					<tr>
-						<th><label>To Address</label></th>
+						<th><label><?php _e( 'To Address', 'postmark-wordpress' ); ?></label></th>
 						<td>
 							<input type="text" name="pm-plugin-test-to-address" class="pm-plugin-test-to-address" value="" placeholder="emily@example.com" />
 						</td>
