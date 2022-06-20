@@ -72,7 +72,7 @@ wp_nonce_field( 'postmark_nonce' );
 				<th><label><?php _e( 'API Key', 'postmark-wordpress' ); ?></label></th>
 				<td>
 					<input type="password" class="pm-api-key postmark-input" value="" placeholder="API Key" />
-					<div class="footnote">Your API key is in the <strong>API Tokens</strong> tab of your <a href="https://account.postmarkapp.com/servers" target="_blank">Postmark Server</a>.</div>
+					<div class="footnote"><?php _e( 'Your API key is in the ', 'postmark-wordpress' ); ?><strong><?php _e( 'API Tokens', 'postmark-wordpress' ); ?></strong><?php _e( ' tab of your ', 'postmark-wordpress' ); ?><a href="https://account.postmarkapp.com/servers" target="_blank"><?php _e( 'Postmark Server', 'postmark-wordpress' ); ?></a>.</div>
 				</td>
 			</tr>
 			<tr>
@@ -86,14 +86,14 @@ wp_nonce_field( 'postmark_nonce' );
 				<th><label><?php _e( 'Sender Email', 'postmark-wordpress' ); ?></label></th>
 				<td>
 					<input type="text" class="pm-sender-address postmark-input" value="" placeholder="example@domain.com" />
-					<div class="footnote">This email must be a verified <a href="https://account.postmarkapp.com/signatures" target="_blank">Sender Signature</a>. It will appear as the "from" address on all outbound emails.</div>
+					<div class="footnote"><?php _e( 'This email must be a verified ', 'postmark-wordpress' ); ?><a href="https://account.postmarkapp.com/signatures" target="_blank"><?php _e( 'Sender Signature', 'postmark-wordpress' ); ?></a><?php _e( '. It will appear as the "from" address on all outbound emails.', 'postmark-wordpress' ); ?></div>
 				</td>
 			</tr>
 			<tr>
 				<th><label><?php _e( 'Force Sender Email', 'postmark-wordpress' ); ?></label></th>
 				<td>
 					<input type="checkbox" class="pm-force-from" value="1" />
-					<span class="footnote">Force emails to be sent from the Sender Email specified above. Disallows overriding using the <code>$headers</code> array.</span>
+					<span class="footnote"><?php _e( 'Force emails to be sent from the Sender Email specified above. Disallows overriding using the ', 'postmark-wordpress' ); ?><code><?php _e( '$headers', 'postmark-wordpress' ); ?></code><?php _e( ' array.', 'postmark-wordpress' ); ?></span>
 				</td>
 			</tr>
 			<tr>
@@ -107,7 +107,7 @@ wp_nonce_field( 'postmark_nonce' );
 				<th><label><?php _e( 'Track Opens', 'postmark-wordpress' ); ?></label></th>
 				<td>
 					<input type="checkbox" class="pm-track-opens" value="1" />
-					<span class="footnote">Track email opens (<code>Force HTML</code> is required).</span>
+					<span class="footnote"><?php _e( 'Track email opens (', 'postmark-wordpress' ); ?><code><?php _e( 'Force HTML', 'postmark-wordpress' ); ?></code><?php _e( ' is required).', 'postmark-wordpress' ); ?></span>
 				</td>
 			</tr>
 			<tr>
