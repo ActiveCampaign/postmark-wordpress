@@ -96,7 +96,7 @@ if ( ! class_exists( 'Postmark_Debug' ) ) {
 		 * @param  bool $value  Value.
 		 * @return string Yes or No based on boolean provided.
 		 */
-		private function strbool( bool $value ) {
+		private function strbool( $value ) {
 			return $value ? 'Yes' : 'No';
 		}
 
