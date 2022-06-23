@@ -4,7 +4,7 @@ Tags: postmark, email, smtp, notifications, wp_mail, wildbit
 Requires PHP: 7.0
 Requires at least: 4.0
 Tested up to: 6.0
-Stable tag: trunk
+Stable tag: 1.17.1
 
 The *officially-supported* ActiveCampaign Postmark plugin for Wordpress.
 
