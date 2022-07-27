@@ -115,8 +115,8 @@ The plugin supports using the `wp_mail_from_name` filter for manually setting a 
 1. ActiveCampaign Postmark WP Plugin Settings screen.
 
 == Changelog ==
-= v1.17.1 =
-* Fix Site Health page when some settings are not set.
+= v1.17.2 =
+* Fix Site Health constants usage.
 
 --------
 
