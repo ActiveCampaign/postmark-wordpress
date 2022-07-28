@@ -21,6 +21,8 @@ if ( ! class_exists( 'Postmark_Debug' ) ) {
 
 			$settings = json_decode( get_option( 'postmark_settings' ) );
 
+			$postmark = "Postmark_Mail";
+
 			$debug_info['postmark-wordpress'] = array(
 				'label'  => __( 'Active Campaign Postmark', 'postmark-wordpress' ),
 				'fields' => array(
@@ -31,17 +33,17 @@ if ( ! class_exists( 'Postmark_Debug' ) ) {
 					),
 					'version'        => array(
 						'label'   => __( 'POSTMARK_VERSION', 'postmark-wordpress' ),
-						'value'   => POSTMARK_VERSION,
+						'value'   => defined( 'POSTMARK_VERSION' ) ? POSTMARK_VERSION : $postmark::$POSTMARK_VERSION,
 						'private' => false,
 					),
 					'directory'      => array(
 						'label'   => __( 'POSTMARK_DIR', 'postmark-wordpress' ),
-						'value'   => POSTMARK_DIR,
+						'value'   => defined( 'POSTMARK_DIR' ) ? POSTMARK_DIR : $postmark::$POSTMARK_DIR,
 						'private' => false,
 					),
 					'url'            => array(
 						'label'   => __( 'POSTMARK_URL', 'postmark-wordpress' ),
-						'value'   => POSTMARK_URL,
+						'value'   => defined( 'POSTMARK_URL' ) ? POSTMARK_URL : $postmark::$POSTMARK_URL,
 						'private' => false,
 					),
 					'apikey'         => array(
