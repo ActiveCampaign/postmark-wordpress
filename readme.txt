@@ -2,7 +2,7 @@
 Contributors: andy7629, alexknowshtml, mgibbs189, jptoto, atheken, prileygraham
 Tags: postmark, email, smtp, notifications, wp_mail, wildbit
 Requires PHP: 7.0
-Requires at least: 4.0
+Requires at least: 5.3
 Tested up to: 6.0
 Stable tag: 1.17.2
 
