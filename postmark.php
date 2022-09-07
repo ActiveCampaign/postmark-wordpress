@@ -5,7 +5,7 @@
  * Description: Overrides wp_mail to send emails through ActiveCampaign Postmark
  * Version: 1.17.2
  * Requires PHP: 7.0
- * Requires at least: 4.0
+ * Requires at least: 5.3
  * Author: Andrew Yates & Matt Gibbs
  */
 
