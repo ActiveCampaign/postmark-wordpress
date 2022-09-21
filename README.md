@@ -12,7 +12,7 @@ If you don’t already have an ActiveCampaign Postmark account, you can get one 
 
 1. Upload postmark directory to your /wp-content/plugins directory or install from plugin marketplace
 2. Activate plugin in WordPress admin
-3. In WordPress admin, go to **Settings** then **ActiveCampaign Postmark**. You will then want to insert your ActiveCampaign Postmark details. If you don’t already have an ActiveCampaign Postmark account, get one at http://postmarkapp.com.
+3. In WordPress admin, go to **Settings** then **ActiveCampaign Postmark**. You will then want to insert your ActiveCampaign Postmark details. If you don’t already have an ActiveCampaign Postmark account, get one at https://postmarkapp.com.
 4. Verify sending by entering a recipient email address you have access to and pressing the “Send Test Email” button. Enable logging for troubleshooting and to check the send result.
 5. Once everything is verified as working, check **Send emails using ActiveCampaign Postmark** and Save, to override `wp_mail` to send using the ActiveCampaign Postmark API instead.
 

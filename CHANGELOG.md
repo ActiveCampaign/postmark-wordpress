@@ -224,7 +224,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -  Arrays of recipients are now properly handled
 -  HTML emails and Text Emails are now handled by checking the headers of the emails sent, and sends via Postmark appropriately.
--  Optional "Powered by Postmark" footer of sent emails. "Postmark solves your WordPress email problems. Send transactional email confidently using http://postmarkapp.com"
+-  Optional "Powered by Postmark" footer of sent emails. "Postmark solves your WordPress email problems. Send transactional email confidently using https://postmarkapp.com"
 -  Add license to README and PHP file
 
 ## [1.0.0]
