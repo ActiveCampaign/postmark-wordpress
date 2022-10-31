@@ -6,6 +6,7 @@
  * Version: 1.17.2
  * Requires PHP: 7.0
  * Requires at least: 5.3
+ * Tested up to: 6.1
  * Author: Andrew Yates & Matt Gibbs
  */
 
