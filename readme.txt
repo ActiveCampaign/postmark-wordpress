@@ -12,9 +12,9 @@ The *officially-supported* ActiveCampaign Postmark plugin for Wordpress.
 
 If you're still sending email with default SMTP, you're blind to delivery problems! ActiveCampaign Postmark for Wordpress enables sites of any size to deliver and track WordPress notification emails reliably, with minimal setup time and zero maintenance.
 
-If you don't already have an ActiveCampaign Postmark account, you can get one in minutes, sign up at https://postmarkapp.com
+If you don't already have a Postmark account, you can get one in minutes, sign up at https://postmarkapp.com
 
-Check out our video on how to set up the ActiveCampaign Postmark for WordPress plugin [here](https://postmarkapp.com/webinars/postmark-wordpress).
+Check out our video on how to set up the Postmark for WordPress plugin [here](https://postmarkapp.com/webinars/postmark-wordpress).
 
 == Installation ==
 
@@ -26,17 +26,17 @@ Check out our video on how to set up the ActiveCampaign Postmark for WordPress p
 
 == Frequently Asked Questions ==
 
-= What is ActiveCampaign Postmark? =
+= What is Postmark? =
 
-ActiveCampaign Postmark is a hosted service that expertly handles all delivery of transactional webapp and web site email. This includes welcome emails, password resets, comment notifications, and more. If you've ever installed WordPress and had issues with PHP's `mail()` function not working right, or your WordPress install sends comment notifications or password resets to spam, Postmark makes all of these problems vanish in seconds. Without Postmark, you may not even know you're having delivery problems. Find out in seconds by installing and configuring this plugin.
+Postmark is a hosted service that expertly handles all delivery of transactional webapp and web site email. This includes welcome emails, password resets, comment notifications, and more. If you've ever installed WordPress and had issues with PHP's `mail()` function not working right, or your WordPress install sends comment notifications or password resets to spam, Postmark makes all of these problems vanish in seconds. Without Postmark, you may not even know you're having delivery problems. Find out in seconds by installing and configuring this plugin.
 
 = Will this plugin work with my WordPress site? =
 
-The ActiveCampaign Postmark for WordPress plugin overrides any usage of the `wp_mail()` function. Because of this, if any 3rd party code or plugins send mail directly using the PHP mail function, or any other method, we cannot override it. Please contact the makers of any offending plugins and let them know that they should use `wp_mail()` instead of unsupported mailing functions.
+The Postmark for WordPress plugin overrides any usage of the `wp_mail()` function. Because of this, if any 3rd party code or plugins send mail directly using the PHP mail function, or any other method, we cannot override it. Please contact the makers of any offending plugins and let them know that they should use `wp_mail()` instead of unsupported mailing functions.
 
 = TLS Version Requirements/Compatibility =
 
-The ActiveCampaign Postmark API requires TLS v1.1 or v1.2 support. We recommend using TLS v1.2.
+The Postmark API requires TLS v1.1 or v1.2 support. We recommend using TLS v1.2.
 
 You can check your TLS v1.2 compatibility using [this plugin](https://wordpress.org/plugins/tls-1-2-compatibility-test/). After installing the plugin, change the dropdown for 'Select API Endpoint' to _How's My SSL?_ and run the test. If compatibility with TLS v1.2 is not detected, contact your server host or make the necessary upgrades to support TLS v1.1 or v1.2.
 
@@ -48,7 +48,7 @@ TLS 1.2 requires:
 
 = Does this cost me money? =
 
-The ActiveCampaign Postmark service (and this plugin) are free to get started. You can sign up at https://postmarkapp.com/. When you need to process more email, ActiveCampaign Postmark offers monthly plans to fit your needs.
+The Postmark service (and this plugin) are free to get started. You can sign up at https://postmarkapp.com/. When you need to process more email, Postmark offers monthly plans to fit your needs.
 
 = My emails are still not sending, or they are going to spam! HELP!? =
 
@@ -56,7 +56,7 @@ No worries, our expert team can help. Just send an email to [support@postmarkapp
 
 = Why should I trust you with my email sending? =
 
-Because we've been in this business for many years. We’ve been running an email marketing service, Newsberry, for five years. Through trial and error we already know what it takes to manage a large volume of email. We handle things like whitelisting, ISP throttling, reverse DNS, feedback loops, content scanning, and delivery monitoring to ensure your emails get to the inbox.
+Because we've been in this business for many years. Through trial and error we already know what it takes to manage a large volume of email. We handle things like whitelisting, ISP throttling, reverse DNS, feedback loops, content scanning, and delivery monitoring to ensure your emails get to the inbox.
 
 Most importantly, a great product requires great support and even better education. Our team is spread out across six time zones to offer fast support on everything from using Postmark to best practices on content and user engagement. A solid infrastructure only goes so far, that’s why improving our customer’s sending practices helps achieve incredible results
 
@@ -98,17 +98,21 @@ And save the changes to the file.
 
 The plugin supports using the `wp_mail_from_name` filter for manually setting a name in the From header.
 
+= I also need a marketing automation tool to connect to my Wordpress site. What do you recommend? =
+
+At [ActiveCampaign](https://www.activecampaign.com/?utm_source=postmark&utm_medium=referral&utm_campaign=postmark_wordpress) you’ll find the email marketing, marketing automation, and CRM tools your marketing and sales teams will love. [ActiveCampaign integrates seamlessly with your Wordpress site](https://wordpress.org/plugins/activecampaign-subscription-forms/) so you can embed forms and collect email addresses on any page, track website visits (and then use that information to trigger automated follow-up emails), or enable live chat to engage with your visitors in real time. [Learn more about ActiveCampaign for Wordpress](https://wordpress.org/plugins/activecampaign-subscription-forms/).
+
 == Additional Resources ==
 
-[ActiveCampaign Postmark for WordPress FAQ](https://postmarkapp.com/support/article/1138-postmark-for-wordpress-faq)
+[Postmark for WordPress FAQ](https://postmarkapp.com/support/article/1138-postmark-for-wordpress-faq)
 
-[Can I use the ActiveCampaign Postmark for WordPress plugin with Gravity Forms?](https://postmarkapp.com/support/article/1129-can-i-use-the-postmark-for-wordpress-plugin-with-gravity-forms)
+[Can I use the Postmark for WordPress plugin with Gravity Forms?](https://postmarkapp.com/support/article/1129-can-i-use-the-postmark-for-wordpress-plugin-with-gravity-forms)
 
-[How do I send with Ninja Forms and ActiveCampaign Postmark for WordPress?](https://postmarkapp.com/support/article/1047-how-do-i-send-with-ninja-forms-and-postmark-for-wordpress)
+[How do I send with Ninja Forms and Postmark for WordPress?](https://postmarkapp.com/support/article/1047-how-do-i-send-with-ninja-forms-and-postmark-for-wordpress)
 
-[How do I send with Contact Form 7 and ActiveCampaign Postmark for WordPress?](https://postmarkapp.com/support/article/1072-how-do-i-send-with-contact-form-7-and-postmark-for-wordpress)
+[How do I send with Contact Form 7 and Postmark for WordPress?](https://postmarkapp.com/support/article/1072-how-do-i-send-with-contact-form-7-and-postmark-for-wordpress)
 
-[Can I use the ActiveCampaign Postmark for WordPress plugin with Divi contact forms?](https://postmarkapp.com/support/article/1128-can-i-use-the-postmark-for-wordpress-plugin-with-divi-contact-forms)
+[Can I use the Postmark for WordPress plugin with Divi contact forms?](https://postmarkapp.com/support/article/1128-can-i-use-the-postmark-for-wordpress-plugin-with-divi-contact-forms)
 
 == Screenshots ==
 
