@@ -1,0 +1,250 @@
+# Copyright (C) 2022
+# This file is distributed under the same license as the  package.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: "
+"https://wordpress.org/support/plugin/postmark-wordpress\n"
+"POT-Creation-Date: 2022-06-20 22:18:54+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2022-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Country: United States\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: "
+"__;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;_nx_noop:1,2,3c;esc_"
+"attr__;esc_html__;esc_attr_e;esc_html_e;esc_attr_x:1,2c;esc_html_x:1,2c;\n"
+"X-Poedit-Basepath: ../\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-Bookmarks: \n"
+"X-Textdomain-Support: yes\n"
+"X-Generator: grunt-wp-i18n 1.0.3\n"
+
+#: includes/class-postmark-debug.php:25
+msgid "Active Campaign Postmark"
+msgstr ""
+
+#: includes/class-postmark-debug.php:28
+msgid "Enabled"
+msgstr ""
+
+#: includes/class-postmark-debug.php:33
+msgid "POSTMARK_VERSION"
+msgstr ""
+
+#: includes/class-postmark-debug.php:38
+msgid "POSTMARK_DIR"
+msgstr ""
+
+#: includes/class-postmark-debug.php:43
+msgid "POSTMARK_URL"
+msgstr ""
+
+#: includes/class-postmark-debug.php:48 page-settings.php:72
+msgid "API Key"
+msgstr ""
+
+#: includes/class-postmark-debug.php:53
+msgid "Stream"
+msgstr ""
+
+#: includes/class-postmark-debug.php:58
+msgid "Sender Address"
+msgstr ""
+
+#: includes/class-postmark-debug.php:63
+msgid "Force From"
+msgstr ""
+
+#: includes/class-postmark-debug.php:68 page-settings.php:100
+#: page-settings.php:110
+msgid "Force HTML"
+msgstr ""
+
+#: includes/class-postmark-debug.php:73 page-settings.php:107
+msgid "Track Opens"
+msgstr ""
+
+#: includes/class-postmark-debug.php:78 page-settings.php:114
+msgid "Track Links"
+msgstr ""
+
+#: includes/class-postmark-debug.php:83
+msgid "Logs Enabled"
+msgstr ""
+
+#: page-settings.php:24
+msgid "ActiveCampaign Postmark Logo"
+msgstr ""
+
+#: page-settings.php:28
+msgid "General"
+msgstr ""
+
+#: page-settings.php:29
+msgid "Send Test Email"
+msgstr ""
+
+#: page-settings.php:30
+msgid "Overrides"
+msgstr ""
+
+#: page-settings.php:31 page-settings.php:200
+msgid "Status"
+msgstr ""
+
+#: page-settings.php:34 page-settings.php:36
+msgid "Logs"
+msgstr ""
+
+#: page-settings.php:40
+msgid "Plugin Testing"
+msgstr ""
+
+#: page-settings.php:65
+msgid "Enabled?"
+msgstr ""
+
+#: page-settings.php:68
+msgid "Send emails using ActiveCampaign Postmark."
+msgstr ""
+
+#: page-settings.php:75
+msgid "Your API key is in the "
+msgstr ""
+
+#: page-settings.php:75
+msgid "API Tokens"
+msgstr ""
+
+#: page-settings.php:75
+msgid " tab of your "
+msgstr ""
+
+#: page-settings.php:75
+msgid "Postmark Server"
+msgstr ""
+
+#: page-settings.php:79
+msgid "Message Stream"
+msgstr ""
+
+#: page-settings.php:82
+msgid "Optional - Default is 'outbound' if blank."
+msgstr ""
+
+#: page-settings.php:86
+msgid "Sender Email"
+msgstr ""
+
+#: page-settings.php:89
+msgid "This email must be a verified "
+msgstr ""
+
+#: page-settings.php:89
+msgid "Sender Signature"
+msgstr ""
+
+#: page-settings.php:89
+msgid ". It will appear as the \"from\" address on all outbound emails."
+msgstr ""
+
+#: page-settings.php:93
+msgid "Force Sender Email"
+msgstr ""
+
+#: page-settings.php:96
+msgid ""
+"Force emails to be sent from the Sender Email specified above. Disallows "
+"overriding using the "
+msgstr ""
+
+#: page-settings.php:96
+msgid "$headers"
+msgstr ""
+
+#: page-settings.php:96
+msgid " array."
+msgstr ""
+
+#: page-settings.php:103
+msgid "Force emails to be sent as HTML."
+msgstr ""
+
+#: page-settings.php:110
+msgid "Track email opens ("
+msgstr ""
+
+#: page-settings.php:110
+msgid " is required)."
+msgstr ""
+
+#: page-settings.php:117
+msgid "Track links in emails."
+msgstr ""
+
+#: page-settings.php:121
+msgid "Enable Logs"
+msgstr ""
+
+#: page-settings.php:124
+msgid "Log send attempts for historical/troubleshooting purposes (Recommended)."
+msgstr ""
+
+#: page-settings.php:137
+msgid "To"
+msgstr ""
+
+#: page-settings.php:141
+msgid "From (optional)"
+msgstr ""
+
+#: page-settings.php:145
+msgid "Send test as HTML, with Open and Link Tracking enabled."
+msgstr ""
+
+#: page-settings.php:155
+msgid "Developer overrides"
+msgstr ""
+
+#: page-settings.php:207
+msgid "Last Checked"
+msgstr ""
+
+#: page-settings.php:218
+msgid "Check Postmark Status Site"
+msgstr ""
+
+#: page-settings.php:277
+msgid "Headers"
+msgstr ""
+
+#: page-settings.php:283
+msgid "Subject"
+msgstr ""
+
+#: page-settings.php:289
+msgid "Body"
+msgstr ""
+
+#: page-settings.php:295
+msgid "To Address"
+msgstr ""
+
+#: postmark.php:139 postmark.php:173 postmark.php:178 postmark.php:236
+#: postmark.php:241 postmark.php:246
+msgid "We were unable to verify this request, please reload the page and try again."
+msgstr ""
+
+#: postmark.php:185
+msgid "You need to specify a valid recipient email address."
+msgstr ""
+
+#: postmark.php:255
+msgid "Something went wrong!"
+msgstr ""

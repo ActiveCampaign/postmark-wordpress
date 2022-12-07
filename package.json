@@ -1,0 +1,16 @@
+{
+  "name": "postmark-wordpress",
+  "version": "1.17.0",
+  "main": "Gruntfile.js",
+  "author": "PostmarkApp",
+  "scripts": {
+    "start": "grunt default",
+    "readme": "grunt readme",
+    "i18n": "grunt i18n"
+  },
+  "devDependencies": {
+    "grunt": "^1.5.3",
+    "grunt-wp-i18n": "^1.0.3",
+    "grunt-wp-readme-to-markdown": "^2.1.0"
+  }
+}
