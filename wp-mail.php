@@ -87,6 +87,7 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 		'From'             => array(),
 		'X-PM-Track-Opens' => array(),
 		'X-PM-TrackLinks'  => array(),
+		'X-PM-Tag'         => array()
 	);
 
 	$headers_list_lowercase = array_change_key_case( $headers_list, CASE_LOWER );
@@ -217,6 +218,10 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 		} else {
 			$body['TrackLinks'] = 'none';
 		}
+	}
+
+	if ( isset( $recognized_headers['X-PM-Tag'] ) ) {
+		$body['Tag'] = $recognized_headers['X-PM-Tag'];
 	}
 
 	if ( 1 === (int) $settings['force_html'] || 'text/html' === $content_type || 1 === $track_opens ) {
