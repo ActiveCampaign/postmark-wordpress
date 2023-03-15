@@ -119,8 +119,8 @@ At [ActiveCampaign](https://www.activecampaign.com/?utm_source=postmark&utm_medi
 1. ActiveCampaign Postmark WP Plugin Settings screen.
 
 == Changelog ==
-= v1.17.2 =
-* Fix Site Health constants usage.
+= v1.18.0 =
+* Add support for tags.
 
 --------
 
