@@ -92,8 +92,8 @@ The plugin supports using the `wp_mail_from_name` filter for manually setting a 
 [Can I use the ActiveCampaign Postmark for WordPress plugin with Divi contact forms?](https://postmarkapp.com/support/article/1128-can-i-use-the-postmark-for-wordpress-plugin-with-divi-contact-forms)
 
 ## Changelog
-## [1.17.2]
-- Fix Site Health constants usage.
+## [1.18.0]
+- Add support for tags.
 
 --------
 
