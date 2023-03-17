@@ -53,6 +53,16 @@ Because we've been in this business for many years. We’ve been running an emai
 
 Most importantly, a great product requires great support and even better education. Our team is spread out across six time zones to offer fast support on everything from using ActiveCampaign Postmark to best practices on content and user engagement. A solid infrastructure only goes so far, that’s why improving our customer’s sending practices helps achieve incredible results.
 
+### How do I tag a message?
+
+There are two ways to tag a message.
+
+1. Set an `X-PM-Tag` message header, i.e. `array_push( $headers, 'X-PM-Tag: PostmarkPluginTest' );` where you are calling `wp_mail()`.
+
+2. Add a filter for `postmark_tag` that hooks into a function that returns the tag you desire.
+
+Using the `postmark_tag` filter option will override a tag set via message headers.
+
 ### Why aren't my HTML emails being sent?
 
 This plugin detects HTML by checking the headers sent by other WordPress plugins. If a "text/html" content type isn't set then this plugin won't send the HTML to ActiveCampaign Postmark to be sent out only the plain text version of the email.
@@ -92,8 +102,8 @@ The plugin supports using the `wp_mail_from_name` filter for manually setting a 
 [Can I use the ActiveCampaign Postmark for WordPress plugin with Divi contact forms?](https://postmarkapp.com/support/article/1128-can-i-use-the-postmark-for-wordpress-plugin-with-divi-contact-forms)
 
 ## Changelog
-## [1.17.2]
-- Fix Site Health constants usage.
+## [1.18.0]
+- Add support for tags.
 
 --------
 

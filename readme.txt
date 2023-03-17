@@ -4,7 +4,7 @@ Tags: postmark, email, smtp, notifications, wp_mail, wildbit
 Requires PHP: 7.0
 Requires at least: 5.3
 Tested up to: 6.1
-Stable tag: 1.17.2
+Stable tag: 1.18.0
 
 The *officially-supported* ActiveCampaign Postmark plugin for Wordpress.
 
@@ -59,6 +59,16 @@ No worries, our expert team can help. Just send an email to [support@postmarkapp
 Because we've been in this business for many years. Through trial and error we already know what it takes to manage a large volume of email. We handle things like whitelisting, ISP throttling, reverse DNS, feedback loops, content scanning, and delivery monitoring to ensure your emails get to the inbox.
 
 Most importantly, a great product requires great support and even better education. Our team is spread out across six time zones to offer fast support on everything from using Postmark to best practices on content and user engagement. A solid infrastructure only goes so far, that’s why improving our customer’s sending practices helps achieve incredible results
+
+= How do I tag a message? =
+
+There are two ways to tag a message.
+
+1. Set an X-PM-Tag message header, i.e. array_push( $headers, 'X-PM-Tag: PostmarkPluginTest' ); where you are calling wp_mail().
+
+2. Add a filter for 'postmark_tag' that hooks into a function that returns the tag you desire.
+
+Using the postmark_tag filter will override a tag set via message headers.
 
 = Why aren't my HTML emails being sent? =
 
@@ -119,8 +129,8 @@ At [ActiveCampaign](https://www.activecampaign.com/?utm_source=postmark&utm_medi
 1. ActiveCampaign Postmark WP Plugin Settings screen.
 
 == Changelog ==
-= v1.17.2 =
-* Fix Site Health constants usage.
+= v1.18.0 =
+* Add support for tags.
 
 --------
 

@@ -87,6 +87,7 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 		'From'             => array(),
 		'X-PM-Track-Opens' => array(),
 		'X-PM-TrackLinks'  => array(),
+		'X-PM-Tag'         => array()
 	);
 
 	$headers_list_lowercase = array_change_key_case( $headers_list, CASE_LOWER );
@@ -217,6 +218,17 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 		} else {
 			$body['TrackLinks'] = 'none';
 		}
+	}
+
+	$body['Tag'] = null;
+
+	if ( isset( $recognized_headers['X-PM-Tag'] ) ) {
+		$body['Tag'] = $recognized_headers['X-PM-Tag'];
+	}
+
+	// Support using a filter to set a tag on a message
+	if ( has_filter( 'postmark_tag' ) ) {
+		$body['Tag'] = apply_filters( 'postmark_tag', $body['Tag'] );
 	}
 
 	if ( 1 === (int) $settings['force_html'] || 'text/html' === $content_type || 1 === $track_opens ) {

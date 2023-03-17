@@ -3,7 +3,7 @@
  * Plugin Name: ActiveCampaign Postmark (Official)
  * Plugin URI: https://postmarkapp.com/
  * Description: Overrides wp_mail to send emails through ActiveCampaign Postmark
- * Version: 1.17.2
+ * Version: 1.18.0
  * Requires PHP: 7.0
  * Requires at least: 5.3
  * Tested up to: 6.1
@@ -41,7 +41,7 @@ class Postmark_Mail {
 	 *
 	 * @var string
 	 */
-	public static $POSTMARK_VERSION = '1.17.2';
+	public static $POSTMARK_VERSION = '1.18.0';
 
 	/**
 	 * ActiveCampaign Postmark Plugin Directory.
@@ -231,9 +231,10 @@ class Postmark_Mail {
 		$headers       = array();
 
 		if ( isset( $_POST['with_tracking_and_html'] ) && $_POST['with_tracking_and_html'] ) {
-			$message = 'This is an <strong>HTML</strong> test email sent using the Postmark plugin. It has <a href="https://postmarkapp.com/developer/user-guide/tracking-opens">Open Tracking</a> and <a href="https://postmarkapp.com/developer/user-guide/tracking-links">Link Tracking</a> enabled.';
+			$message = 'This is an <strong>HTML</strong> test email sent using the Postmark plugin. It has <a href="https://postmarkapp.com/developer/user-guide/tracking-opens">Open Tracking</a> and <a href="https://postmarkapp.com/developer/user-guide/tracking-links">Link Tracking</a> enabled and is tagged.';
 			array_push( $headers, 'X-PM-Track-Opens: true' );
 			array_push( $headers, 'X-PM-TrackLinks: HtmlAndText' );
+			array_push( $headers, 'X-PM-Tag: PostmarkPluginTest' );
 		} else {
 			$message = 'This is a test email sent using the Postmark plugin.';
 		}
