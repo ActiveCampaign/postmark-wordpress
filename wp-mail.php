@@ -227,7 +227,9 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 	}
 
 	// Support using a filter to set a tag on a message
-	$from_name = apply_filters( 'postmark_tag', $body['Tag'] );
+	if ( has_filter( 'postmark_tag' ) ) {
+		apply_filters( 'postmark_tag', $body['Tag'] );
+	}
 
 	if ( 1 === (int) $settings['force_html'] || 'text/html' === $content_type || 1 === $track_opens ) {
 		$body['HtmlBody'] = $message;
