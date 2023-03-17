@@ -1,5 +1,5 @@
 === ActiveCampaign Postmark for Wordpress ===
-Contributors: andy7629, alexknowshtml, mgibbs189, jptoto, atheken, prileygraham
+Contributors: andy7629, alexknowshtml, mgibbs189, jptoto, atheken, prileygraham, dorzki
 Tags: postmark, email, smtp, notifications, wp_mail, wildbit
 Requires PHP: 7.0
 Requires at least: 5.3
