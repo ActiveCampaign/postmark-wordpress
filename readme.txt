@@ -129,8 +129,9 @@ At [ActiveCampaign](https://www.activecampaign.com/?utm_source=postmark&utm_medi
 1. ActiveCampaign Postmark WP Plugin Settings screen.
 
 == Changelog ==
-= v1.18.0 =
-* Add support for tags.
+= v1.18.1 =
+* Update Status tab to use new Postmark API.
+* Tested up to WordPress 6.2.
 
 --------
 
