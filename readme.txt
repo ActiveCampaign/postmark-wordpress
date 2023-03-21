@@ -3,8 +3,8 @@ Contributors: andy7629, alexknowshtml, mgibbs189, jptoto, atheken, prileygraham,
 Tags: postmark, email, smtp, notifications, wp_mail, wildbit
 Requires PHP: 7.0
 Requires at least: 5.3
-Tested up to: 6.1
-Stable tag: 1.18.0
+Tested up to: 6.2
+Stable tag: 1.18.1
 
 The *officially-supported* ActiveCampaign Postmark plugin for Wordpress.
 
@@ -129,8 +129,9 @@ At [ActiveCampaign](https://www.activecampaign.com/?utm_source=postmark&utm_medi
 1. ActiveCampaign Postmark WP Plugin Settings screen.
 
 == Changelog ==
-= v1.18.0 =
-* Add support for tags.
+= v1.18.1 =
+* Update Status tab to use new Postmark API.
+* Tested up to WordPress 6.2.
 
 --------
 
