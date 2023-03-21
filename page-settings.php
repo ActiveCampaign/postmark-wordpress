@@ -186,7 +186,7 @@ wp_nonce_field( 'postmark_nonce' );
 		$pm_status = json_decode(
 			wp_remote_retrieve_body(
 				wp_remote_get(
-					'https://status.postmarkapp.com/api/1.0/status/',
+					'https://status.postmarkapp.com/api/v1/status',
 					array(
 						'headers' => array(
 							'Accept'       => 'application/json',
@@ -203,14 +203,14 @@ wp_nonce_field( 'postmark_nonce' );
 				<th><label>Status</label></th>
 
 				<td>
-					<?php echo $pm_status->status; ?>
+					<?php echo $pm_status->page->state; ?>
 				</td>
 			</tr>
 			<tr>
 				<th><label>Last Checked</label></th>
 				<td>
 				<?php
-					$unix_date   = gmdate( 'U', strtotime( $pm_status->lastCheckDate ) );
+					$unix_date   = gmdate( 'U', strtotime( $pm_status->page->updated_at ) );
 					$date_format = get_option( 'date_format' );
 					$time_format = get_option( 'time_format' );
 					echo wp_date( "{$date_format} {$time_format}", $unix_date );
