@@ -231,6 +231,11 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 		$body['Tag'] = apply_filters( 'postmark_tag', $body['Tag'] );
 	}
 
+	// Support using a filter to set metadata on a message
+	if ( has_filter( 'postmark_metadata' ) ) {
+		$body['Metadata'] = apply_filters( 'postmark_metadata', array() );
+	}
+
 	if ( 1 === (int) $settings['force_html'] || 'text/html' === $content_type || 1 === $track_opens ) {
 		$body['HtmlBody'] = $message;
 		// The user really, truly wants this sent as HTML, don't send it as text, too.
