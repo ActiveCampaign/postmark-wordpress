@@ -70,6 +70,10 @@ There are two ways to tag a message.
 
 Using the postmark_tag filter will override a tag set via message headers.
 
+= How do I add metadata to a message? =
+
+Add a filter for 'postmark_metadata' that hooks into a function which returns the array of metadata you wish to attach to a message.
+
 = Why aren't my HTML emails being sent? =
 
 This plugin detects HTML by checking the headers sent by other WordPress plugins. If a "text/html" content type isn't set then this plugin won't send the HTML to Postmark to be sent out only the plain text version of the email.
