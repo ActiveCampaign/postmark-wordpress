@@ -297,7 +297,7 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 		$to    = $body['To'];
 
 		// Only store the To address, not the To name.
-		if ( false !== strpos( $body['To'], '<' ) && false !== strpos( $to, '>' ) ) {
+		if ( ! empty( $body['To'] ) && ! empty( $to ) && false !== strpos( $body['To'], '<' ) && false !== strpos( $to, '>' ) ) {
 			$to = substr( $body['To'], strpos( $body['To'], '<' ), -1 );
 		}
 
