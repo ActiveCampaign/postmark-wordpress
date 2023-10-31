@@ -237,6 +237,10 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 	}
 
 	if ( 1 === (int) $settings['force_html'] || 'text/html' === $content_type || 1 === $track_opens ) {
+		# convert "/n" newlines in plain text to <br> tags in forced HTML
+		if ( 'text/plain' === $content_type ) {
+			$message = str_replace( "\n", "<br>", $message );
+		}
 		$body['HtmlBody'] = $message;
 		// The user really, truly wants this sent as HTML, don't send it as text, too.
 		// For historical reasons, we can't "force html" and "track opens" set both html and text bodies,
