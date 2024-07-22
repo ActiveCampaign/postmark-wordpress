@@ -6,7 +6,7 @@
  * Version: 1.19.1
  * Requires PHP: 7.0
  * Requires at least: 5.3
- * Tested up to: 6.4
+ * Tested up to: 6.6
  * Author: Andrew Yates & Matt Gibbs
  */
 
