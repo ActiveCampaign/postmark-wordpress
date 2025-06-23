@@ -78,6 +78,7 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 	*/
 
 	$recognized_headers = array();
+	$custom_headers     = array();
 
 	$headers_list = array(
 		'Content-Type'     => array(),
@@ -94,9 +95,11 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 
 	if ( ! empty( $headers ) ) {
 		foreach ( $headers as $key => $header ) {
-			$key = strtolower( $key );
-			if ( array_key_exists( $key, $headers_list_lowercase ) ) {
-				$header_key = $key;
+			$custom_header_key = null;
+			$custom_header_val = null;
+			$lowercase_key = strtolower( $key );
+			if ( array_key_exists( $lowercase_key, $headers_list_lowercase ) ) {
+				$header_key = $lowercase_key;
 				$header_val = $header;
 				$segments   = explode( ':', $header );
 				if ( 2 === count( $segments ) ) {
@@ -111,7 +114,13 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 					if ( array_key_exists( strtolower( $segments[0] ), $headers_list_lowercase ) ) {
 						list( $header_key, $header_val ) = $segments;
 						$header_key                      = strtolower( $header_key );
+					} else {
+						list( $custom_header_key, $custom_header_val ) = $segments;
 					}
+				} else {
+					// Keep the casing of custom keys
+					$custom_header_key = $key;
+					$custom_header_val = $header;
 				}
 			}
 
@@ -128,6 +137,14 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 
 				unset( $header_key );
 				unset( $header_val );
+			}
+
+			// If a custom header was detected, assign it too.
+			if ( isset( $custom_header_key ) && isset( $custom_header_val ) ) {
+				$custom_headers[] = array(
+					'Name'  => $custom_header_key,
+					'Value' => trim( $custom_header_val )
+				);
 			}
 		}
 
@@ -247,6 +264,10 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 		}
 	}
 
+	if ( ! empty( $custom_headers ) ) {
+		$body['Headers'] = $custom_headers;
+	}
+
 	if ( 1 === $track_opens ) {
 		$body['TrackOpens'] = 'true';
 	}
@@ -336,7 +357,7 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
         'to' => $body['To'],
         'subject' => $body['Subject'],
         'message' => $body['HtmlBody'] ?? $body['TextBody'],
-        'headers' => $recognized_headers,
+        'headers' => array_merge( $custom_headers, $recognized_headers ),
         'attachments' => $body['Attachments'] ?? null,
     ));
 
