@@ -291,7 +291,7 @@ class Postmark_Mail {
 		}
 
 		// We validate that 'api_key' contains only allowed caracters [letters, numbers, dash].
-		if ( isset( $data['api_key'] ) && ( 1 === preg_match( '/^[A-Za-z0-9\-]*$/', $data['api_key'] || 'POSTMARK_API_TEST' === $data['api_key'] ) ) ) {
+		if ( isset( $data['api_key'] ) && ( 1 === preg_match( '/^[A-Za-z0-9\-]*$/', $data['api_key'] ) || 'POSTMARK_API_TEST' === $data['api_key'] ) ) {
 			$settings['api_key'] = $data['api_key'];
 		} else {
 			$settings['api_key'] = '';
