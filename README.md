@@ -37,6 +37,14 @@ TLS 1.2 requires:
 - cURL 7.34.0 or higher
 - OpenSSL 1.0.1 or higher
 
+### Brotli security (CVE-2026-111497)
+
+The Brotli decoder (libbrotli 1.0.3–1.2.0) is affected by [CVE-2026-111497](https://www.cve.org/CVERecord?id=CVE-2026-111497). WordPress usually sends requests through cURL, which
+advertises and decodes Brotli using your server's libbrotli when libcurl is built with it. The fsockopen fallback does not
+decode Brotli. Ask your host to apply the distro security update for
+`libbrotli`/`brotli` and `curl` (upstream fixed in 1.0.10, 1.1.1 and 1.2.1; distros often backport the fix without
+changing the version).
+
 ### Does this cost me money?
 
 The ActiveCampaign Postmark service (and this plugin) are free to get started, for up to 100 emails a month. You can sign up at https://postmarkapp.com/. When you need to process more than 100 emails a month, ActiveCampaign Postmark offers monthly plans to fit your needs.
